@@ -1,0 +1,73 @@
+{
+  "name": "9IADT Fase 4 Tech Challenge",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  "runArgs": [
+    "--env-file",
+    "${localWorkspaceFolder}/.devcontainer/.env"
+  ],
+  "mounts": [
+    "source=fiap-fase4-cache,target=/home/vscode/.cache,type=volume"
+  ],
+  "containerEnv": {
+    "UV_LINK_MODE": "copy"
+  },
+  "remoteUser": "vscode",
+  "remoteEnv": {
+    "GIT_ASKPASS": "/usr/local/bin/github-askpass",
+    "GIT_TERMINAL_PROMPT": "0",
+    "GIT_CONFIG_COUNT": "2",
+    "GIT_CONFIG_KEY_0": "user.name",
+    "GIT_CONFIG_VALUE_0": "${containerEnv:GIT_USER_NAME}",
+    "GIT_CONFIG_KEY_1": "user.email",
+    "GIT_CONFIG_VALUE_1": "${containerEnv:GIT_USER_EMAIL}",
+    "GIT_AUTHOR_NAME": "${containerEnv:GIT_USER_NAME}",
+    "GIT_AUTHOR_EMAIL": "${containerEnv:GIT_USER_EMAIL}",
+    "GIT_COMMITTER_NAME": "${containerEnv:GIT_USER_NAME}",
+    "GIT_COMMITTER_EMAIL": "${containerEnv:GIT_USER_EMAIL}"
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "forwardPorts": [
+    8501,
+    8888
+  ],
+  "portsAttributes": {
+    "8501": {
+      "label": "Streamlit",
+      "onAutoForward": "notify"
+    },
+    "8888": {
+      "label": "Jupyter Notebook",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+        "python.terminal.activateEnvironment": false,
+        "jupyter.jupyterServerType": "local"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-toolsai.jupyter",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "ms-python.debugpy",
+        "eamodio.gitlens",
+        "editorconfig.editorconfig",
+        "davidanson.vscode-markdownlint"
+      ]
+    }
+  }
+}
