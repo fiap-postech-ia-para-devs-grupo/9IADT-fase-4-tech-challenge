@@ -4,7 +4,7 @@ set -e
 
 bash .devcontainer/scripts/configure-git.sh
 
-git lfs install
+git lfs install --skip-repo
 
 uv sync --frozen
 
