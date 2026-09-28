@@ -216,3 +216,19 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# macOS
+.DS_Store
+
+# Agent skills: .agents/skills é a fonte; .claude/skills é symlink criado no post-create
+.claude/skills
+
+# Datasets brutos (reproduzidos por scripts/download_data.py)
+data/*
+!data/demo_patients.json
+!data/video/
+data/video/*
+!data/video/SOURCES.md
+
+# Cache de pesos do Ultralytics baixados no diretório de trabalho
+*.pt

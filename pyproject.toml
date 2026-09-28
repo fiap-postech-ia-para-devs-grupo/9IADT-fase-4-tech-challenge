@@ -1,0 +1,56 @@
+[project]
+name = "monitoramento-multimodal-fase4"
+version = "0.1.0"
+description = "Tech Challenge Fase 4 — Monitoramento Multimodal de Pacientes (vídeo, áudio, sinais vitais, prescrições → Alertas)"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "ultralytics>=8.2",                     # YOLOv8-pose
+    "torch>=2.2",                           # CPU-only no Linux, ver [tool.uv.sources]
+    "torchvision>=0.17",
+    "opencv-python>=4.9",
+    "azure-cognitiveservices-speech>=1.37",
+    "azure-ai-textanalytics>=5.3",          # TA for Health + Sentiment
+    "librosa>=0.10",
+    "praat-parselmouth>=0.4",
+    "pydub>=0.25",                          # + ffmpeg no sistema
+    "jiwer>=3.0",                           # WER
+    "wfdb>=4.1",                            # PhysioNet
+    "pandas>=2.2",
+    "scikit-learn>=1.4",
+    "plotly>=5.20",
+    "streamlit>=1.35",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "ipykernel>=6.29",
+]
+
+[tool.uv]
+package = false
+
+# Sem GPU no escopo: no Linux (container) usa as wheels CPU do PyTorch em vez das CUDA (~GBs).
+# No macOS o PyPI padrão já é CPU/MPS.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
