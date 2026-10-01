@@ -142,14 +142,14 @@ class Alerta:
         return cls(
             id=dados["id"],
             paciente_id=dados["paciente_id"],
-            origem=dados["origem"],
-            tipo=dados["tipo"],
-            severidade=dados["severidade"],
+            origem=Origem(dados["origem"]),
+            tipo=Tipo(dados["tipo"]),
+            severidade=Severidade(dados["severidade"]),
             descricao=dados["descricao"],
             evidencia=dados["evidencia"],
             detectado_em=datetime.fromisoformat(dados["detectado_em"]),
             alertas_origem=list(dados.get("alertas_origem") or []),
-            status=dados.get("status", Status.NOVO),
+            status=Status(dados.get("status", Status.NOVO)),
             reconhecido_por=dados.get("reconhecido_por"),
             reconhecido_em=datetime.fromisoformat(reconhecido_em) if reconhecido_em else None,
         )

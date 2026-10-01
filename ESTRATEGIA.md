@@ -288,7 +288,7 @@ monitoramento-multimodal-fase4/
 ├── docs/
 │   └── relatorio_tecnico.md
 ├── pyproject.toml + uv.lock            ← dependências (uv); requirements.txt exportado para quem não usa uv
-├── .devcontainer/                       ← ambiente padrão do time (Python 3.12, uv, ffmpeg, git-lfs, torch CPU)
+├── .devcontainer/                       ← ambiente padrão do time (Python 3.12, uv, ffmpeg, git-lfs, gh, torch CPU)
 ├── .env.example
 └── README.md
 ```
@@ -317,10 +317,12 @@ scikit-learn>=1.4
 plotly>=5.20
 streamlit>=1.35
 python-dotenv>=1.0
-# grupo dev: pytest, ruff, ipykernel
+# grupo dev: pytest, ruff, pyright, ipykernel
 ```
 
-**Ambiente:** o devcontainer (`.devcontainer/`) é o padrão do time: já traz ffmpeg, git-lfs, libs do OpenCV/Azure Speech e roda `uv sync --frozen` na criação. Fora do container: instalar ffmpeg + git-lfs e rodar `uv sync`. Para avaliadores sem uv: `uv export --no-dev --no-hashes -o requirements.txt` e `pip install -r requirements.txt`.
+**Checagens:** `uv run pytest`, `uv run ruff check .`, `uv run pyright` (mesma configuração do Pylance, em `[tool.pyright]` do `pyproject.toml`).
+
+**Ambiente:** o devcontainer (`.devcontainer/`) é o padrão do time: já traz ffmpeg, git-lfs, gh (autenticado via `GITHUB_TOKEN`), libs do OpenCV/Azure Speech e roda `uv sync --frozen` na criação. Fora do container: instalar ffmpeg + git-lfs e rodar `uv sync`. Para avaliadores sem uv: `uv export --no-dev --no-hashes -o requirements.txt` e `pip install -r requirements.txt`.
 
 `.env`: `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`, `AZURE_LANGUAGE_KEY`, `AZURE_LANGUAGE_ENDPOINT`. `.env` (na raiz, lido via `python-dotenv`) no `.gitignore`; `.devcontainer/.env` guarda só credenciais de git do container.
 

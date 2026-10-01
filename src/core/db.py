@@ -16,6 +16,7 @@ import sqlite3
 from collections.abc import Iterable
 from dataclasses import fields
 from datetime import datetime
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -26,7 +27,7 @@ _RAIZ = Path(__file__).resolve().parents[2]
 CAMINHO_PADRAO = Path(os.environ.get("ALERTAS_DB", _RAIZ / "data" / "alertas.db"))
 
 
-def _enum_check(coluna: str, enum: type) -> str:
+def _enum_check(coluna: str, enum: type[StrEnum]) -> str:
     valores = ", ".join(f"'{membro.value}'" for membro in enum)
     return f"CHECK ({coluna} IN ({valores}))"
 

@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from src.core import db
-from src.core.alerts import Alerta, Status, reconhecer, resolver
+from src.core.alerts import Alerta, Origem, Severidade, Status, Tipo, reconhecer, resolver
 
 INICIO_PADRAO = datetime(2026, 10, 1, 8, 0)
 
@@ -27,9 +27,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     def alerta(
         minutos: float,
         paciente_id: str,
-        origem: str,
-        tipo: str,
-        severidade: str,
+        origem: Origem,
+        tipo: Tipo,
+        severidade: Severidade,
         descricao: str,
         evidencia: dict[str, Any],
         **kw: Any,
@@ -46,12 +46,14 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
             **kw,
         )
 
-    def composto(minutos: float, severidade: str, descricao: str, origens: list[Alerta]) -> Alerta:
+    def composto(
+        minutos: float, severidade: Severidade, descricao: str, origens: list[Alerta]
+    ) -> Alerta:
         return alerta(
             minutos,
             origens[0].paciente_id,
-            "fusao",
-            "composto",
+            Origem.FUSAO,
+            Tipo.COMPOSTO,
             severidade,
             descricao,
             {"regra": descricao, "janela_h": 24},
@@ -62,9 +64,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     spo2 = alerta(
         30,
         "demo-01",
-        "sinais_vitais",
-        "sinal_vital",
-        "alta",
+        Origem.SINAIS_VITAIS,
+        Tipo.SINAL_VITAL,
+        Severidade.ALTA,
         "SpO2 abaixo de 90% por 6 minutos (regra clínica)",
         {
             "serie": "SpO2",
@@ -76,18 +78,18 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     fr = alerta(
         34,
         "demo-01",
-        "sinais_vitais",
-        "sinal_vital",
-        "media",
+        Origem.SINAIS_VITAIS,
+        Tipo.SINAL_VITAL,
+        Severidade.MEDIA,
         "FR 3,4σ acima da história recente do paciente (z-score)",
         {"serie": "FR", "janela": [1920, 2040], "valores": [22, 26, 27], "tecnica": "zscore"},
     )
     vocal = alerta(
         45,
         "demo-01",
-        "audio",
-        "alteracao_vocal",
-        "media",
+        Origem.AUDIO,
+        Tipo.ALTERACAO_VOCAL,
+        Severidade.MEDIA,
         "Voz com padrão de dificuldade respiratória (probabilidade 0,81)",
         {
             "trecho": "well, I just feel so tired lately",
@@ -100,9 +102,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     dispneia = alerta(
         46,
         "demo-01",
-        "audio",
-        "termo_critico",
-        "alta",
+        Origem.AUDIO,
+        Tipo.TERMO_CRITICO,
+        Severidade.ALTA,
         "Paciente relata falta de ar ao falar (Termo Crítico: dyspnea)",
         {
             "trecho": "I get really short of breath when I walk to the bathroom",
@@ -113,7 +115,7 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     )
     insuficiencia = composto(
         47,
-        "critica",
+        Severidade.CRITICA,
         "Possível insuficiência respiratória",
         [spo2, vocal, dispneia],
     )
@@ -122,9 +124,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     opioide = alerta(
         120,
         "demo-02",
-        "prescricao",
-        "mudanca_terapeutica",
-        "media",
+        Origem.PRESCRICAO,
+        Tipo.MUDANCA_TERAPEUTICA,
+        Severidade.MEDIA,
         "Início de droga de alta vigilância: morfina 4 mg IV",
         {
             "droga": "Morphine Sulfate",
@@ -137,15 +139,15 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     queda = alerta(
         300,
         "demo-02",
-        "video",
-        "queda",
-        "alta",
+        Origem.VIDEO,
+        Tipo.QUEDA,
+        Severidade.ALTA,
         "Queda detectada: paciente passou de em pé para o chão",
         {"frame": "results/video/quarto_02_f0412.jpg", "t": 13.7, "razao_bbox": 0.42},
     )
     queda_medicacao = composto(
         301,
-        "alta",
+        Severidade.ALTA,
         "Queda possivelmente associada a medicação",
         [opioide, queda],
     )
@@ -154,9 +156,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     anti_hipertensivo = alerta(
         60,
         "demo-03",
-        "prescricao",
-        "mudanca_terapeutica",
-        "baixa",
+        Origem.PRESCRICAO,
+        Tipo.MUDANCA_TERAPEUTICA,
+        Severidade.BAIXA,
         "Aumento de dose > 50% em < 24h: metoprolol 25 → 50 mg",
         {
             "droga": "Metoprolol Tartrate",
@@ -168,9 +170,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     pas = alerta(
         150,
         "demo-03",
-        "sinais_vitais",
-        "sinal_vital",
-        "alta",
+        Origem.SINAIS_VITAIS,
+        Tipo.SINAL_VITAL,
+        Severidade.ALTA,
         "PAS abaixo de 90 mmHg (Isolation Forest + regra clínica)",
         {
             "serie": "PAS",
@@ -181,16 +183,16 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     )
     efeito_adverso = composto(
         152,
-        "alta",
+        Severidade.ALTA,
         "Possível efeito adverso de medicação",
         [anti_hipertensivo, pas],
     )
     desvio = alerta(
         200,
         "demo-03",
-        "video",
-        "desvio_execucao",
-        "baixa",
+        Origem.VIDEO,
+        Tipo.DESVIO_EXECUCAO,
+        Severidade.BAIXA,
         "Agachamento com amplitude insuficiente: flexão do joelho de 62° (esperado 70°–120°)",
         {
             "frame": "results/video/agachamento_03_f0288.jpg",
@@ -203,9 +205,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     desvio_2 = alerta(
         205,
         "demo-03",
-        "video",
-        "desvio_execucao",
-        "media",
+        Origem.VIDEO,
+        Tipo.DESVIO_EXECUCAO,
+        Severidade.MEDIA,
         "Assimetria esquerda/direita de 18° no joelho",
         {
             "frame": "results/video/agachamento_03_f0510.jpg",
@@ -218,9 +220,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     dor = alerta(
         240,
         "demo-03",
-        "audio",
-        "termo_critico",
-        "media",
+        Origem.AUDIO,
+        Tipo.TERMO_CRITICO,
+        Severidade.MEDIA,
         "Paciente relata dor no joelho durante exercícios (Termo Crítico: pain)",
         {
             "trecho": "my knee hurts a lot when I do the squats",
@@ -231,7 +233,7 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     )
     agravamento = composto(
         241,
-        "media",
+        Severidade.MEDIA,
         "Possível agravamento em reabilitação",
         [desvio, desvio_2, dor],
     )
@@ -240,9 +242,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     lab_video = alerta(
         400,
         "avulso",
-        "video",
-        "desvio_execucao",
-        "baixa",
+        Origem.VIDEO,
+        Tipo.DESVIO_EXECUCAO,
+        Severidade.BAIXA,
         "Elevação lateral de braço com compensação de tronco (inclinação 14°)",
         {
             "frame": "results/video/upload_f0120.jpg",
@@ -254,9 +256,9 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     lab_audio = alerta(
         410,
         "avulso",
-        "audio",
-        "termo_critico",
-        "baixa",
+        Origem.AUDIO,
+        Tipo.TERMO_CRITICO,
+        Severidade.BAIXA,
         "Menção a fadiga na Consulta enviada (Termo Crítico: fatigue)",
         {
             "trecho": "I've been feeling tired all the time",

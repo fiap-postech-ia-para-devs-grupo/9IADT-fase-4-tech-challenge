@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from src.core import db
-from src.core.alerts import Alerta, Status, TransicaoInvalida
+from src.core.alerts import Alerta, Origem, Severidade, Status, Tipo, TransicaoInvalida
 
 T0 = datetime(2026, 10, 1, 8, 0)
 
@@ -25,9 +25,9 @@ def alerta(
 ):
     return Alerta(
         paciente_id=paciente_id,
-        origem=origem,
-        tipo=tipo,
-        severidade=severidade,
+        origem=Origem(origem),
+        tipo=Tipo(tipo),
+        severidade=Severidade(severidade),
         descricao=f"{tipo} em {paciente_id}",
         evidencia={"serie": "SpO2", "janela": [0, 300], "valores": [89, 88]},
         detectado_em=T0 + timedelta(minutes=minutos),
@@ -122,7 +122,8 @@ def test_reconhecer_e_resolver_atualizam_o_status_gravado(conn):
 
     resolvido = db.resolver(conn, original.id)
 
-    assert db.obter(conn, original.id).status is Status.RESOLVIDO
+    assert resolvido == db.obter(conn, original.id)
+    assert resolvido.status is Status.RESOLVIDO
     assert resolvido.reconhecido_por == "enf. Ana"
 
 
@@ -133,6 +134,7 @@ def test_reconhecer_sem_horario_usa_o_momento_atual(conn):
 
     reconhecido = db.reconhecer(conn, original.id, por="enf. Ana")
 
+    assert reconhecido.reconhecido_em is not None
     assert antes <= reconhecido.reconhecido_em <= datetime.now()
 
 

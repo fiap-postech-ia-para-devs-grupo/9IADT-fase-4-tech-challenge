@@ -45,4 +45,5 @@ def test_popular_mock_de_novo_preserva_reconhecimentos_feitos_na_central(tmp_pat
 
         popular_mock(conn)
 
-        assert db.obter(conn, novo.id).status is Status.RECONHECIDO
+        gravado = db.obter(conn, novo.id)
+        assert gravado is not None and gravado.status is Status.RECONHECIDO

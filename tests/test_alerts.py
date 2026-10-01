@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import pytest
 
@@ -17,7 +18,7 @@ T0 = datetime(2026, 10, 1, 8, 0)
 
 
 def alerta_spo2(**kw):
-    campos = dict(
+    campos: dict[str, Any] = dict(
         paciente_id="demo-01",
         origem="sinais_vitais",
         tipo="sinal_vital",
