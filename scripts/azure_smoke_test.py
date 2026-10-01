@@ -29,6 +29,16 @@ TEXTO_CLINICO = "Patient reports dyspnea and chest pain. Started on 81 mg aspiri
 TEXTO_SENTIMENTO = "I am really worried, I can barely breathe at night."
 
 
+def _detalhe_falha(
+    resultado: speechsdk.SpeechSynthesisResult | speechsdk.SpeechRecognitionResult | None,
+) -> str:
+    if resultado is None:
+        return "sem resposta"
+    if resultado.reason == speechsdk.ResultReason.Canceled:
+        return resultado.cancellation_details.error_details
+    return str(resultado.reason)
+
+
 def testar_stt(config: AzureConfig, audio: Path | None) -> str:
     speech_config = speechsdk.SpeechConfig(
         subscription=config.speech_key, region=config.speech_region
@@ -44,8 +54,7 @@ def testar_stt(config: AzureConfig, audio: Path | None) -> str:
             sintese = sintetizador.speak_text_async(FRASE).get()
             concluida = speechsdk.ResultReason.SynthesizingAudioCompleted
             if sintese is None or sintese.reason != concluida:
-                detalhe = sintese.cancellation_details.error_details if sintese else "sem resposta"
-                raise RuntimeError(f"TTS falhou: {detalhe}")
+                raise RuntimeError(f"TTS falhou: {_detalhe_falha(sintese)}")
             del sintetizador  # libera o arquivo WAV antes de reconhecer
 
         reconhecedor = speechsdk.SpeechRecognizer(
@@ -54,12 +63,7 @@ def testar_stt(config: AzureConfig, audio: Path | None) -> str:
         )
         resultado = reconhecedor.recognize_once_async().get()
         if resultado is None or resultado.reason != speechsdk.ResultReason.RecognizedSpeech:
-            detalhe = (
-                resultado.cancellation_details.error_details
-                if resultado is not None and resultado.reason == speechsdk.ResultReason.Canceled
-                else getattr(resultado, "reason", "sem resposta")
-            )
-            raise RuntimeError(f"STT falhou: {detalhe}")
+            raise RuntimeError(f"STT falhou: {_detalhe_falha(resultado)}")
         return f"transcrição: {resultado.text!r}"
 
 

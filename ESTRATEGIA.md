@@ -271,11 +271,12 @@ monitoramento-multimodal-fase4/
 │   │   └── fusion.py                    ← Fusão / Alerta Composto (Antonio)
 │   └── analyzers/
 │       ├── video/                       ← pose, angles, exercise_rules, fall, report (Marcelo)
-│       ├── audio/                       ← semantic (Azure), acoustic (Coswara) (V. Geizler)
+│       ├── audio/                       ← azure (config), semantic (Azure), acoustic (Coswara) (V. Geizler)
 │       ├── vitals/                      ← load, detectors, inject, evaluate, stream (Antonio)
 │       └── prescriptions/               ← rules (V. Blasque)
 ├── scripts/
 │   ├── download_data.py                 ← baixa subsets de PhysioNet/Coswara/PriMock57
+│   ├── azure_smoke_test.py              ← valida chaves/cota do Azure (STT, TA for Health, Sentiment)
 │   └── run_batch.py                     ← processa tudo e popula o SQLite
 ├── data/
 │   ├── video/ (+ SOURCES.md)
@@ -286,6 +287,7 @@ monitoramento-multimodal-fase4/
 ├── results/                             ← métricas e artefatos por modalidade
 ├── tests/
 ├── docs/
+│   ├── azure-setup.md                   ← conta, região, cotas F0 e Plano B do Azure
 │   └── relatorio_tecnico.md
 ├── pyproject.toml + uv.lock            ← dependências (uv); requirements.txt exportado para quem não usa uv
 ├── .devcontainer/                       ← ambiente padrão do time (Python 3.12, uv, ffmpeg, git-lfs, gh, torch CPU)
