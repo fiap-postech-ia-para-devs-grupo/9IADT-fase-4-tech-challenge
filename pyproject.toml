@@ -28,6 +28,7 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.6",
     "ipykernel>=6.29",
+    "pyright>=1.1.414",
 ]
 
 [tool.uv]
@@ -54,3 +55,10 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.pyright]
+include = ["src", "scripts", "tests"]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "standard"
