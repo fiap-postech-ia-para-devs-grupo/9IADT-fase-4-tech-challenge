@@ -59,11 +59,17 @@ Filtro = str | Iterable[str] | None
 _COLUNAS = tuple(campo.name for campo in fields(Alerta))
 
 
-def conectar(caminho: str | Path = CAMINHO_PADRAO) -> sqlite3.Connection:
-    """Abre (ou cria) o banco de Alertas e garante o schema."""
+def conectar(
+    caminho: str | Path = CAMINHO_PADRAO, *, check_same_thread: bool = True
+) -> sqlite3.Connection:
+    """Abre (ou cria) o banco de Alertas e garante o schema.
+
+    `check_same_thread=False` é para o Streamlit, que reaproveita a conexão entre as threads
+    das sessões.
+    """
     caminho = Path(caminho)
     caminho.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(caminho)
+    conn = sqlite3.connect(caminho, check_same_thread=check_same_thread)
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA)
     return conn
