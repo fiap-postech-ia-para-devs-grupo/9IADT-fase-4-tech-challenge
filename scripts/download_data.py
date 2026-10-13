@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -69,10 +70,29 @@ def baixar_mimic3wdb(destino: Path) -> None:
     raise NotImplementedError
 
 
+MIMIC4_DEMO_URL = "https://physionet.org/files/mimic-iv-demo/2.2"
+# prescriptions e emar são o insumo do Analisador; patients e admissions dão idade/sexo e o
+# intervalo de cada internação (usado quando uma prescrição não tem stoptime).
+MIMIC4_DEMO_ARQUIVOS = (
+    "LICENSE.txt",
+    "hosp/prescriptions.csv.gz",
+    "hosp/emar.csv.gz",
+    "hosp/patients.csv.gz",
+    "hosp/admissions.csv.gz",
+)
+
+
 @dataset("mimic4demo", dono="V. Blasque", destino="prescriptions/mimic4demo")
 def baixar_mimic4demo(destino: Path) -> None:
-    """MIMIC-IV Clinical Database Demo: hosp/prescriptions e hosp/emar."""
-    raise NotImplementedError
+    """MIMIC-IV Clinical Database Demo (ODbL, acesso aberto): hosp/prescriptions e hosp/emar."""
+    for arquivo in MIMIC4_DEMO_ARQUIVOS:
+        alvo = destino / arquivo
+        if alvo.exists():
+            continue
+        alvo.parent.mkdir(parents=True, exist_ok=True)
+        parcial = alvo.with_suffix(alvo.suffix + ".part")
+        urllib.request.urlretrieve(f"{MIMIC4_DEMO_URL}/{arquivo}", parcial)
+        parcial.replace(alvo)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -100,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
             falhas += 1
             print(f"[erro]     {nome}: {erro}", file=sys.stderr)
         else:
-            print(f"[ok]       {nome} → {destino.relative_to(RAIZ_DADOS.parent)}")
+            print(f"[ok]       {nome} -> {destino.relative_to(RAIZ_DADOS.parent)}")
     return 1 if falhas else 0
 
 
