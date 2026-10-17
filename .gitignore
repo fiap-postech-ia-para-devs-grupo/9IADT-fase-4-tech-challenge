@@ -226,6 +226,9 @@ __marimo__/
 # Datasets brutos (reproduzidos por scripts/download_data.py)
 data/*
 !data/demo_patients.json
+!data/vitals/
+data/vitals/*
+!data/vitals/selecionados.txt
 !data/video/
 data/video/*
 !data/video/SOURCES.md

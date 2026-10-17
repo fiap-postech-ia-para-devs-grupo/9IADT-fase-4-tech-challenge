@@ -1,0 +1,4 @@
+tecnica,injecoes,detectadas,alertas,atraso_mediano_min,recall,precisao
+isolation_forest,23,11,18,18.0,0.4782608695652174,0.6111111111111112
+regras_clinicas,23,23,64,0.0,1.0,0.40625
+zscore_movel,23,16,90,0.0,0.6956521739130435,0.18888888888888888
