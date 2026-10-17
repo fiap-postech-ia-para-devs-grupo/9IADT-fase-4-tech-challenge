@@ -202,3 +202,25 @@ def test_alerta_de_sinal_vital_eh_valido_no_contrato():
         detectado_em=pd.Timestamp("2150-01-01 01:00").to_pydatetime(),
     )
     assert alerta.para_dict()["origem"] == "sinais_vitais"
+
+
+def test_replay_grava_alertas_no_sqlite(tmp_path):
+    from src.core import db
+
+    janela = janela_normal(n=300)
+    janela.loc[janela.index[200:210], "FC"] = 135
+    conn = db.conectar(tmp_path / "alertas.db")
+
+    emitidos = list(
+        stream.replay(
+            janela,
+            PACIENTE,
+            tecnicas=("regras_clinicas",),
+            minutos_por_segundo=0,
+            ao_detectar=lambda alerta: db.salvar(conn, alerta),
+        )
+    )
+
+    gravados = db.listar(conn)
+    assert len(gravados) == len(emitidos) == 1
+    assert gravados[0].id == emitidos[0].id
