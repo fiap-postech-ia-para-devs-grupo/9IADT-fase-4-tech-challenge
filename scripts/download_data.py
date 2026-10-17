@@ -64,10 +64,27 @@ def baixar_coswara(destino: Path) -> None:
     raise NotImplementedError
 
 
+MIMIC3WDB_URL = "https://physionet.org/files/mimic3wdb/1.0/"
+
+
 @dataset("mimic3wdb", dono="Antonio", destino="vitals/mimic3wdb")
 def baixar_mimic3wdb(destino: Path) -> None:
-    """~10–20 registros numerics (FC, FR, SpO2, PA) via wfdb."""
-    raise NotImplementedError
+    """Registros numerics listados em `data/vitals/selecionados.txt` (um caminho por linha).
+
+    Baixa o .hea e o .dat de cada um para `destino/<pasta>/`; arquivos já existentes são pulados.
+    A lista é escolhida por `scripts/selecionar_registros_vitals.py`.
+    """
+    import urllib.request
+
+    lista = RAIZ_DADOS / "vitals" / "selecionados.txt"
+    registros = [linha.strip() for linha in lista.read_text().splitlines() if linha.strip()]
+    for registro in registros:
+        for extensao in ("hea", "dat"):
+            arquivo = destino / f"{registro}.{extensao}"
+            if arquivo.exists():
+                continue
+            arquivo.parent.mkdir(parents=True, exist_ok=True)
+            urllib.request.urlretrieve(f"{MIMIC3WDB_URL}{registro}.{extensao}", arquivo)
 
 
 MIMIC4_DEMO_URL = "https://physionet.org/files/mimic-iv-demo/2.2"

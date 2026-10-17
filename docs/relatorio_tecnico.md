@@ -23,7 +23,45 @@ _Dono: Renato._ <!-- TODO -->
 
 ## 2. Fluxo Multimodal
 
-_Dono: Antonio._ Diagrama: fontes → Analisadores → Alertas → Fusão → Central de Alertas. <!-- TODO -->
+_Dono: Antonio._
+
+Cada modalidade tem o seu Analisador, que lê uma fonte pública e emite Alertas no mesmo Contrato do Alerta (`src/core/alerts.py`). Os Alertas vão para um único SQLite (`src/core/db.py`). A Fusão lê esse banco, cruza Alertas de modalidades diferentes do mesmo Paciente de Demonstração numa janela de 24 horas e grava os Alertas Compostos. A Central de Alertas é a única tela em que a equipe vê e reconhece os Alertas.
+
+```mermaid
+flowchart LR
+    subgraph Fontes públicas
+        V[Clipes Pexels/Pixabay]
+        A[PriMock57 e Coswara]
+        S[MIMIC-III numerics]
+        P[MIMIC-IV Demo]
+    end
+    subgraph Analisadores
+        AV[video: YOLOv8-pose]
+        AA[audio: Azure e acústica]
+        AS[vitals: regras, z-score, IF]
+        AP[prescriptions: regras]
+    end
+    DB[(alertas.db)]
+    F[Fusão: src/core/fusion.py]
+    C[Central de Alertas e Painel]
+    V --> AV
+    A --> AA
+    S --> AS
+    P --> AP
+    AV --> DB
+    AA --> DB
+    AS --> DB
+    AP --> DB
+    DB --> F
+    F -->|Alerta Composto| DB
+    DB --> C
+```
+
+**Monitoramento contínuo.** Os sinais vitais não são analisados em lote. O `src/analyzers/vitals/stream.py` reproduz o registro minuto a minuto (1 minuto de dado por segundo de parede, por padrão) e grava cada Alerta no banco no instante em que a Anomalia aparece pela primeira vez. Isso é o que a Tela 2 vai mostrar ao vivo. O replay sem pausa (`scripts/replay_vitals.py`) grava o mesmo conjunto de Alertas, sem esperar.
+
+**Identidade dos Alertas.** Os ids são determinísticos (UUID v5 a partir do conteúdo da Anomalia), então rodar de novo o mesmo registro não duplica Alertas. Isso faz do banco um resultado reprodutível, e não um acúmulo de execuções.
+
+**Limite da Fusão.** Os Pacientes de Demonstração são compostos (ver seção 4). Os Alertas de origens diferentes vêm de registros de bases públicas distintas, então a Fusão mostra a regra e a janela, não uma correlação clínica real.
 
 ## 3. Modelos por Tipo de Dado
 
