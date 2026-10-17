@@ -67,6 +67,7 @@ class EvidenciaVideo(TypedDict, total=False):
 class EvidenciaAudio(TypedDict, total=False):
     trecho: str  # trecho da transcrição (ou arquivo de áudio)
     inicio: float  # segundos desde o início da Consulta
+    categoria: str  # Termo Crítico: "respiratorio" ou "dor" (usado pela Fusão, seção 8)
 
 
 class EvidenciaSinalVital(TypedDict, total=False):
