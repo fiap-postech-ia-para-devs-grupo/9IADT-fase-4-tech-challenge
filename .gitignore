@@ -232,6 +232,10 @@ data/vitals/*
 !data/video/
 data/video/*
 !data/video/SOURCES.md
+!data/audio/
+data/audio/*
+!data/audio/primock57_selecionadas.txt
+!data/audio/coswara_pastas_selecionadas.txt
 
 # Cache de pesos do Ultralytics baixados no diretório de trabalho
 *.pt

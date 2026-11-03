@@ -71,7 +71,51 @@ _Dono: Marcelo._ <!-- TODO -->
 
 ### 3.2 Áudio — Azure STT + TA for Health + classificador acústico
 
-_Dono: V. Geizler._ <!-- TODO -->
+_Dono: V. Geizler._
+
+**Dados.** Canal do paciente de 18 Consultas do PriMock57 (4–5 por dia dos 5 dias de gravação, `data/audio/primock57_selecionadas.txt`) — áudio já em WAV 16 kHz mono e a transcrição manual (`.TextGrid`) usada como referência do WER. Subset do Coswara (`data/audio/coswara_pastas_selecionadas.txt`): 17 das ~43 pastas do repositório, escolhidas por densidade de rótulo (pessoas com `bd`/`ftg` por MB baixado), já que o dataset não tem um subset pequeno pronto e os rótulos de interesse estão espalhados de forma desigual entre as pastas. Rationale completo de cada escolha nos próprios arquivos de seleção.
+
+**Camada semântica** (`src/analyzers/audio/semantic.py`, ESTRATEGIA.md seção 5):
+
+1. `converter_wav`: WAV 16 kHz mono (`pydub`/`ffmpeg`), idempotente.
+2. `transcrever`: Azure Speech to Text (`en-US`), reconhecimento contínuo com timestamp por trecho, **cacheado em JSON** (`src/analyzers/audio/cache.py`) — reprocessar a mesma Consulta lê o cache em vez de gastar cota.
+3. `calcular_wer`: WER (`jiwer`) contra o `.TextGrid` manual, normalizando as duas transcrições (minúsculas, sem pontuação, sem as tags `<UNSURE>`/`<UNIN/>` do PriMock57).
+4. `extrair_entidades_saude`: Text Analytics for Health, em lotes de até 25 trechos, cacheado.
+5. `termos_criticos`: entidades `SymptomOrSign`/`Diagnosis` × lista curada (`src/analyzers/audio/termos.py`) → Alerta `termo_critico`, com o trecho e o `inicio` (segundos desde o começo da Consulta) como Evidência; `categoria` (`respiratorio`/`dor`) só é preenchida nos termos que a Fusão usa (ESTRATEGIA.md, seção 8).
+6. `analisar_sentimento`: Sentiment por trecho do paciente, cacheado.
+
+**Camada acústica** (`src/analyzers/audio/acoustic.py`, ESTRATEGIA.md seção 6): features de `counting-normal.wav` e `vowel-a.wav` — MFCC (média/desvio de 13 coeficientes), F0, jitter, shimmer, HNR (`parselmouth`), proporção de pausas e taxa de fala (proxy por transições silêncio→fala sobre a energia RMS, `librosa`). As duas gravações entram como amostras independentes do mesmo rótulo (não concatenadas por pessoa): é o que permite aplicar o mesmo extrator depois sobre um áudio de fala livre, na inferência.
+
+**Treino e avaliação** (`scripts/treinar_acustico.py`). Rótulo por pessoa a partir de `combined_data.csv`: 1 = `bd` (Breathing Difficulties) ou `ftg` (Fatigue), 0 = `healthy` sem nenhum dos dois. Das 1.163 pessoas rotuladas com áudio extraído, balanceei até 300 por classe (300 sintomáticas / 245 saudáveis — menos saudáveis disponíveis nas pastas escolhidas) → 1.067 gravações. Split 75/25 **por pessoa** (as duas gravações da mesma pessoa nunca ficam uma no treino e outra no teste, para não vazar informação do indivíduo entre os dois).
+
+| Modelo | AUC | F1 | Limiar | VN | FP | FN | VP |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Regressão Logística | 0,705 | 0,694 | 0,607 | 79 | 40 | 49 | 101 |
+| Random Forest | 0,722 | 0,763 | 0,530 | 73 | 46 | 29 | 121 |
+
+Resultados em `results/audio/acoustic_metricas.csv` e `results/audio/acoustic_resumo.json`. O **limiar** de cada modelo é a estatística J de Youden (maximiza sensibilidade + especificidade − 1) sobre o próprio conjunto de teste — escolhido para equilibrar os dois erros, já que não há custo clínico definido para favorecer um lado. O **Random Forest** (maior AUC) é o modelo persistido (`data/audio/modelo_acustico.joblib`) e usado na inferência.
+
+**Inferência no PriMock57** (mesmo script): rodar o classificador sobre a fala do paciente das 18 Consultas, sem precisar do Azure. Resultado em `results/audio/alteracao_vocal_primock57.csv` — probabilidade e se passou do limiar, por Consulta; quando passa, `src/analyzers/audio/acoustic.py::alerta_alteracao_vocal` grava um Alerta `alteracao_vocal`.
+
+**Função do Laboratório** (`src/analyzers/audio/lab.py::analyze_audio`, #14): roda as duas camadas sobre um áudio qualquer e devolve transcrição, Termos Críticos, Sentimento, métricas acústicas e probabilidade de Alteração Vocal, com os Alertas já no Contrato — chamada pela Tela 3 (`src/ui/laboratorio.py`).
+
+**Testes** (`uv run pytest tests/test_audio_*.py tests/test_laboratorio.py`, 43 testes): Azure **mockado** (nenhum teste chama a rede) — `_reconhecer_continuo`, `_extrair_entidades_azure` e `_analisar_sentimento_azure` são substituídos por funções falsas, e o cache é testado separadamente. `converter_wav` e a extração de features acústicas usam `ffmpeg`/`librosa`/`parselmouth` de verdade sobre áudio sintético gerado no teste (tom puro, silêncio), não dados reais. O parser de `.TextGrid`, o cálculo de WER, a busca de Termos Críticos e a geração de Alertas (determinismo, formato do Contrato) são testados com dados fixos.
+
+**Leitura dos números e limitações** (ver também seção 7):
+
+- **AUC moderado (~0,7).** Esperado: a ESTRATEGIA.md já previa "desempenho fraco (AUC ~0,6)" como risco aceito — o valor está no pipeline reprodutível, não no número. Os falsos negativos (29–49) importariam clinicamente: o limiar de Youden não prioriza recall.
+- **Treino e inferência vêm de tipos de fala diferentes.** O classificador aprende em `counting-normal`/`vowel-a` (fala controlada, curta) e infere sobre consulta espontânea (PriMock57); é a limitação explícita da ESTRATEGIA.md seção 5 ("as camadas são avaliadas em datasets diferentes"). Na prática, isso aparece como viés: 17 das 18 Consultas passam do limiar de Alteração Vocal (seção 5), evidência de desalinhamento de domínio, não de que quase todo paciente tenha o padrão.
+- **Subset do Coswara reduzido por tempo/banda desta sessão.** 545 pessoas, não as 300–600 **por classe** da ESTRATEGIA.md (ficou 300 sintomáticas / 245 saudáveis). `data/audio/coswara_pastas_selecionadas.txt` documenta como escalar para mais pastas.
+- **Camada semântica sem execução real contra o Azure.** A conta/credenciais (#21) ainda não estavam disponíveis nesta sessão; `wer.csv` e `termos_criticos.csv` de `scripts/processar_audio_semantico.py` dependem de rodar com `.env` preenchido. O código está completo e testado com Azure mockado; falta só a chamada real, cacheada na primeira vez.
+
+**Como rodar.**
+
+```bash
+uv run python scripts/download_data.py primock57 coswara
+uv run python -m scripts.treinar_acustico             # métricas + modelo + inferência no PriMock57
+uv run python -m scripts.processar_audio_semantico    # requer .env (docs/azure-setup.md)
+uv run pytest tests/test_audio_*.py tests/test_laboratorio.py
+```
 
 ### 3.3 Sinais Vitais — regras × z-score × Isolation Forest
 
@@ -168,9 +212,34 @@ Exemplos reais, nos registros do MIMIC-III listados em `data/vitals/selecionados
 
 Para os números da avaliação com anomalias injetadas (recall, precisão e atraso por técnica), ver a seção 3.3 e `results/vitals/`.
 
+### Áudio (V. Geizler)
+
+Inferência real do classificador acústico (Random Forest, AUC 0,722, limiar 0,530 — seção 3.2) sobre a fala do paciente nas 18 Consultas do PriMock57, sem depender do Azure (`results/audio/alteracao_vocal_primock57.csv`):
+
+- **17 de 18 Consultas** passaram do limiar (probabilidades entre 0,50 e 0,87) — ex.: `day5_consultation02` com 0,867, `day1_consultation01` com 0,673.
+- Só `day3_consultation01` (0,497) ficou abaixo, por uma margem mínima.
+
+Esse resultado **não deve ser lido como "quase todo paciente do PriMock57 tem Alteração Vocal"**: é evidência do desalinhamento de domínio já apontado na seção 3.2 — o classificador, treinado em gravações curtas e controladas (contagem, vogal sustentada) do Coswara, generaliza mal para fala espontânea de consulta e tende a marcar positivo. Fica registrado como achado honesto, não como resultado clínico (ver seção 7). WER e Termos Críticos reais (camada semântica) dependem do `.env` do Azure (#21, seção 6).
+
 ## 6. Integração com Azure (serviços, custos, cotas)
 
-_Dono: V. Geizler._ Ver [azure-setup.md](azure-setup.md). <!-- TODO -->
+_Dono: V. Geizler._ Setup completo, cotas F0 e Plano B em [azure-setup.md](azure-setup.md) (#4); criação da conta e validação real do smoke test são o #21, em andamento.
+
+**Serviços.** **Speech** (Speech to Text, `en-US`, reconhecimento contínuo com timestamp) e **Language** (Text Analytics for Health + Sentiment), ambos tier **F0** (gratuito): 5h/mês de STT e 5.000 registros/mês de Language, compartilhados pelo time inteiro numa única chave.
+
+**Orçamento de cota usado pelo Analisador de Áudio:**
+
+| Uso | Custo estimado |
+| --- | --- |
+| Batch de 18 Consultas (canal do paciente) | ~18 × 4–5 min de fala ≈ 1,3–1,5 h de STT; ~2–4 registros de Language por Consulta (um por trecho transcrito) |
+| Smoke test (`scripts/azure_smoke_test.py`) | ~10 s de STT + 2 registros de Language |
+| Upload no Laboratório (por análise) | 1 arquivo de STT + 1 registro de Language por trecho transcrito |
+
+Isso fica bem dentro das 5h/5.000 registros mensais, com sobra para a demo e a gravação do vídeo (ESTRATEGIA.md, seção 15).
+
+**Protegendo a cota.** Toda resposta do Azure (STT, TA for Health, Sentiment) é cacheada em JSON por `src/analyzers/audio/cache.py` (`obter_ou_computar`), em `data/audio/cache_primock57/` (batch) ou `data/audio/cache_laboratorio/` (upload): reprocessar o mesmo áudio lê o cache e não chama o Azure de novo. Isso é o que permite rodar `uv run pytest` e `scripts/treinar_acustico.py` (camada acústica) sem tocar a cota nenhuma vez — só `scripts/processar_audio_semantico.py` e o upload na Tela 3 chamam o Azure de fato, e só na primeira vez por arquivo.
+
+**Estado no fechamento desta frente (#9, #10, #14):** código completo (`src/analyzers/audio/semantic.py`, `scripts/azure_smoke_test.py`, `docs/azure-setup.md`), testado com Azure mockado (`tests/test_audio_semantic.py`). A conta/recursos reais (#21) ainda não tinham sido criados quando esta frente foi fechada; `uv run python -m scripts.azure_smoke_test` e `scripts/processar_audio_semantico.py` precisam do `.env` preenchido para rodar — ver seção 3.2 para o que fica pendente até lá (WER e Termos Críticos reais).
 
 ## 7. Limitações (datasets distintos, pacientes compostos, dados em inglês)
 
@@ -183,6 +252,14 @@ _Dono: Renato, com insumo de cada dono._
 - **Anomalias injetadas são artificiais.** Os eventos injetados cruzam exatamente os limites clínicos, o que favorece as regras. O recall das regras é otimista e não deve ser lido como capacidade de detecção em produção.
 - **Anomalias naturais contam como falso positivo.** A precisão baixa das regras inclui Anomalias reais que já estavam nos registros. Sem rótulo clínico, não dá para separar erro de detecção de anomalia verdadeira.
 - **Registros de 1 minuto.** A resolução é de um ponto por minuto. Eventos de poucos segundos, como uma arritmia breve, não são capturados.
+
+**Áudio (V. Geizler):**
+
+- **Camada semântica sem execução real contra o Azure.** A conta/recursos (#21) não estavam disponíveis durante esta frente: o pipeline (STT, WER, TA for Health, Sentiment) está completo e testado com Azure mockado, mas o WER médio e os Termos Críticos reais em `results/audio/` dependem de rodar `scripts/processar_audio_semantico.py` com o `.env` preenchido.
+- **Treino e inferência acústica vêm de tipos de fala diferentes.** O classificador é treinado em `counting-normal`/`vowel-a` do Coswara (fala controlada, curta) e infere sobre a fala espontânea de uma Consulta (PriMock57) ou de um upload qualquer; é uma limitação de desenho, não um bug — já prevista na ESTRATEGIA.md, seção 5. Na inferência real sobre as 18 Consultas do PriMock57, 17 passaram do limiar (seção 5): é desalinhamento de domínio, não um sinal clínico real.
+- **AUC moderado (~0,7).** Esperado desde a ESTRATEGIA.md (seção 15, risco aceito). O valor do classificador está em ter um pipeline reprodutível com métrica real, não em alta acurácia; os falsos negativos do limiar de Youden importariam clinicamente numa aplicação real.
+- **Subset do Coswara menor que o alvo.** 545 pessoas (300 sintomáticas / 245 saudáveis), não as 300–600 **por classe** da ESTRATEGIA.md: o dataset distribui os rótulos de interesse de forma muito desigual entre as pastas (ver rationale em `data/audio/coswara_pastas_selecionadas.txt`), e baixar mais pastas custaria bandwidth/tempo além do orçado nesta frente.
+- **Dados em inglês, de dois contextos diferentes.** PriMock57 é consulta simulada (ator, não paciente real); Coswara é rastreamento de COVID-19, não triagem geral de dificuldade respiratória/fadiga — a Alteração Vocal detectada não tem validação clínica própria.
 
 ## 8. Conclusão e Trabalhos Futuros
 

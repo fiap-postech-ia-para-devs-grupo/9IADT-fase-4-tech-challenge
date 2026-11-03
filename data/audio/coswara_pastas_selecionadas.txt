@@ -1,0 +1,30 @@
+# Pastas do Coswara-Data baixadas para o subset balanceado (ESTRATEGIA.md, seção 5).
+#
+# O Coswara não tem um subset pequeno pronto: cada pasta (data do lote de upload, não a data
+# do registro) é um tar.gz dividido em partes de ~100 MB, e os rótulos de interesse ("bd"
+# Breathing Difficulties / "ftg" Fatigue vs. saudável sem nenhum dos dois) estão espalhados de
+# forma desigual entre as ~43 pastas do repositório. Esta lista foi escolhida por um critério
+# de densidade (pessoas com o rótulo que falta / MB da pasta), cruzando o `combined_data.csv`
+# (rótulo por pessoa) com o CSV de cada pasta (localização real da pessoa), para cobrir
+# aproximadamente 300 pessoas de cada classe com o menor download possível (~4,6 GB).
+#
+# Reprodutível com `uv run python scripts/download_data.py coswara`; para um subset maior,
+# acrescentar pastas de data/audio/coswara/combined_data.csv (baixado junto) que ainda não
+# estão aqui.
+20220224
+20220116
+20210830
+20210930
+20210816
+20210630
+20210914
+20210714
+20200814
+20201031
+20200604
+20210206
+20200911
+20200824
+20201012
+20201130
+20200930
