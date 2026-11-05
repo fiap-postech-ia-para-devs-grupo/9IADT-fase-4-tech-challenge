@@ -12,6 +12,7 @@ Vocal — junto com os Alertas já no Contrato, prontos para `db.salvar`.
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -55,7 +56,10 @@ def analyze_audio(
     """
     cache_dir.mkdir(parents=True, exist_ok=True)
     agora = datetime.now()
-    identificador = arquivo.stem
+    # O conteúdo entra na identidade: dois uploads "gravacao.wav" diferentes não podem
+    # compartilhar cache nem id de Alerta.
+    resumo = hashlib.sha256(arquivo.read_bytes()).hexdigest()[:12]
+    identificador = f"{arquivo.stem}-{resumo}"
 
     audio_pronto = semantic.converter_wav(arquivo, cache_dir / f"{identificador}_16k.wav")
 

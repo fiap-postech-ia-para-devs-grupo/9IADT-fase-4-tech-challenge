@@ -32,7 +32,9 @@ from src.analyzers.audio.cache import obter_ou_computar
 from src.core.alerts import Alerta, Origem, Severidade, Tipo
 
 IDIOMA = "en-US"
-TAMANHO_LOTE_LANGUAGE = 25  # limite de documentos por chamada da TextAnalyticsClient
+# Documentos por chamada (HTTP 400 acima disso): limites distintos por recurso do Language.
+TAMANHO_LOTE_HEALTH = 25
+TAMANHO_LOTE_SENTIMENT = 10
 
 _NAMESPACE = uuid.UUID("9d6e8c2a-9b44-4a4d-9a7b-5a7b7f8e0a92")
 
@@ -51,6 +53,13 @@ class EntidadeClinica:
     texto: str
     categoria: str
     confianca: float
+    certeza: str | None = None  # "positive", "negative", "negativePossible"...
+    associacao: str | None = None  # "subject" (o paciente) ou "other" (ex.: um familiar)
+
+    @property
+    def afirmada_sobre_o_paciente(self) -> bool:
+        negada = self.certeza in ("negative", "negativePossible")
+        return not negada and self.associacao != "other"
 
 
 @dataclass(frozen=True)
@@ -67,6 +76,7 @@ class ResultadoSemantico:
     consulta_id: str
     transcricao: list[Trecho]
     wer: float | None  # None quando não há transcrição manual para comparar
+    wer_sem_hesitacoes: float | None
     alertas_termo_critico: list[Alerta]
     sentimentos: list[SentimentoTrecho]
 
@@ -155,6 +165,9 @@ def transcrever(
 
 _TAG_TEXTGRID = re.compile(r"<[A-Z/]+>")
 _PONTUACAO = re.compile(r"[^\w\s']")
+# A transcrição manual registra hesitações que o Azure quase sempre omite; elas pesam no WER
+# sem afetar nenhum Termo Crítico.
+_HESITACOES = re.compile(r"\b(?:um+|uh+|er+m*|mm+|hm+)\b")
 
 
 def _normalizar(texto: str) -> str:
@@ -178,11 +191,19 @@ def ler_textgrid(caminho: Path) -> list[Trecho]:
     return trechos
 
 
-def calcular_wer(hipotese: list[Trecho], referencia: list[Trecho]) -> float:
+def calcular_wer(
+    hipotese: list[Trecho], referencia: list[Trecho], *, sem_hesitacoes: bool = False
+) -> float:
     """WER (jiwer) entre a transcrição do Azure e a manual, concatenadas em ordem e
-    normalizadas (minúsculas, sem pontuação, sem as tags `<UNSURE>`/`<UNIN/>` do PriMock57)."""
+    normalizadas (minúsculas, sem pontuação, sem as tags `<UNSURE>`/`<UNIN/>` do PriMock57).
+
+    `sem_hesitacoes` também remove "um", "uh" e afins das duas transcrições.
+    """
     texto_hipotese = _normalizar(" ".join(t.texto for t in hipotese))
     texto_referencia = _normalizar(" ".join(t.texto for t in referencia))
+    if sem_hesitacoes:
+        texto_hipotese = " ".join(_HESITACOES.sub(" ", texto_hipotese).split())
+        texto_referencia = " ".join(_HESITACOES.sub(" ", texto_referencia).split())
     if not texto_referencia:
         return float("nan")
     return float(jiwer.wer(texto_referencia, texto_hipotese))
@@ -204,6 +225,13 @@ def _em_lotes(itens: list[Trecho], tamanho: int) -> list[list[Trecho]]:
     return [itens[i : i + tamanho] for i in range(0, len(itens), tamanho)]
 
 
+def _exigir_sucesso(documento: object, tipo_erro: type) -> None:
+    """Falha em vez de devolver um resultado vazio: o que sai daqui vai para o cache, e uma
+    falha cacheada como "sem Termos Críticos" ou "neutro" nunca mais seria reprocessada."""
+    if isinstance(documento, tipo_erro):
+        raise RuntimeError(f"Azure Language recusou um documento: {documento.error}")  # type: ignore[attr-defined]
+
+
 def _extrair_entidades_azure(
     trechos: list[Trecho], config: AzureConfig
 ) -> list[list[EntidadeClinica]]:
@@ -211,18 +239,20 @@ def _extrair_entidades_azure(
 
     resultado: list[list[EntidadeClinica]] = []
     with _cliente_language(config) as cliente:
-        for lote in _em_lotes(trechos, TAMANHO_LOTE_LANGUAGE):
+        for lote in _em_lotes(trechos, TAMANHO_LOTE_HEALTH):
             poller = cliente.begin_analyze_healthcare_entities(
                 [t.texto for t in lote], language="en"
             )
             for documento in poller.result():
-                if isinstance(documento, DocumentError):
-                    resultado.append([])
-                    continue
+                _exigir_sucesso(documento, DocumentError)
                 resultado.append(
                     [
                         EntidadeClinica(
-                            texto=e.text, categoria=e.category, confianca=e.confidence_score
+                            texto=e.text,
+                            categoria=e.category,
+                            confianca=e.confidence_score,
+                            certeza=e.assertion.certainty if e.assertion else None,
+                            associacao=e.assertion.association if e.assertion else None,
                         )
                         for e in documento.entities
                     ]
@@ -234,7 +264,7 @@ def extrair_entidades_saude(
     trechos: list[Trecho], config: AzureConfig, cache_dir: Path, consulta_id: str
 ) -> list[list[EntidadeClinica]]:
     """Entidades clínicas por trecho, na mesma ordem de `trechos`; cacheado em JSON."""
-    caminho_cache = cache_dir / f"{consulta_id}.ta_health.json"
+    caminho_cache = cache_dir / f"{consulta_id}.ta_health_v2.json"  # v2: com certeza e associação
     return obter_ou_computar(
         caminho_cache,
         lambda: _extrair_entidades_azure(trechos, config),
@@ -260,7 +290,7 @@ def _alerta_termo_critico(
     if termo.categoria is not None:
         evidencia["categoria"] = termo.categoria
     severidade = Severidade.ALTA if termo.categoria is not None else Severidade.MEDIA
-    chave = f"{consulta_id}|{trecho.inicio}|{termo.termo}"
+    chave = f"{paciente_id}|{consulta_id}|{trecho.inicio}|{termo.termo}"
     return Alerta(
         id=str(uuid.uuid5(_NAMESPACE, chave)),
         paciente_id=paciente_id,
@@ -280,18 +310,25 @@ def termos_criticos(
     consulta_id: str,
     inicio: datetime,
 ) -> list[Alerta]:
-    """Um Alerta por (trecho, termo curado encontrado); um trecho pode gerar mais de um.
+    """Um Alerta por (trecho, termo curado encontrado), sem repetir o par dentro do trecho; um
+    trecho pode gerar Alertas de termos diferentes.
 
     `inicio` é o instante (simulado ou real) do começo da Consulta; cada Alerta soma o
     deslocamento do trecho dentro dela.
     """
     alertas: list[Alerta] = []
     for trecho, entidades in zip(trechos, entidades_por_trecho, strict=True):
+        termos_do_trecho: set[str] = set()
         for entidade in entidades:
             if entidade.categoria not in termos.CATEGORIAS_AZURE_RELEVANTES:
                 continue
+            if not entidade.afirmada_sobre_o_paciente:
+                continue  # "no fever at all", "my child was vomiting"
             termo = termos.localizar(entidade.texto, entidade.categoria)
-            if termo is not None:
+            if termo is None or termo.termo in termos_do_trecho:
+                continue
+            if not termos.excluido_pelo_contexto(termo.termo, trecho.texto):
+                termos_do_trecho.add(termo.termo)
                 alertas.append(
                     _alerta_termo_critico(paciente_id, consulta_id, trecho, termo, inicio)
                 )
@@ -306,14 +343,10 @@ def _analisar_sentimento_azure(trechos: list[Trecho], config: AzureConfig) -> li
 
     resultado: list[dict] = []
     with _cliente_language(config) as cliente:
-        for lote in _em_lotes(trechos, TAMANHO_LOTE_LANGUAGE):
+        for lote in _em_lotes(trechos, TAMANHO_LOTE_SENTIMENT):
             documentos = cliente.analyze_sentiment([t.texto for t in lote], language="en")
             for documento in documentos:
-                if isinstance(documento, DocumentError):
-                    resultado.append(
-                        {"sentimento": "neutral", "positivo": 0.0, "neutro": 1.0, "negativo": 0.0}
-                    )
-                    continue
+                _exigir_sucesso(documento, DocumentError)
                 scores = documento.confidence_scores
                 resultado.append(
                     {
@@ -371,9 +404,12 @@ def processar_consulta(
     transcricao = transcrever(audio_pronto, config, cache_dir)
 
     wer: float | None = None
+    wer_sem_hesitacoes: float | None = None
     textgrid = pasta_primock57 / "transcripts" / f"{consulta_id}_patient.TextGrid"
     if textgrid.exists():
-        wer = calcular_wer(transcricao, ler_textgrid(textgrid))
+        referencia = ler_textgrid(textgrid)
+        wer = calcular_wer(transcricao, referencia)
+        wer_sem_hesitacoes = calcular_wer(transcricao, referencia, sem_hesitacoes=True)
 
     entidades = extrair_entidades_saude(transcricao, config, cache_dir, consulta_id)
     alertas = termos_criticos(
@@ -385,6 +421,7 @@ def processar_consulta(
         consulta_id=consulta_id,
         transcricao=transcricao,
         wer=wer,
+        wer_sem_hesitacoes=wer_sem_hesitacoes,
         alertas_termo_critico=alertas,
         sentimentos=sentimentos,
     )

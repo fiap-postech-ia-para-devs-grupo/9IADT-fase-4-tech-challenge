@@ -38,6 +38,7 @@ from src.core.alerts import Alerta, Origem, Severidade, Tipo
 ARQUIVOS_UTEIS = ("counting-normal.wav", "vowel-a.wav")
 N_MFCC = 13
 TAXA_AMOSTRAGEM = 16_000
+N_DOBRAS_LIMIAR = 5
 
 _NAMESPACE = uuid.UUID("3f7a9c1e-6b2d-4e5f-9a1c-8d4e6f0b2c7a")
 
@@ -221,10 +222,15 @@ def treinar_avaliar(
     treino: pd.DataFrame, teste: pd.DataFrame, seed: int = 0
 ) -> tuple[dict[str, ResultadoModelo], dict[str, Any]]:
     """Treina os dois modelos em `treino` e avalia em `teste`. Devolve as métricas por modelo
-    e os próprios modelos ajustados (para `salvar_modelo`/inferência)."""
+    e os próprios modelos ajustados (para `salvar_modelo`/inferência).
+
+    O limiar vem de previsões fora da dobra no treino (validação cruzada por pessoa), nunca do
+    teste: escolhê-lo no teste infla o F1 e a matriz de confusão reportados.
+    """
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import confusion_matrix, f1_score, roc_auc_score
+    from sklearn.model_selection import StratifiedGroupKFold, cross_val_predict
     from sklearn.pipeline import Pipeline
     from sklearn.preprocessing import StandardScaler
 
@@ -240,11 +246,17 @@ def treinar_avaliar(
     }
 
     resultados: dict[str, ResultadoModelo] = {}
+    dobras = StratifiedGroupKFold(n_splits=N_DOBRAS_LIMIAR, shuffle=True, random_state=seed)
     for nome, modelo in modelos.items():
+        probas_fora_da_dobra = np.asarray(
+            cross_val_predict(
+                modelo, X_treino, y_treino, groups=treino["id"], cv=dobras, method="predict_proba"
+            )
+        )
+        limiar = _limiar_youden(y_treino, probas_fora_da_dobra[:, 1])
         modelo.fit(X_treino, y_treino)
         probas = modelo.predict_proba(X_teste)[:, 1]
         auc = roc_auc_score(y_teste, probas)
-        limiar = _limiar_youden(y_teste, probas)
         preds = (probas >= limiar).astype(int)
         (tn, fp), (fn, tp) = confusion_matrix(y_teste, preds, labels=[0, 1]).tolist()
         resultados[nome] = ResultadoModelo(
@@ -322,7 +334,7 @@ def alerta_alteracao_vocal(
         evidencia["trecho"] = trecho
     severidade = Severidade.ALTA if probabilidade >= 0.8 else Severidade.MEDIA
     return Alerta(
-        id=str(uuid.uuid5(_NAMESPACE, f"{arquivo}|alteracao_vocal")),
+        id=str(uuid.uuid5(_NAMESPACE, f"{paciente_id}|{arquivo}|alteracao_vocal")),
         paciente_id=paciente_id,
         origem=Origem.AUDIO,
         tipo=Tipo.ALTERACAO_VOCAL,

@@ -241,3 +241,21 @@ def test_alerta_alteracao_vocal_e_deterministico():
     a1 = acoustic.alerta_alteracao_vocal("p1", "c1.wav", 0.9, limiar=0.5)
     a2 = acoustic.alerta_alteracao_vocal("p1", "c1.wav", 0.9, limiar=0.5)
     assert a1.id == a2.id
+
+
+def test_id_do_alerta_de_alteracao_vocal_depende_do_paciente():
+    a = acoustic.alerta_alteracao_vocal("avulso", "c1.wav", 0.9, limiar=0.5)
+    b = acoustic.alerta_alteracao_vocal("demo-01", "c1.wav", 0.9, limiar=0.5)
+    assert a.id != b.id
+
+
+def test_limiar_nao_depende_do_conjunto_de_teste():
+    dataset = _dataset_sintetico(n_por_classe=15)
+    treino, teste = acoustic.dividir_por_pessoa(dataset, teste=0.3, seed=0)
+    teste_invertido = teste.assign(rotulo=1 - teste["rotulo"])
+
+    original, _ = acoustic.treinar_avaliar(treino, teste, seed=0)
+    invertido, _ = acoustic.treinar_avaliar(treino, teste_invertido, seed=0)
+
+    for nome in original:
+        assert original[nome].limiar == invertido[nome].limiar

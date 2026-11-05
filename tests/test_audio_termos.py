@@ -39,3 +39,15 @@ def test_casamento_ignora_maiusculas():
 
 def test_texto_vazio_nao_casa():
     assert termos.localizar("   ", "SymptomOrSign") is None
+
+
+def test_plural_casa_com_o_termo_no_singular():
+    assert termos.localizar("chest pains", "SymptomOrSign").termo == "chest pain"
+    assert termos.localizar("headaches", "SymptomOrSign").termo == "headache"
+    assert termos.localizar("palpitations", "SymptomOrSign").termo == "palpitation"
+
+
+def test_variantes_vistas_nas_consultas_reais_casam():
+    assert termos.localizar("can't breathe", "SymptomOrSign").categoria == "respiratorio"
+    assert termos.localizar("breathless", "SymptomOrSign").categoria == "respiratorio"
+    assert termos.localizar("nauseous", "SymptomOrSign").termo == "nauseous"

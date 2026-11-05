@@ -93,3 +93,25 @@ def test_analyze_audio_com_modelo_mas_probabilidade_abaixo_do_limiar_nao_gera_al
 
     assert resultado.probabilidade_alteracao_vocal == 0.1
     assert all(a.tipo is not Tipo.ALTERACAO_VOCAL for a in resultado.alertas)
+
+
+def test_uploads_de_mesmo_nome_e_conteudo_diferente_nao_compartilham_identidade(
+    tmp_path, monkeypatch
+):
+    identidades = []
+
+    def fake_entidades(trechos, config, cache_dir, consulta_id):
+        identidades.append(consulta_id)
+        return [[]]
+
+    monkeypatch.setattr(semantic, "extrair_entidades_saude", fake_entidades)
+    for pasta, conteudo in (("a", b"\x00"), ("b", b"\x01"), ("c", b"\x00")):
+        (tmp_path / pasta).mkdir()
+        arquivo = tmp_path / pasta / "gravacao.wav"
+        arquivo.write_bytes(conteudo)
+        lab.analyze_audio(
+            arquivo, config=object(), cache_dir=tmp_path / "cache", caminho_modelo=tmp_path / "x"
+        )
+
+    assert identidades[0] != identidades[1]  # conteúdo diferente: não reaproveita cache
+    assert identidades[0] == identidades[2]  # mesmo conteúdo: reaproveita, não gasta cota

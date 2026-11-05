@@ -58,7 +58,13 @@ def main(argv: list[str] | None = None) -> int:
         resultado = processar_consulta(
             consulta_id, RAIZ_PRIMOCK57, config, CACHE_DIR, paciente_id="avulso"
         )
-        linhas_wer.append({"consulta": consulta_id, "wer": resultado.wer})
+        linhas_wer.append(
+            {
+                "consulta": consulta_id,
+                "wer": resultado.wer,
+                "wer_sem_hesitacoes": resultado.wer_sem_hesitacoes,
+            }
+        )
         for alerta in resultado.alertas_termo_critico:
             linhas_termos.append(
                 {
@@ -77,8 +83,11 @@ def main(argv: list[str] | None = None) -> int:
     tabela_wer.to_csv(SAIDA / "wer.csv", index=False)
     pd.DataFrame(linhas_termos).to_csv(SAIDA / "termos_criticos.csv", index=False)
 
-    medio = tabela_wer["wer"].dropna().mean()
-    print(f"\nWER médio ({tabela_wer['wer'].notna().sum()} Consultas): {medio:.3f}")
+    n_wer = tabela_wer["wer"].notna().sum()
+    print(
+        f"\nWER médio ({n_wer} Consultas): {tabela_wer['wer'].mean():.3f} "
+        f"(sem hesitações: {tabela_wer['wer_sem_hesitacoes'].mean():.3f})"
+    )
     print(f"Termos Críticos no total: {len(linhas_termos)}")
 
     if args.gravar:

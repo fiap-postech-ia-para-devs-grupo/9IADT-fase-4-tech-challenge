@@ -75,9 +75,11 @@ def _mostrar_alertas(conn: sqlite3.Connection, resultado: ResultadoLaboratorio) 
         with st.expander(f"{ICONE_SEVERIDADE[alerta.severidade]} {alerta.descricao}"):
             renderizar_evidencia(alerta)
     if st.button("Gravar Alertas no Banco", type="primary", key="gravar_alertas_audio"):
-        for alerta in resultado.alertas:
+        # Só os novos: regravar sobrescreveria o status de um Alerta já tratado pela equipe.
+        novos = [a for a in resultado.alertas if db.obter(conn, a.id) is None]
+        for alerta in novos:
             db.salvar(conn, alerta)
-        st.success(f"{len(resultado.alertas)} Alerta(s) gravado(s) na Central de Alertas.")
+        st.success(f"{len(novos)} Alerta(s) novo(s) gravado(s) na Central de Alertas.")
 
 
 def _analisar_upload(arquivo) -> None:

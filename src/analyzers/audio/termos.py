@@ -27,6 +27,10 @@ TERMOS_CRITICOS: dict[str, str | None] = {
     "short of breath": CATEGORIA_RESPIRATORIO,
     "breathlessness": CATEGORIA_RESPIRATORIO,
     "difficulty breathing": CATEGORIA_RESPIRATORIO,
+    "difficult breathing": CATEGORIA_RESPIRATORIO,
+    "can't breathe": CATEGORIA_RESPIRATORIO,
+    "breathless": CATEGORIA_RESPIRATORIO,
+    "coughing up blood": CATEGORIA_RESPIRATORIO,
     "wheezing": CATEGORIA_RESPIRATORIO,
     "wheeze": CATEGORIA_RESPIRATORIO,
     "chest tightness": CATEGORIA_RESPIRATORIO,
@@ -37,17 +41,33 @@ TERMOS_CRITICOS: dict[str, str | None] = {
     "back pain": CATEGORIA_DOR,
     "fatigue": None,
     "tiredness": None,
+    "tired": None,
     "dizziness": None,
+    "dizzy": None,
     "nausea": None,
+    "nauseous": None,
     "vomiting": None,
+    "vomited": None,
+    "vomit": None,
     "fever": None,
-    "palpitations": None,
+    "feverish": None,
+    "palpitation": None,
     "confusion": None,
 }
 
 # Categorias de entidade da TA for Health que podem conter um Termo Crítico (as demais —
 # MedicationName, Dosage, Age... — não são sintoma/diagnóstico e não entram na busca).
 CATEGORIAS_AZURE_RELEVANTES = frozenset({"SymptomOrSign", "Diagnosis", "SymptomSignOrFinding"})
+
+
+# Expressões em que o termo não tem o sentido clínico da lista; a TA for Health extrai só
+# "fever" de "hay fever", sem marcar como negação.
+_CONTEXTOS_EXCLUIDOS: dict[str, tuple[str, ...]] = {"fever": ("hay fever",)}
+
+
+def excluido_pelo_contexto(termo: str, trecho: str) -> bool:
+    texto = trecho.lower()
+    return any(contexto in texto for contexto in _CONTEXTOS_EXCLUIDOS.get(termo, ()))
 
 
 @dataclass(frozen=True)
@@ -71,7 +91,7 @@ def localizar(texto: str, entidade_categoria: str) -> TermoCritico | None:
     if not normalizado:
         return None
     for termo, categoria in TERMOS_CRITICOS.items():
-        padrao = rf"\b{re.escape(termo)}\b"
+        padrao = rf"\b{re.escape(termo)}s?\b"  # plural: "chest pains", "headaches"
         if re.search(padrao, normalizado):
             return TermoCritico(
                 termo=termo,
