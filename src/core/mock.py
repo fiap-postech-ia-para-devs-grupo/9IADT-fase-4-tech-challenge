@@ -111,13 +111,14 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
             "inicio": 121.5,
             "entidade": "SymptomOrSign",
             "termo": "dyspnea",
+            "categoria": "respiratorio",
         },
     )
     insuficiencia = composto(
         47,
         Severidade.CRITICA,
         "Possível insuficiência respiratória",
-        [spo2, vocal, dispneia],
+        [spo2, dispneia],
     )
 
     # demo-02: Queda após início de opioide

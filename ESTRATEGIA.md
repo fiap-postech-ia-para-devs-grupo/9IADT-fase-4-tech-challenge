@@ -168,7 +168,7 @@ Todo Analisador grava Alertas **exatamente** neste formato (`src/core/alerts.py`
 
 | Alertas de origem | Alerta Composto | Severidade |
 | --- | --- | --- |
-| Sinal Vital (SpO2/FR) + Alteração Vocal ou Termo Crítico respiratório | Possível insuficiência respiratória | crítica |
+| Sinal Vital (SpO2/FR) + Termo Crítico respiratório ([ADR-0002](docs/adr/0002-alteracao-vocal-fora-da-fusao.md)) | Possível insuficiência respiratória | crítica |
 | Queda + Mudança Terapêutica (opioide/sedativo iniciado) | Queda possivelmente associada a medicação | alta |
 | Sinal Vital (PA/FC) + Mudança Terapêutica (anti-hipertensivo/antiarrítmico) | Possível efeito adverso de medicação | alta |
 | Desvio de Execução recorrente + Termo Crítico de dor | Possível agravamento em reabilitação | média |

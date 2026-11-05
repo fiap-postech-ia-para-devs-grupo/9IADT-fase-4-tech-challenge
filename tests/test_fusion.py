@@ -71,8 +71,16 @@ def regras(compostos):
     return [c.evidencia["regra"] for c in compostos]
 
 
-def test_sinal_respiratorio_com_alteracao_vocal_vira_insuficiencia_critica():
-    origens = [sinal("SpO2"), vocal()]
+def termo_respiratorio(quando: datetime = T0) -> Alerta:
+    return vocal(quando, tipo=Tipo.TERMO_CRITICO, categoria="respiratorio")
+
+
+def test_alteracao_vocal_nao_entra_na_fusao():
+    assert fusion.fundir([sinal("SpO2"), vocal()]) == []
+
+
+def test_sinal_respiratorio_com_termo_respiratorio_vira_insuficiencia_critica():
+    origens = [sinal("SpO2"), termo_respiratorio()]
 
     compostos = fusion.fundir(origens)
 
@@ -94,11 +102,11 @@ def test_termo_critico_so_conta_se_for_respiratorio():
 def test_origens_fora_da_janela_de_24h_nao_fundem():
     tarde = T0 + timedelta(hours=25)
 
-    assert fusion.fundir([sinal("SpO2"), vocal(quando=tarde)]) == []
+    assert fusion.fundir([sinal("SpO2"), termo_respiratorio(tarde)]) == []
 
 
 def test_pacientes_diferentes_nao_fundem():
-    assert fusion.fundir([sinal("SpO2", paciente="outro"), vocal()]) == []
+    assert fusion.fundir([sinal("SpO2", paciente="outro"), termo_respiratorio()]) == []
 
 
 def test_queda_com_sedativo_vira_alerta_alto():
@@ -136,6 +144,6 @@ def test_um_desvio_so_nao_basta_para_recorrencia():
 
 
 def test_ids_sao_deterministicos():
-    origens = [sinal("SpO2"), vocal()]
+    origens = [sinal("SpO2"), termo_respiratorio()]
 
     assert [c.id for c in fusion.fundir(origens)] == [c.id for c in fusion.fundir(origens)]
