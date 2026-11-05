@@ -38,6 +38,8 @@ Serviços usados pelo Analisador de Áudio (ESTRATEGIA.md, seções 1, 5, 12 e 1
 
 Se a região escolhida não oferecer Text Analytics for Health, o smoke test falha no `[FALHA] TA for Health`: recriar o recurso Language em outra região (`eastus`, `westeurope`) e atualizar o `.env`.
 
+Para testar o upload de ponta a ponta no Laboratório, siga [teste-upload-audio.md](teste-upload-audio.md).
+
 ## Cotas F0 (orçamento de cota)
 
 Conferir os números no portal (*Pricing tier* de cada recurso) no momento da criação; a Microsoft muda limites sem aviso.

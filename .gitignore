@@ -237,6 +237,8 @@ data/audio/*
 !data/audio/primock57_selecionadas.txt
 !data/audio/coswara_pastas_selecionadas.txt
 !data/audio/modelo_acustico.joblib
+!data/audio/SOURCES.md
+!data/audio/teste_upload/
 # Respostas do Azure versionadas: reprocessar não gasta cota F0 (os WAVs ficam de fora)
 !data/audio/cache_primock57/
 data/audio/cache_primock57/*
