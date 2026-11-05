@@ -1,0 +1,413 @@
+[
+  [],
+  [
+    {
+      "texto": "today",
+      "categoria": "Time",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "7th of June",
+      "categoria": "Time",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "53",
+      "categoria": "Age",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "confidence",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.69,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "my chest",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.63,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "ongoing",
+      "categoria": "Course",
+      "confianca": 0.68,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "couple of hours",
+      "categoria": "Time",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "middle",
+      "categoria": "Direction",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "chest",
+      "categoria": "BodyStructure",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "pressure",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "comfort",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.89,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "comfort",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "no one's sitting on my chest",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.76,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "7 out of 10",
+      "categoria": "MeasurementValue",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "7",
+      "categoria": "MeasurementValue",
+      "confianca": 0.57,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "inches",
+      "categoria": "MeasurementUnit",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "comfortable",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "wife",
+      "categoria": "FamilyRelation",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Every other week",
+      "categoria": "Frequency",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fortnightly",
+      "categoria": "Frequency",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "cholesterol",
+      "categoria": "ExaminationName",
+      "confianca": 0.71,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hypertension",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hypertension",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "medicine",
+      "categoria": "TreatmentName",
+      "confianca": 0.76,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "shortness of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "slightly",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "lightheaded",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": "neutralPossible",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "calf pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "leg swelling",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "nausea",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "nausea",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "vomiting",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "head",
+      "categoria": "BodyStructure",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "some",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.62,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "left",
+      "categoria": "Direction",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "shoulder",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "right",
+      "categoria": "Direction",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "stress",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Right",
+      "categoria": "Direction",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "ambulance",
+      "categoria": "CareEnvironment",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  []
+]

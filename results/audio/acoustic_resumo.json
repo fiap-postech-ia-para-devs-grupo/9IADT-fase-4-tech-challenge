@@ -38,5 +38,5 @@
     "taxa_fala"
   ],
   "modelo_escolhido": "random_forest",
-  "limiar_escolhido": 0.53
+  "limiar_escolhido": 0.5733333333333334
 }

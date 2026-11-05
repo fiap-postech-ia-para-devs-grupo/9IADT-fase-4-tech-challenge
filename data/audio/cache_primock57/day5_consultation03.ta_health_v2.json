@@ -1,0 +1,805 @@
+[
+  [],
+  [
+    {
+      "texto": "19th of September 1993",
+      "categoria": "Date",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "really",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.56,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "anxious",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "past few months",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "nervous",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "every morning",
+      "categoria": "Frequency",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "worry",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.57,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "anxiety",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "GP",
+      "categoria": "HealthcareProfession",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "two months",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "stressful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.69,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "past two months",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "A fashion retailer",
+      "categoria": "Employment",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "head",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "never worked",
+      "categoria": "Employment",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "retail",
+      "categoria": "Employment",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "doing well",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.89,
+      "certeza": "neutralPossible",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Right",
+      "categoria": "Direction",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "stressed",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "worried",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "get to sleep",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.8,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hours",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hours",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hours",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "lying awake",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "all night",
+      "categoria": "Time",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "heart",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "racing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "panicking",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "alarm",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "heart is racing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "day",
+      "categoria": "Time",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "heart was racing so much",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": "positivePossible",
+      "associacao": null
+    },
+    {
+      "texto": "heart attack",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "morning",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "feel like I'm even",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "shallow sleep",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "3/4 hours",
+      "categoria": "Time",
+      "confianca": 0.76,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "significant",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.56,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "eating",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "much differently",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.58,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "down",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "morning",
+      "categoria": "Time",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "overslept",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.9,
+      "certeza": "positivePossible",
+      "associacao": null
+    },
+    {
+      "texto": "tired",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "panic",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": "positivePossible",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "constant",
+      "categoria": "Course",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "rapid",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "heart beating",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "stressful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "stress",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "heart problem",
+      "categoria": "Diagnosis",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "couple of minutes",
+      "categoria": "Time",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "day",
+      "categoria": "Time",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "holding my hand on my chest",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "10 minutes",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "couple of months",
+      "categoria": "Time",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "painful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "heart",
+      "categoria": "BodyStructure",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "heart",
+      "categoria": "BodyStructure",
+      "confianca": 0.58,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fast",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "enjoyment",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.67,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "tired",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "stressful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.62,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "friends",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "running",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "tension",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "every morning",
+      "categoria": "Frequency",
+      "confianca": 0.6,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sick",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "good",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.64,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "worse",
+      "categoria": "Course",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "worse",
+      "categoria": "Course",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "past couple of months",
+      "categoria": "Time",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "tension",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "anxiety",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "bad",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.76,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "down",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.89,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "worried",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "down",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "unhappy",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "suicidal thoughts",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "thoughts that have",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.67,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "extreme",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "family",
+      "categoria": "FamilyRelation",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "my parents",
+      "categoria": "LivingStatus",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "parents",
+      "categoria": "FamilyRelation",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "week",
+      "categoria": "Time",
+      "confianca": 0.64,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "parents",
+      "categoria": "FamilyRelation",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "retired",
+      "categoria": "Employment",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "glass",
+      "categoria": "SubstanceUseAmount",
+      "confianca": 0.79,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "wine",
+      "categoria": "SubstanceUse",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "during the week with dinner",
+      "categoria": "Frequency",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "mum",
+      "categoria": "FamilyRelation",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "depression",
+      "categoria": "Diagnosis",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "depression",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "stress",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "mum",
+      "categoria": "FamilyRelation",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "GP",
+      "categoria": "HealthcareProfession",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  []
+]

@@ -6,11 +6,11 @@ Serviços usados pelo Analisador de Áudio (ESTRATEGIA.md, seções 1, 5, 12 e 1
 
 | Item | Valor |
 | --- | --- |
-| Conta | _a preencher: Azure for Students de quem? (ou Plano B)_ |
-| Região (Speech e Language) | _a preencher_ — sugestão: `eastus` |
-| Recurso Speech | _nome_ · F0 |
-| Recurso Language | _nome_ · F0 · endpoint `https://<nome>.cognitiveservices.azure.com/` |
-| Smoke test passou em | _data_ |
+| Conta | Azure free de Renato (Plano B) |
+| Região (Speech e Language) | `eastus` |
+| Recurso Speech | `fiap-f4-speech-svc` · F0 · região `eastus` |
+| Recurso Language | `fiap-f4-language-svc` · F0 · endpoint `https://fiap-f4-language-svc.cognitiveservices.azure.com/` |
+| Smoke test passou em | 05/11/2026 |
 
 ## Passo a passo
 

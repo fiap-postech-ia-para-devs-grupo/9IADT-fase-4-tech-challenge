@@ -1,0 +1,448 @@
+[
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "40 years old",
+      "categoria": "Age",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "10s",
+      "categoria": "MeasurementValue",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "problems with my hearing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hear very well",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.63,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.63,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "numb",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "few weeks",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "3 weeks",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "left side",
+      "categoria": "Direction",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hearing side have gone down",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "left",
+      "categoria": "Direction",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "left",
+      "categoria": "Direction",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ear",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "jaw",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.72,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "numb",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "Hazelnut",
+      "categoria": "Allergen",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Umm",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "doesn't feel like",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "side",
+      "categoria": "Direction",
+      "confianca": 0.69,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "face",
+      "categoria": "BodyStructure",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Nothing coming out",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.64,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "cotton buds",
+      "categoria": "TreatmentName",
+      "confianca": 0.95,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "polyps",
+      "categoria": "Diagnosis",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "nose",
+      "categoria": "BodyStructure",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "occasionally",
+      "categoria": "Course",
+      "confianca": 0.79,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "half Ernie feeling",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "remember",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "positivePossible",
+      "associacao": null
+    },
+    {
+      "texto": "labyrinthitis",
+      "categoria": "Diagnosis",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "sprayed",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "nose",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "chemist",
+      "categoria": "HealthcareProfession",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "Latex",
+      "categoria": "MedicationName",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "brother",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "neurofibromatosis",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ringing",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "dizzy",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "my partner",
+      "categoria": "LivingStatus",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "back",
+      "categoria": "BodyStructure",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "ringing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "occasionally",
+      "categoria": "Course",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "dizzy",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "lack of hearing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "numbness",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "panic",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "frantic",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "frantic",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "die",
+      "categoria": "Diagnosis",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "MMM",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  []
+]

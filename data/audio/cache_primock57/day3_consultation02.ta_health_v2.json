@@ -1,0 +1,344 @@
+[
+  [],
+  [],
+  [
+    {
+      "texto": "1986",
+      "categoria": "Time",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "NW3",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.8,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "bad",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.72,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "severe",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "past four days",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hot",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "temperature",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fever",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "1st",
+      "categoria": "Time",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fever",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "paracetamol",
+      "categoria": "MedicationName",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ibuprofen",
+      "categoria": "MedicationName",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "general",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.79,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "aching muscles",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "neck",
+      "categoria": "BodyStructure",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "sick",
+      "categoria": "Diagnosis",
+      "confianca": 0.95,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "cough",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "general aching",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "body aching",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "bites",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "friend",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "unwell",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "cold",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "quite a lot",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "shivering",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.86,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.8,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "cold",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "rash",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bleeding",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "rash",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "body",
+      "categoria": "BodyStructure",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "red",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "itchy",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Sounds serious",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.63,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "OK",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "cool",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  []
+]

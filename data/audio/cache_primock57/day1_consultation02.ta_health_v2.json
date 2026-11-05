@@ -1,0 +1,500 @@
+[
+  [
+    {
+      "texto": "well",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "few days",
+      "categoria": "Time",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sore",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "red skin",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "itchy",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "chest",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hands",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "arms",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "itching",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "lot",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "can't even sleep at",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.68,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "disease",
+      "categoria": "Diagnosis",
+      "confianca": 0.62,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "eczema",
+      "categoria": "Diagnosis",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "steroid",
+      "categoria": "MedicationClass",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "cream",
+      "categoria": "MedicationForm",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "pharmacy",
+      "categoria": "CareEnvironment",
+      "confianca": 0.67,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "last night",
+      "categoria": "Time",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "eating a lot",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "today",
+      "categoria": "Time",
+      "confianca": 0.89,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "steroid",
+      "categoria": "MedicationClass",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "cream",
+      "categoria": "MedicationForm",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "itchy",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "eczema",
+      "categoria": "Diagnosis",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "arms",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "chest",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hands",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "last weekend",
+      "categoria": "Time",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "painful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "showers",
+      "categoria": "TreatmentName",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "skin",
+      "categoria": "BodyStructure",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "cracked",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "cracked",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Four days ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "people",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.66,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "chest",
+      "categoria": "BodyStructure",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hands",
+      "categoria": "BodyStructure",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "elbows",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "face",
+      "categoria": "BodyStructure",
+      "confianca": 0.71,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "itching",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "eczema",
+      "categoria": "Diagnosis",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "eczema",
+      "categoria": "Diagnosis",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "arm",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "asthma",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "allergies",
+      "categoria": "Diagnosis",
+      "confianca": 0.55,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "few flatmates",
+      "categoria": "LivingStatus",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "31",
+      "categoria": "Age",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "full time job",
+      "categoria": "Employment",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "few people",
+      "categoria": "LivingStatus",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "a pharmaceutical company",
+      "categoria": "Employment",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "a few years now",
+      "categoria": "Time",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "per week",
+      "categoria": "Frequency",
+      "confianca": 0.89,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "drink",
+      "categoria": "SubstanceUse",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "younger",
+      "categoria": "Age",
+      "confianca": 0.56,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "antihistamines",
+      "categoria": "MedicationClass",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "antihistamines",
+      "categoria": "MedicationClass",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "sounds good",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.56,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "Right",
+      "categoria": "Direction",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    }
+  ]
+]

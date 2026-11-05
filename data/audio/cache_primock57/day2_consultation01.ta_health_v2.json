@@ -1,0 +1,238 @@
+[
+  [],
+  [
+    {
+      "texto": "31st of October, 1990",
+      "categoria": "Date",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "hear as",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.8,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hearing's kind",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.69,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "six weeks",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "a year ago",
+      "categoria": "Time",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "a couple of days",
+      "categoria": "Time",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "occasionally",
+      "categoria": "Course",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ringing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "left",
+      "categoria": "Direction",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ear",
+      "categoria": "BodyStructure",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "side",
+      "categoria": "Direction",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.76,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sick",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "dizzy",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "ringing",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "dizziness",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sickness",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "nausea",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "room spinning",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "off balance",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "ringing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ear",
+      "categoria": "BodyStructure",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Right",
+      "categoria": "Direction",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "sounds great",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "OK",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "brilliant",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Alexa",
+      "categoria": "MedicationName",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ]
+]

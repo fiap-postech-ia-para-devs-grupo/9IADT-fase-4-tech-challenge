@@ -1,0 +1,332 @@
+[
+  {
+    "sentimento": "neutral",
+    "positivo": 0.01,
+    "neutro": 0.99,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 1.0,
+    "neutro": 0.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.53,
+    "neutro": 0.47,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 1.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 1.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 1.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.2,
+    "neutro": 0.79,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.08,
+    "neutro": 0.7,
+    "negativo": 0.21
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.44,
+    "neutro": 0.51,
+    "negativo": 0.05
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.11,
+    "neutro": 0.89,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "negative",
+    "positivo": 0.01,
+    "neutro": 0.38,
+    "negativo": 0.6
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.04,
+    "neutro": 0.6,
+    "negativo": 0.36
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.52,
+    "neutro": 0.47,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "negative",
+    "positivo": 0.2,
+    "neutro": 0.29,
+    "negativo": 0.52
+  },
+  {
+    "sentimento": "negative",
+    "positivo": 0.01,
+    "neutro": 0.32,
+    "negativo": 0.67
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.09,
+    "neutro": 0.55,
+    "negativo": 0.36
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.06,
+    "neutro": 0.85,
+    "negativo": 0.09
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.03,
+    "neutro": 0.96,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 0.99,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.09,
+    "neutro": 0.89,
+    "negativo": 0.02
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.02,
+    "neutro": 0.78,
+    "negativo": 0.21
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 1.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.2,
+    "neutro": 0.79,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.01,
+    "neutro": 0.99,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.06,
+    "neutro": 0.93,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.01,
+    "neutro": 0.99,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.02,
+    "neutro": 0.78,
+    "negativo": 0.21
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.02,
+    "neutro": 0.78,
+    "negativo": 0.21
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.02,
+    "neutro": 0.78,
+    "negativo": 0.21
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 0.99,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.38,
+    "neutro": 0.61,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.03,
+    "neutro": 0.96,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.25,
+    "neutro": 0.73,
+    "negativo": 0.02
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 0.99,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 1.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 1.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.95,
+    "neutro": 0.04,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.16,
+    "neutro": 0.78,
+    "negativo": 0.06
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.62,
+    "neutro": 0.38,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.9,
+    "neutro": 0.09,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.96,
+    "neutro": 0.04,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.17,
+    "neutro": 0.7,
+    "negativo": 0.13
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.15,
+    "neutro": 0.84,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.16,
+    "neutro": 0.83,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.04,
+    "neutro": 0.95,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "negative",
+    "positivo": 0.09,
+    "neutro": 0.36,
+    "negativo": 0.55
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.03,
+    "neutro": 0.57,
+    "negativo": 0.4
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.02,
+    "neutro": 0.78,
+    "negativo": 0.21
+  },
+  {
+    "sentimento": "negative",
+    "positivo": 0.01,
+    "neutro": 0.07,
+    "negativo": 0.91
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.04,
+    "neutro": 0.95,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "negative",
+    "positivo": 0.03,
+    "neutro": 0.29,
+    "negativo": 0.68
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.0,
+    "neutro": 1.0,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.99,
+    "neutro": 0.01,
+    "negativo": 0.0
+  },
+  {
+    "sentimento": "neutral",
+    "positivo": 0.03,
+    "neutro": 0.96,
+    "negativo": 0.01
+  },
+  {
+    "sentimento": "positive",
+    "positivo": 0.96,
+    "neutro": 0.04,
+    "negativo": 0.0
+  }
+]

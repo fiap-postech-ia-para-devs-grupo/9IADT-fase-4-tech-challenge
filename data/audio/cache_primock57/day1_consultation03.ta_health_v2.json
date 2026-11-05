@@ -1,0 +1,509 @@
+[
+  [],
+  [
+    {
+      "texto": "terrible",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "midday",
+      "categoria": "Time",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "left",
+      "categoria": "Direction",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ill",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "vomit",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "zigzag lines in my vision",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "few minutes",
+      "categoria": "Time",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "vision blurred",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "horrible",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.55,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "unwell",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "throbbing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.8,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "left side",
+      "categoria": "Direction",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "worse",
+      "categoria": "Course",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "head",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "neck",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "worse",
+      "categoria": "Course",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "gets",
+      "categoria": "Course",
+      "confianca": 0.57,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "worse",
+      "categoria": "Course",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "brain cancer",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": "positivePossible",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "friend",
+      "categoria": "FamilyRelation",
+      "confianca": 0.71,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "mum",
+      "categoria": "FamilyRelation",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "died",
+      "categoria": "Diagnosis",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": "other"
+    },
+    {
+      "texto": "brain tumour",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "sunglasses",
+      "categoria": "TreatmentName",
+      "confianca": 0.85,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "lights",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hurting my eyes",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "vomited",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "feverish",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "similar",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.62,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "few weeks ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Couple of days",
+      "categoria": "Time",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "painkillers",
+      "categoria": "MedicationClass",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Couple days",
+      "categoria": "Time",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "off work",
+      "categoria": "Employment",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "work",
+      "categoria": "Employment",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fashion industry",
+      "categoria": "Employment",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sick",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "today",
+      "categoria": "Time",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "brain tumour",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headaches",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "mum",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "migraines",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "mum",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "thyroid",
+      "categoria": "Diagnosis",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "three months",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "contraception",
+      "categoria": "TreatmentName",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "stressful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "down",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "stressed",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "my own",
+      "categoria": "LivingStatus",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "cancer",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "migraine",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "mum",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "similar symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.66,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Doctor",
+      "categoria": "HealthcareProfession",
+      "confianca": 0.67,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  []
+]

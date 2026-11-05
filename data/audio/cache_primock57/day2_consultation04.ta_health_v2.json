@@ -1,0 +1,314 @@
+[
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "45",
+      "categoria": "Age",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "very sort",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "breathless",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "breathe",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.59,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "catches",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.8,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "right",
+      "categoria": "Direction",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hand",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "back",
+      "categoria": "BodyStructure",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "slight",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fever",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "coughed up",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit of blood",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.62,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "heart beating",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.62,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "tired",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "tired",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "couple of weeks",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "back",
+      "categoria": "BodyStructure",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "hand",
+      "categoria": "BodyStructure",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "work",
+      "categoria": "Employment",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "an office",
+      "categoria": "Employment",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "desk job",
+      "categoria": "Employment",
+      "confianca": 0.79,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "Methotrexate",
+      "categoria": "MedicationName",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "Methotrexate",
+      "categoria": "MedicationName",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "SLE",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "This morning",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "7013",
+      "categoria": "Age",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "very good circulation",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "pretty normal to me",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "lung cancer",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "coughing up blood",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "die",
+      "categoria": "Diagnosis",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "lung cancer",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  []
+]

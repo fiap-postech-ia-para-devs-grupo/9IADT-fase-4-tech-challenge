@@ -1,0 +1,343 @@
+[
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "14th of January, 1996",
+      "categoria": "Date",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "two",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "three days ago",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "running",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "friend",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "short of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sure of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "blue inhaler",
+      "categoria": "TreatmentName",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "wheezing",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "coughing",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "short of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "morning",
+      "categoria": "Frequency",
+      "confianca": 0.66,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "evening",
+      "categoria": "Frequency",
+      "confianca": 0.55,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "salbutamol",
+      "categoria": "MedicationName",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "clenel",
+      "categoria": "MedicationName",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "septuagen",
+      "categoria": "MedicationName",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hydrocortisone",
+      "categoria": "MedicationName",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Ben",
+      "categoria": "MedicationName",
+      "confianca": 0.71,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hydrocortisone",
+      "categoria": "MedicationName",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "brothers",
+      "categoria": "FamilyRelation",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "asthmatic",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": "other"
+    },
+    {
+      "texto": "sister",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "eczema",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "every day",
+      "categoria": "Frequency",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "3",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "4 years ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "inhalers",
+      "categoria": "TreatmentName",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "preventative",
+      "categoria": "TreatmentName",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "remember",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "two years ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "last two",
+      "categoria": "Time",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "three days",
+      "categoria": "Time",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "this month",
+      "categoria": "Time",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "100",
+      "categoria": "MeasurementValue",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "fever",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "hay fever",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  []
+]

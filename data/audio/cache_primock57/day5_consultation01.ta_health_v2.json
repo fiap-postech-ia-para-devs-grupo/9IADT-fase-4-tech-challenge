@@ -1,0 +1,379 @@
+[
+  [],
+  [],
+  [
+    {
+      "texto": "of the 4th, 1990",
+      "categoria": "Time",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "really bad",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "a day now",
+      "categoria": "Time",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "yesterday morning",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "throbbing",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "left side",
+      "categoria": "Direction",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "comes and goes",
+      "categoria": "Course",
+      "confianca": 0.59,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "quite",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.6,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sensitive to light",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "quite",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "painful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "severe",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "no good",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "Feeling fine",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "normal",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "period",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.59,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "week ago",
+      "categoria": "Time",
+      "confianca": 0.76,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "cold symptoms",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "doing OK",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "day before",
+      "categoria": "Time",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "feverish",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "painkillers",
+      "categoria": "MedicationClass",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "cough",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "contraception",
+      "categoria": "TreatmentName",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "six years ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "mum",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "high blood pressure",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "migraines",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "six months ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "fine",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "friends",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Die",
+      "categoria": "Diagnosis",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "tomorrow",
+      "categoria": "Time",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "aspirin",
+      "categoria": "Allergen",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "few days",
+      "categoria": "Time",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "fine",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.72,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "stressed",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "neutralPossible",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "better",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "a day or two",
+      "categoria": "Time",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "today",
+      "categoria": "Time",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  []
+]

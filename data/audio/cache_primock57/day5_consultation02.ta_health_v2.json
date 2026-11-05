@@ -1,0 +1,283 @@
+[
+  [],
+  [],
+  [
+    {
+      "texto": "14/02/1974",
+      "categoria": "Date",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "hurts",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Six days now",
+      "categoria": "Time",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "6 days",
+      "categoria": "Time",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "hurts",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "unpleasant smell",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "tummy",
+      "categoria": "BodyStructure",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "lower",
+      "categoria": "Direction",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "tummy",
+      "categoria": "BodyStructure",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "spotted",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.6,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "blood in my urine spots",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "law",
+      "categoria": "FamilyRelation",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "blood spot",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "IBS",
+      "categoria": "TreatmentName",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "spotting in my urine",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "tethering",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.6,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Clean",
+      "categoria": "TreatmentName",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "my SIM",
+      "categoria": "TreatmentName",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "friends",
+      "categoria": "LivingStatus",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "wine",
+      "categoria": "SubstanceUse",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "a week",
+      "categoria": "Frequency",
+      "confianca": 0.85,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "fever",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "antibiotics",
+      "categoria": "MedicationClass",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "pharmacy",
+      "categoria": "CareEnvironment",
+      "confianca": 0.89,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "medication",
+      "categoria": "TreatmentName",
+      "confianca": 0.83,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "5 minutes",
+      "categoria": "Time",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  []
+]
