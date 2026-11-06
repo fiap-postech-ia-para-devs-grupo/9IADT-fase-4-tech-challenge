@@ -71,9 +71,9 @@ def figura_sinais(
                 figura.add_hline(
                     y=limite,
                     line={"dash": "dot", "color": "#999", "width": 1},
-                    row=linha,
+                    row=linha,  # pyright: ignore[reportArgumentType]
                     col=1,  # pyright: ignore[reportArgumentType]
-                )  # pyright: ignore[reportArgumentType]
+                )
         do_sinal = [
             e.alerta
             for e in eventos
