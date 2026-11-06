@@ -39,7 +39,7 @@ Gravação de áudio de um diálogo entre médico e paciente.
 _Avoid_: atendimento, conversa, sessão
 
 **Termo Crítico**:
-Entidade clínica (sintoma, condição, medicamento) extraída da transcrição de uma Consulta que exige atenção da equipe.
+Entidade clínica (sintoma, condição, medicamento) extraída da transcrição de uma Consulta, afirmada sobre o próprio paciente, que exige atenção da equipe. Sintoma negado ou de um familiar não é Termo Crítico.
 _Avoid_: palavra-chave, keyword
 
 **Alteração Vocal**:

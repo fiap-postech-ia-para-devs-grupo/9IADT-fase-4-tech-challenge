@@ -1,0 +1,391 @@
+[
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "a week ago",
+      "categoria": "Time",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "weird",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "swelling",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "elbow",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "painful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.89,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "feel fine",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "slightly",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.89,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "warm",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.6,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fluid",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "left",
+      "categoria": "Direction",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "hand",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "elbow",
+      "categoria": "BodyStructure",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "I can actually like move it normally",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "strange",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.66,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Umm",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "remember",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "well",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "osteoarthritis",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "Umm",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "hurts",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "joints",
+      "categoria": "BodyStructure",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "family",
+      "categoria": "FamilyRelation",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "few years ago",
+      "categoria": "Time",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "GP",
+      "categoria": "HealthcareProfession",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "53",
+      "categoria": "Age",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "peanuts",
+      "categoria": "Allergen",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "2-3 times a week",
+      "categoria": "Frequency",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "healthy",
+      "categoria": "Diagnosis",
+      "confianca": 0.64,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.57,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "warm",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "tip",
+      "categoria": "BodyStructure",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "elbow",
+      "categoria": "BodyStructure",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "next week",
+      "categoria": "Time",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "swelling",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.85,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fluid",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Hummer skin fridge",
+      "categoria": "TreatmentName",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "die",
+      "categoria": "Diagnosis",
+      "confianca": 0.64,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "getting worse",
+      "categoria": "Course",
+      "confianca": 0.76,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "physical appointment",
+      "categoria": "AdministrativeEvent",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "All right",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sounds",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  []
+]

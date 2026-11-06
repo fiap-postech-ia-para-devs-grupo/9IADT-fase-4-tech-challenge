@@ -1,0 +1,25 @@
+# Consultas do PriMock57 processadas em lote (ESTRATEGIA.md, seção 5): 18 de 57, uma
+# fração de cada um dos 5 dias de gravação para variar clínico e caso. Orçamento de cota:
+# ~9 min por Consulta, canal do paciente só (o que importa para Termo Crítico, Sentimento e
+# Alteração Vocal) ≈ metade disso em áudio efetivo de fala do paciente.
+#
+# Formato: um id "dayN_consultationNN" por linha, igual ao prefixo dos arquivos em audio/ e
+# transcripts/ do repositório babylonhealth/primock57.
+day1_consultation01
+day1_consultation02
+day1_consultation03
+day1_consultation04
+day2_consultation01
+day2_consultation02
+day2_consultation03
+day2_consultation04
+day3_consultation01
+day3_consultation02
+day3_consultation03
+day3_consultation04
+day4_consultation01
+day4_consultation02
+day4_consultation03
+day5_consultation01
+day5_consultation02
+day5_consultation03

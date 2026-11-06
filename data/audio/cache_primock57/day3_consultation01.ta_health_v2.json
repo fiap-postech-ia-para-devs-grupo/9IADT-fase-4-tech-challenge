@@ -1,0 +1,434 @@
+[
+  [],
+  [
+    {
+      "texto": "alright",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.66,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "weird",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.85,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "today",
+      "categoria": "Time",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "1st of October 99",
+      "categoria": "Date",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Chrome",
+      "categoria": "MedicationName",
+      "confianca": 0.58,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "friends",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "laxative soup",
+      "categoria": "TreatmentName",
+      "confianca": 0.57,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "lips",
+      "categoria": "BodyStructure",
+      "confianca": 0.72,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "feeling a little weird",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "left",
+      "categoria": "Direction",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "swelling",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "swelling",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "upper",
+      "categoria": "Direction",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "lip",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "getting bigger",
+      "categoria": "Course",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "7:00",
+      "categoria": "Time",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "half an hour",
+      "categoria": "Time",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "feeling like",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.59,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "pumping blood",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "getting worse",
+      "categoria": "Course",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "breathe that well",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "now",
+      "categoria": "Time",
+      "confianca": 0.64,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "chest",
+      "categoria": "BodyStructure",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "little difficult",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.64,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "remember",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "neutralPossible",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "A year ago",
+      "categoria": "Time",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "friends",
+      "categoria": "FamilyRelation",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "remember",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "remember",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "next morning",
+      "categoria": "Time",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "quite",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.6,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "swollen up",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "really",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.72,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "bad",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "quite",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "difficult breathing",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "asthma",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "Salbutamol",
+      "categoria": "MedicationName",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "inhalers",
+      "categoria": "MedicationForm",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "asthma",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "peanut",
+      "categoria": "Allergen",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "antihistamines",
+      "categoria": "MedicationClass",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "kid",
+      "categoria": "Age",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "remember",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "mom",
+      "categoria": "FamilyRelation",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "small",
+      "categoria": "Age",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [
+    {
+      "texto": "swelling",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "sick",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "alone",
+      "categoria": "LivingStatus",
+      "confianca": 0.91,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "mom",
+      "categoria": "FamilyRelation",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "Mom",
+      "categoria": "FamilyRelation",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "antihistamines",
+      "categoria": "MedicationClass",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  []
+]

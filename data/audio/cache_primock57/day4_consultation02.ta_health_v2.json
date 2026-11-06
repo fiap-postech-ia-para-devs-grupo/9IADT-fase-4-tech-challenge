@@ -1,0 +1,322 @@
+[
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "35 years old",
+      "categoria": "Age",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "October 7th",
+      "categoria": "Time",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "lose my appetite",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "tingling",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "arms",
+      "categoria": "BodyStructure",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "elevator",
+      "categoria": "CareEnvironment",
+      "confianca": 0.62,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "morning",
+      "categoria": "Time",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "heart",
+      "categoria": "BodyStructure",
+      "confianca": 0.8,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "beating kind of fast",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.89,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "headache",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "front",
+      "categoria": "Direction",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "little bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.82,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "nauseous",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "breathing",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.63,
+      "certeza": "positivePossible",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "changed jobs",
+      "categoria": "Employment",
+      "confianca": 0.93,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "a lawyer",
+      "categoria": "Employment",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "a lawyer",
+      "categoria": "Employment",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "a previous job",
+      "categoria": "Employment",
+      "confianca": 0.75,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "5",
+      "categoria": "MeasurementValue",
+      "confianca": 0.56,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "lbs",
+      "categoria": "MeasurementUnit",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "QikLink",
+      "categoria": "ExaminationName",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "short of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "once a day",
+      "categoria": "Frequency",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "loss of libido",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "hypothyroidism",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Fireworks",
+      "categoria": "Employment",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "once a week",
+      "categoria": "Frequency",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "a while",
+      "categoria": "Frequency",
+      "confianca": 0.7,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "sounds",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "very good",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.69,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Right",
+      "categoria": "Direction",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  []
+]

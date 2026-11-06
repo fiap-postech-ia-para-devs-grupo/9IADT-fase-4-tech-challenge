@@ -1,0 +1,480 @@
+[
+  [],
+  [
+    {
+      "texto": "weather",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.6,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "past four days",
+      "categoria": "Time",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sore throat",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "runny nose",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "cough",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Sore throat",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "going away",
+      "categoria": "Course",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "cough",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "Bad",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "tired",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "kept",
+      "categoria": "Course",
+      "confianca": 0.55,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sneezing",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "kids",
+      "categoria": "FamilyRelation",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "kindergarten",
+      "categoria": "Age",
+      "confianca": 0.57,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "normal",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.69,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "sore throat",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "painful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": "positivePossible",
+      "associacao": null
+    },
+    {
+      "texto": "couple of days",
+      "categoria": "Time",
+      "confianca": 0.97,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "fast",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "painful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.74,
+      "certeza": "positivePossible",
+      "associacao": null
+    },
+    {
+      "texto": "swallow",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "positivePossible",
+      "associacao": null
+    },
+    {
+      "texto": "one of the days",
+      "categoria": "Time",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "nose",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "stuffed",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "quite",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "congested",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "yesterday",
+      "categoria": "Time",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "dry",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "painful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "night sweats",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "bit",
+      "categoria": "ConditionQualifier",
+      "confianca": 0.63,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "tired",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "fever",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "going down",
+      "categoria": "Course",
+      "confianca": 0.88,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "paracetamol",
+      "categoria": "MedicationName",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "ibuprofen",
+      "categoria": "MedicationName",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.76,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "chest",
+      "categoria": "BodyStructure",
+      "confianca": 0.58,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "bit winded on exertion",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.56,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "past couple days",
+      "categoria": "Time",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "treated",
+      "categoria": "TreatmentName",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "grandma",
+      "categoria": "FamilyRelation",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "diabetes",
+      "categoria": "Diagnosis",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": "other"
+    }
+  ],
+  [
+    {
+      "texto": "grandma",
+      "categoria": "FamilyRelation",
+      "confianca": 0.98,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "type 2",
+      "categoria": "Diagnosis",
+      "confianca": 0.94,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "Granddad",
+      "categoria": "FamilyRelation",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "exam",
+      "categoria": "ExaminationName",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "alone",
+      "categoria": "LivingStatus",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "an accountant",
+      "categoria": "Employment",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "stressful",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.64,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "end of the year",
+      "categoria": "Time",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "stress",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.81,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "cigars",
+      "categoria": "SubstanceUse",
+      "confianca": 0.95,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "very big drinker",
+      "categoria": "SubstanceUse",
+      "confianca": 0.8,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "couple of days",
+      "categoria": "Time",
+      "confianca": 0.9,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  []
+]

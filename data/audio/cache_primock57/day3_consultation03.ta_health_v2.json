@@ -1,0 +1,404 @@
+[
+  [],
+  [
+    {
+      "texto": "OK",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.86,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "35 years old",
+      "categoria": "Age",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "ago",
+      "categoria": "Time",
+      "confianca": 0.68,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "feeling down",
+      "categoria": "Diagnosis",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "wife",
+      "categoria": "FamilyRelation",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "like feeling right",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.73,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "feel out of place",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.84,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "down",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.79,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "short of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "nauseous",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Umm",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.61,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "loss of appetite",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "eating very much",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.94,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "months",
+      "categoria": "Time",
+      "confianca": 0.59,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "Three months ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "3 1/2 months ago",
+      "categoria": "Time",
+      "confianca": 0.99,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "less than",
+      "categoria": "RelationalOperator",
+      "confianca": 0.71,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "stone",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.77,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "nauseous",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "every now and again",
+      "categoria": "Course",
+      "confianca": 0.67,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "feeling very good",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "problems",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.68,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "diarrhea",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": "negative",
+      "associacao": null
+    },
+    {
+      "texto": "well set",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.8,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "texto": "feeling unwell",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.85,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "assurance of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "heart starts beating",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.78,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "breathe",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.96,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "every time",
+      "categoria": "Frequency",
+      "confianca": 0.56,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "heart",
+      "categoria": "BodyStructure",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "beating",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "can't breathe",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.87,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "feel",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.67,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "unwell",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.92,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "heart",
+      "categoria": "BodyStructure",
+      "confianca": 0.68,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "Cold chest pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.95,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "pain",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.99,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [
+    {
+      "texto": "activity",
+      "categoria": "ExaminationName",
+      "confianca": 0.65,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "my thyroid",
+      "categoria": "ExaminationName",
+      "confianca": 0.68,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "little activity",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.68,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [
+    {
+      "texto": "thyroxine",
+      "categoria": "MedicationName",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      "texto": "shortness of breath",
+      "categoria": "SymptomOrSign",
+      "confianca": 1.0,
+      "certeza": null,
+      "associacao": null
+    },
+    {
+      "texto": "feeling good enough for good",
+      "categoria": "SymptomOrSign",
+      "confianca": 0.93,
+      "certeza": "negative",
+      "associacao": null
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  []
+]

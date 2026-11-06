@@ -5,8 +5,8 @@ da tabela `REGRAS`. Uma regra dispara quando dois Alertas do mesmo paciente, de 
 diferentes, caem numa janela de `JANELA_FUSAO` (24 h simuladas). Os ids são determinísticos.
 
 Convenções que dependem de outros Analisadores:
-    - Termo Crítico só conta como respiratório se `evidencia["categoria"] == "respiratorio"`;
-      Alteração Vocal já é respiratória por definição (CONTEXT.md).
+    - Termo Crítico só conta como respiratório se `evidencia["categoria"] == "respiratorio"`.
+    - Alteração Vocal não entra em nenhuma regra (docs/adr/0002).
     - Desvio de Execução "recorrente" são pelo menos `MIN_DESVIOS` Alertas do mesmo paciente
       na janela.
 """
@@ -59,8 +59,6 @@ def _sinal_hemodinamico(a: Alerta) -> bool:
 def _audio_respiratorio(a: Alerta) -> bool:
     if a.origem is not Origem.AUDIO:
         return False
-    if a.tipo is Tipo.ALTERACAO_VOCAL:
-        return True
     return a.tipo is Tipo.TERMO_CRITICO and a.evidencia.get("categoria") == "respiratorio"
 
 

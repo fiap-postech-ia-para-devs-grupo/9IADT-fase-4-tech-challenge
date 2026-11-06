@@ -6,11 +6,11 @@ Serviços usados pelo Analisador de Áudio (ESTRATEGIA.md, seções 1, 5, 12 e 1
 
 | Item | Valor |
 | --- | --- |
-| Conta | _a preencher: Azure for Students de quem? (ou Plano B)_ |
-| Região (Speech e Language) | _a preencher_ — sugestão: `eastus` |
-| Recurso Speech | _nome_ · F0 |
-| Recurso Language | _nome_ · F0 · endpoint `https://<nome>.cognitiveservices.azure.com/` |
-| Smoke test passou em | _data_ |
+| Conta | Azure free de Renato (Plano B) |
+| Região (Speech e Language) | `eastus` |
+| Recurso Speech | `fiap-f4-speech-svc` · F0 · região `eastus` |
+| Recurso Language | `fiap-f4-language-svc` · F0 · endpoint `https://fiap-f4-language-svc.cognitiveservices.azure.com/` |
+| Smoke test passou em | 05/11/2026 |
 
 ## Passo a passo
 
@@ -37,6 +37,8 @@ Serviços usados pelo Analisador de Áudio (ESTRATEGIA.md, seções 1, 5, 12 e 1
    Sintetiza uma frase em inglês com o próprio Speech, transcreve de volta (STT `en-US`) e chama TA for Health e Sentiment. Sai com código 0 e três `[OK]` quando está tudo certo; código 2 se faltar variável no `.env`; código 1 se algum serviço falhar (a mensagem mostra qual). Para testar com um áudio real: `--audio caminho.wav` (WAV 16 kHz mono).
 
 Se a região escolhida não oferecer Text Analytics for Health, o smoke test falha no `[FALHA] TA for Health`: recriar o recurso Language em outra região (`eastus`, `westeurope`) e atualizar o `.env`.
+
+Para testar o upload de ponta a ponta no Laboratório, siga [teste-upload-audio.md](teste-upload-audio.md).
 
 ## Cotas F0 (orçamento de cota)
 
