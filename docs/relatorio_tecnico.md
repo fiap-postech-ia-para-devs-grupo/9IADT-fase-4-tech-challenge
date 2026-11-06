@@ -195,7 +195,37 @@ uv run pytest tests/test_prescriptions.py
 
 ## 4. Fusão e Pacientes de Demonstração
 
-_Dono: V. Blasque._ Declarar que os pacientes são compostos para demonstração ([ADR 0001](adr/0001-paciente-de-demonstracao-composto.md)). <!-- TODO -->
+_Dono: V. Blasque._
+
+**Os pacientes são compostos.** Não existe dataset público com o mesmo paciente em todas as modalidades. Cada Paciente de Demonstração é fictício e liga fontes reais de pessoas diferentes, com os horários escolhidos para caber numa mesma internação ([ADR 0001](adr/0001-paciente-de-demonstracao-composto.md)). As coincidências entre modalidades são **encenadas**: a Fusão demonstra o mecanismo, não uma correlação clínica. As métricas de cada Analisador vêm dos seus próprios datasets, nunca destes pacientes.
+
+**Montagem** (`data/demo_patients.json`, `src/core/demo.py`). A internação dura o que dura o registro de Sinais Vitais. Cada fonte é deslocada para esse relógio: as prescrições por uma âncora (um instante do MIMIC-IV que cai num minuto da internação), a Consulta e o vídeo por um minuto de início. Alertas de prescrição fora da internação ficam de fora. A Consulta é lida do cache versionado do Azure, sem gastar cota.
+
+| Paciente | Sinais Vitais (MIMIC-III) | Prescrições (MIMIC-IV Demo) | Consulta (PriMock57) | Alerta Composto |
+| --- | --- | --- | --- | --- |
+| `demo-01` | `3002751n` | paciente 10035631, oxicodona no minuto 60 | `day3_consultation04`, início no minuto 136,33 | **crítico**: possível insuficiência respiratória |
+| `demo-02` | `3009891n` | paciente 10005348, metoprolol 12,5 → 50 mg no minuto 60 | `day5_consultation01`, início no minuto 150 | alto: possível efeito adverso de medicação |
+| `demo-03` | `3007382n` | paciente 10021487, hidromorfona no minuto 90 | `day1_consultation03`, início no minuto 120 | nenhum por enquanto: depende da Queda do Analisador de Vídeo |
+
+No `demo-01`, o offset da Consulta faz "short of breath", dito aos 40 s, coincidir com a SpO2 de 85% do minuto 137: o Termo Crítico respiratório e o Sinal Vital caem no mesmo minuto e geram o Alerta Composto crítico. Essa Consulta está entre as únicas com Termo Crítico respiratório, que é o que a regra exige ([ADR 0002](adr/0002-alteracao-vocal-fora-da-fusao.md)).
+
+**Fusão.** Tardia e por regras (`src/core/fusion.py`, seção 8 da ESTRATEGIA.md): dois Alertas do mesmo paciente, de modalidades diferentes, numa janela de 24 h. Como a internação simulada dura poucas horas, quase todo par coincide. Por isso, a demonstração mantém um Alerta Composto por regra, o do par mais próximo no tempo.
+
+**Painel do Paciente (Tela 2).** O replay avança o relógio da internação e cada Alerta surge no minuto em que ficaria visível: os de Sinais Vitais quando o detector os emite, os demais no seu horário e o Composto quando a última origem aparece. Os Alertas surgidos vão para a Central de Alertas, onde a equipe os reconhece; reiniciar o replay não desfaz um Reconhecimento. A linha do tempo mostra prescrições monitoradas, Consulta e vídeo, com os marcadores de Alerta.
+
+**Limitações.**
+
+- O vídeo ainda não faz parte da demonstração: `clipe` está vazio nos três pacientes, à espera do Analisador de Vídeo (#6). Os Alertas de vídeo gravados no SQLite para um `demo-0X` já entram na tela e na Fusão, e a regra "Queda + opioide" está coberta por teste com um Alerta sintético, mas não foi exercitada com dado real.
+- Os trechos de prescrição foram escolhidos a dedo para a história de cada paciente, o que torna a contagem de Alertas destes pacientes não representativa; a contagem por regra está na seção 3.4.
+- Os registros de Sinais Vitais têm só 4 a 5 horas, então a internação simulada é curta.
+
+**Como rodar.**
+
+```bash
+uv run python scripts/download_data.py mimic3wdb mimic4demo
+uv run streamlit run app.py                     # Painel do Paciente > Tocar replay
+uv run python -m scripts.gerar_pacientes_demo   # opcional: grava tudo no SQLite sem tocar o replay
+```
 
 ## 5. Resultados e Exemplos de Anomalias Detectadas
 

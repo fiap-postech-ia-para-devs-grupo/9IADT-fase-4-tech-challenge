@@ -1,0 +1,50 @@
+{
+  "_nota": "Pacientes fictícios, compostos de datasets públicos distintos, com offsets escolhidos para alinhar as Anomalias (docs/adr/0001). Tempos em minutos desde `internacao_inicio`.",
+  "pacientes": [
+    {
+      "id": "demo-01",
+      "nome": "Paciente de Demonstração 1: piora respiratória",
+      "resumo": "A queda de SpO2 coincide com a Consulta em que o paciente relata falta de ar: Alerta Composto crítico.",
+      "internacao_inicio": "2026-10-01T08:00:00",
+      "sinais_vitais": { "registro": "30/3002751/3002751n" },
+      "prescricoes": {
+        "subject_id": 10035631,
+        "hadm_id": 21476294,
+        "ancora": "2115-11-08T20:00:00",
+        "ancora_min": 60
+      },
+      "consulta": { "id": "day3_consultation04", "inicio_min": 136.33 },
+      "video": { "clipe": null, "inicio_min": 210 }
+    },
+    {
+      "id": "demo-02",
+      "nome": "Paciente de Demonstração 2: instabilidade após ajuste de beta-bloqueador",
+      "resumo": "Hipotensão logo depois de um salto de dose de metoprolol: Alerta Composto de possível efeito adverso.",
+      "internacao_inicio": "2026-10-01T08:00:00",
+      "sinais_vitais": { "registro": "30/3009891/3009891n" },
+      "prescricoes": {
+        "subject_id": 10005348,
+        "hadm_id": 25239799,
+        "ancora": "2130-10-30T14:00:00",
+        "ancora_min": 60
+      },
+      "consulta": { "id": "day5_consultation01", "inicio_min": 150 },
+      "video": { "clipe": null, "inicio_min": 200 }
+    },
+    {
+      "id": "demo-03",
+      "nome": "Paciente de Demonstração 3: queda após início de opioide",
+      "resumo": "Início de hidromorfona antes da Queda no quarto: o Alerta Composto depende do Analisador de Vídeo (#6).",
+      "internacao_inicio": "2026-10-01T08:00:00",
+      "sinais_vitais": { "registro": "30/3007382/3007382n" },
+      "prescricoes": {
+        "subject_id": 10021487,
+        "hadm_id": 26321862,
+        "ancora": "2117-01-28T02:00:00",
+        "ancora_min": 90
+      },
+      "consulta": { "id": "day1_consultation03", "inicio_min": 120 },
+      "video": { "clipe": null, "inicio_min": 200 }
+    }
+  ]
+}

@@ -136,6 +136,11 @@ def resolver(conn: sqlite3.Connection, alerta_id: str) -> Alerta:
     return resolvido
 
 
+def remover(conn: sqlite3.Connection, ids: Iterable[str]) -> None:
+    with conn:
+        conn.executemany("DELETE FROM alertas WHERE id = ?", [(i,) for i in ids])
+
+
 def _obter_ou_falhar(conn: sqlite3.Connection, alerta_id: str) -> Alerta:
     alerta = obter(conn, alerta_id)
     if alerta is None:
