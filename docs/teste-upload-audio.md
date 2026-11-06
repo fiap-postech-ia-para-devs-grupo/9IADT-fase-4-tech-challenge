@@ -2,7 +2,7 @@
 
 Roteiro para conferir, em cerca de 5 minutos, o caminho completo do upload de áudio com o Azure real: transcrição, Termos Críticos e Alteração Vocal.
 
-**Estado:** o resultado esperado abaixo vem do processamento em lote da Consulta completa. O upload deste clipe ainda não foi executado; confirme e corrija este roteiro depois do primeiro teste.
+**Estado:** testado com o Azure real por Renato em novembro de 2026, com sucesso.
 
 ## Antes de começar
 
