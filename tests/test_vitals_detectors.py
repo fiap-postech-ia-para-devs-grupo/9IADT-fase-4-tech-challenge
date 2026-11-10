@@ -179,3 +179,28 @@ def test_janela_sem_datetime_index_levanta_erro():
     janela = janela_normal().reset_index(drop=True)
     with pytest.raises(ValueError, match="DatetimeIndex"):
         detectors.detect(janela, PACIENTE, "zscore_movel")
+
+
+def test_zscore_serie_parada_nao_gera_sigma_absurdo():
+    # Série praticamente constante: sem piso no σ, um degrau de 11 mmHg daria z de bilhões.
+    indice = pd.date_range("2150-01-01 00:00", periods=200, freq="min")
+    valores = np.full(200, 120.0) + np.random.default_rng(0).normal(0, 1e-9, 200)
+    valores[150:] = 131
+    janela = pd.DataFrame({"FC": 80.0, "FR": 16.0, "SpO2": 97.0, "PAS": valores}, index=indice)
+
+    alertas = detectors.zscore_movel(janela, PACIENTE)
+
+    pas = [a for a in alertas if a.evidencia["serie"] == "PAS"]
+    assert pas, "degrau de 11 mmHg deveria disparar"
+    assert all(a.evidencia["z_pico"] < 10 for a in pas)
+
+
+def test_zscore_degrau_abaixo_do_desvio_minimo_nao_dispara():
+    indice = pd.date_range("2150-01-01 00:00", periods=200, freq="min")
+    valores = np.full(200, 120.0) + np.random.default_rng(0).normal(0, 1e-9, 200)
+    valores[150:] = 125  # 5 mmHg: abaixo do desvio mínimo de PAS (10)
+    janela = pd.DataFrame({"FC": 80.0, "FR": 16.0, "SpO2": 97.0, "PAS": valores}, index=indice)
+
+    assert not [
+        a for a in detectors.zscore_movel(janela, PACIENTE) if a.evidencia["serie"] == "PAS"
+    ]

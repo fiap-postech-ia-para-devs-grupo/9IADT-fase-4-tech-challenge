@@ -126,7 +126,8 @@ def zscore_movel(janela: pd.DataFrame, paciente_id: str) -> list[Alerta]:
         # shift(1): o ponto avaliado não entra na própria média nem no próprio desvio
         historia = valor.shift(1).rolling(JANELA_ZSCORE, min_periods=MIN_HISTORIA_ZSCORE)
         media = historia.mean()
-        desvio = historia.std().replace(0, np.nan)
+        # σ mínimo = desvio mínimo / 3: sem isso, série parada dá σ quase zero e z absurdo
+        desvio = historia.std().clip(lower=DESVIO_MINIMO_ZSCORE[serie] / LIMITE_ZSCORE)
         z = (valor - media) / desvio
         relevante = (valor - media).abs() >= DESVIO_MINIMO_ZSCORE[serie]
         for inicio, fim in _episodios((z.abs() > LIMITE_ZSCORE) & relevante):

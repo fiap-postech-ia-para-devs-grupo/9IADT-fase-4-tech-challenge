@@ -224,3 +224,22 @@ def test_replay_grava_alertas_no_sqlite(tmp_path):
     gravados = db.listar(conn)
     assert len(gravados) == len(emitidos) == 1
     assert gravados[0].id == emitidos[0].id
+
+
+def test_replay_nao_reemite_episodio_longo():
+    # Episódio de 200 min acima de 180: com janela curta, o início sairia da janela e
+    # viraria um Alerta novo a cada minuto. Com histórico completo, sai um só.
+    janela = janela_normal(n=300)
+    janela.loc[janela.index[50:250], "PAS"] = 186
+
+    alertas = list(
+        stream.replay(
+            janela,
+            PACIENTE,
+            tecnicas=("regras_clinicas",),
+            minutos_por_segundo=0,
+        )
+    )
+
+    pas = [a for a in alertas if a.evidencia["serie"] == "PAS"]
+    assert len(pas) == 1

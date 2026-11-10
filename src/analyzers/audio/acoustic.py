@@ -129,9 +129,7 @@ def localizar_arquivos(pasta_extraida: Path) -> dict[str, dict[str, Path]]:
             if not pessoa.is_dir():
                 continue
             arquivos = {
-                nome: caminho
-                for nome in ARQUIVOS_UTEIS
-                if (caminho := pessoa / nome).exists()
+                nome: caminho for nome in ARQUIVOS_UTEIS if (caminho := pessoa / nome).exists()
             }
             if arquivos:
                 resultado[pessoa.name] = arquivos
@@ -340,8 +338,7 @@ def alerta_alteracao_vocal(
         tipo=Tipo.ALTERACAO_VOCAL,
         severidade=severidade,
         descricao=(
-            "Voz com padrão de dificuldade respiratória/fadiga "
-            f"(probabilidade {probabilidade:.2f})"
+            f"Voz com padrão de dificuldade respiratória/fadiga (probabilidade {probabilidade:.2f})"
         ),
         evidencia=evidencia,
         detectado_em=detectado_em or datetime.now(),

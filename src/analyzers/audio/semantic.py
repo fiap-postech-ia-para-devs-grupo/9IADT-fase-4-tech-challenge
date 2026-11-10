@@ -297,7 +297,7 @@ def _alerta_termo_critico(
         origem=Origem.AUDIO,
         tipo=Tipo.TERMO_CRITICO,
         severidade=severidade,
-        descricao=f"Paciente menciona termo crítico ({termo.termo}): \"{trecho.texto}\"",
+        descricao=f'Paciente menciona termo crítico ({termo.termo}): "{trecho.texto}"',
         evidencia=evidencia,
         detectado_em=inicio + timedelta(seconds=trecho.inicio),
     )

@@ -141,7 +141,7 @@ Resultados em `results/vitals/avaliacao.csv` (agregado) e `results/vitals/avalia
 
 **Leitura dos números.** As regras acertam todas as injeções porque os eventos foram desenhados para cruzar exatamente os limites clínicos, então esse recall é otimista. A precisão baixa das regras não é só erro: os Alertas "falsos" contam Anomalias reais que já estavam nos registros (ex.: SpO2 de 76% no registro 3000100n). O z-score detecta mais tipos de desvio, mas gera muitos alertas sobre variações pequenas. O Isolation Forest é o mais preciso, com menos alertas, mas detecta menos e com atraso de cerca de 18 minutos, porque só marca um padrão conjunto depois que a média móvel se afasta da história.
 
-No replay (`scripts/replay_vitals.py`), os 10 registros geraram 239 Alertas `sinal_vital` gravados no SQLite.
+No replay (`scripts/replay_vitals.py`), os 10 registros geraram 124 Alertas `sinal_vital` gravados no SQLite.
 
 ### 3.4 Prescrições — regras sobre MIMIC-IV Demo
 
