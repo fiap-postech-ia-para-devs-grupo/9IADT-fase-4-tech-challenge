@@ -1,4 +1,3 @@
-
 import pytest
 
 from src.analyzers.audio import acoustic, lab, semantic

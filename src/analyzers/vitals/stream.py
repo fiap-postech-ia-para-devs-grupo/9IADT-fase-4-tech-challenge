@@ -27,7 +27,7 @@ def replay(
     paciente_id: str,
     tecnicas: Sequence[str] = TECNICAS_PADRAO,
     minutos_por_segundo: float = 1.0,
-    janela_analise: int = 180,
+    janela_analise: int | None = None,
     esperar: Callable[[float], None] = time.sleep,
     ao_detectar: Callable[[Alerta], None] | None = None,
 ) -> Iterator[Alerta]:
@@ -37,7 +37,10 @@ def replay(
         if minutos_por_segundo > 0:
             esperar(1 / minutos_por_segundo)
 
-        trecho = janela.iloc[max(0, t - janela_analise + 1) : t + 1]
+        # Sem `janela_analise`, cada passo usa todo o histórico até t. Com janela curta, um
+        # episódio longo sai da janela e volta como Alerta novo a cada minuto.
+        inicio = 0 if janela_analise is None else max(0, t - janela_analise + 1)
+        trecho = janela.iloc[inicio : t + 1]
         for tecnica in tecnicas:
             for alerta in detectors.detect(trecho, paciente_id, tecnica):
                 inicio_abs = trecho.index[0] + pd.Timedelta(seconds=alerta.evidencia["janela"][0])

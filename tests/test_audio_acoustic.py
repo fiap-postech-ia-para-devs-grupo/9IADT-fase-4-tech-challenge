@@ -176,9 +176,7 @@ def test_dividir_por_pessoa_nao_mistura_gravacoes_da_mesma_pessoa():
 
 
 def test_balancear_por_pessoa_limita_cada_classe():
-    metadados = pd.DataFrame(
-        {"id": [f"p{i}" for i in range(10)], "rotulo": [1] * 7 + [0] * 3}
-    )
+    metadados = pd.DataFrame({"id": [f"p{i}" for i in range(10)], "rotulo": [1] * 7 + [0] * 3})
     balanceado = acoustic.balancear_por_pessoa(metadados, por_classe=3, seed=0)
     contagem = balanceado["rotulo"].value_counts()
     assert contagem[1] == 3
@@ -226,7 +224,12 @@ def test_alerta_alteracao_vocal_none_abaixo_do_limiar():
 
 def test_alerta_alteracao_vocal_no_contrato_quando_acima_do_limiar():
     alerta = acoustic.alerta_alteracao_vocal(
-        "demo-01", "c1.wav", 0.81, limiar=0.5, trecho="I feel so tired", inicio=12.0,
+        "demo-01",
+        "c1.wav",
+        0.81,
+        limiar=0.5,
+        trecho="I feel so tired",
+        inicio=12.0,
         detectado_em=datetime(2026, 10, 1, 8, 0),
     )
     assert alerta is not None
