@@ -28,8 +28,10 @@ uv sync --frozen
 Sem uv, use o `requirements.txt` exportado do lock:
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 ```
+
+O `--extra-index-url` é necessário no Linux, porque o `torch` CPU vem do índice do PyTorch.
 
 **2. Credenciais do Azure**
 
