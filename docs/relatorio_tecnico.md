@@ -67,7 +67,75 @@ flowchart LR
 
 ### 3.1 Vídeo — YOLOv8-pose, Desvio de Execução, Queda
 
-_Dono: Marcelo._ <!-- TODO -->
+_Dono: Marcelo._
+
+**Cenários.** O Analisador de Vídeo (`src/analyzers/video/`) cobre os dois cenários da ESTRATEGIA.md, seção 4. Na **Sessão de Fisioterapia**, o paciente executa um exercício com amplitude esperada conhecida, e o Analisador aponta o **Desvio de Execução**. No **quarto**, ele aponta a **Queda**: o paciente passa de em pé para o chão.
+
+**Pipeline.**
+
+1. `pose.py`: **YOLOv8n-pose** (Ultralytics, keypoints COCO-17) em CPU, 1 a cada 3 frames (~10 por segundo num clipe de 30 fps). Usa a pessoa de maior confiança no frame.
+2. `angles.py`: ângulos de joelho, quadril, ombro e cotovelo nos dois lados, mais a inclinação do tronco em relação à vertical. Keypoint com confiança abaixo de 0,5 vira lacuna.
+3. `exercise_rules.py`: segmenta as repetições pelo joelho mais flexionado (abaixo de 140° por pelo menos 0,4 s, tolerando 0,35 s de oclusão) e aplica as regras do exercício.
+4. `fall.py`: regras sobre a caixa da pessoa (detalhadas abaixo).
+5. `report.py`: o **Relatório de Sessão** em Markdown, com as repetições, os Desvios, os frames de Evidência com o esqueleto anotado e o gráfico dos ângulos ao longo do tempo.
+6. `lab.py`: `analyze_video(arquivo, exercicio=..., vista=...)` amarra tudo, gera os Alertas no Contrato e é a mesma função usada pela Tela 3 e pelo lote (`scripts/processar_video.py`).
+
+**Regras de Desvio de Execução.** Os limiares vêm de referências de reabilitação e estão documentados no código. Não foram calibrados nos clipes.
+
+| Regra | Exercício | Limiar | Vista |
+| --- | --- | --- | --- |
+| Amplitude insuficiente | agachamento | joelho no fundo da repetição acima de 100° (coxa longe da horizontal) | qualquer |
+| Compensação de tronco | agachamento | tronco inclinado mais de 50° durante a repetição | qualquer |
+| Assimetria | agachamento | joelhos diferem mais de 20° no fundo | frontal |
+| Valgo dinâmico | agachamento unipodal | joelho de apoio desvia mais de 10° para dentro da linha quadril–tornozelo (FPPA), por pelo menos 0,3 s | frontal |
+
+Valgo e assimetria só são avaliados com câmera de frente ou de costas, porque de lado uma perna esconde a outra. No agachamento unipodal visto de frente, a flexão do joelho quase não aparece na imagem. Por isso, o valgo é contado por episódio, e não por repetição.
+
+**Regra de Queda.** É uma Queda quando três condições se cumprem:
+
+- a caixa da pessoa passa de vertical (largura/altura < 0,6) para deitada (≥ 1,0);
+- a altura da caixa cai para no máximo 50% da altura em pé;
+- isso acontece em até 2 s e se mantém por 1 s (mediana da janela).
+
+Cada condição descarta um falso positivo visto nos clipes. A altura relativa descarta o exercício com a perna estendida, em que a caixa fica larga mas a pessoa continua alta. A transição curta descarta deitar-se devagar. A permanência descarta um frame isolado com a caixa errada.
+
+**Dados.** Os clipes vêm de duas fontes públicas, listados com licença em `data/video/SOURCES.md` e com gabarito em `data/video/clipes.json`. Baixe com `scripts/download_data.py video`.
+
+- **Fisioterapia:** quatro clipes do Wikimedia Commons. Dois são de agachamento, um de perfil e um de costas. Os outros dois são de agachamento unipodal, publicados por Ageberg et al. (2010) num estudo sobre a observação do valgo. Nesses dois, o gabarito é o rótulo dos próprios autores: "joelho sobre o pé" e "joelho medial ao pé".
+- **Quarto:** oito sequências do **UR Fall Detection Dataset** (Kwolek & Kepski, 2014), cinco rotuladas como queda e três como atividades de vida diária sem queda. O vídeo do dataset junta profundidade e RGB lado a lado, e o Analisador usa só a metade RGB.
+
+Não havia dataset público de fisioterapia rotulado com desvios (ESTRATEGIA.md, seção 4). Por isso, nos dois clipes de agachamento o gabarito é a inspeção dos frames.
+
+**Resultados** (`results/video/avaliacao.csv`, Relatórios de Sessão em `results/video/<clipe>/`):
+
+| Clipe | Cenário | Esperado | Detectado | CPU (s) / vídeo (s) |
+| --- | --- | --- | --- | --- |
+| `agachamento_lateral` | 6 agachamentos, perfil | 0 Desvios | 0 Desvios (6 repetições) | 17,8 / 28,2 |
+| `agachamento_costas` | 2 agachamentos, costas | 0 Desvios | 0 Desvios (2 repetições) | 4,3 / 7,1 |
+| `unipodal_alinhado` | unipodal, joelho sobre o pé | 0 Desvios | 0 Desvios | 8,2 / 16,7 |
+| `unipodal_valgo` | unipodal, joelho medial ao pé | 5 valgos | 5 valgos (FPPA de 15° a 18°) | 7,9 / 16,2 |
+| `queda_01` a `queda_05` | queda | 1 Queda cada | 1 Queda cada | 2,0–4,4 / 3,2–7,2 |
+| `sem_queda_01` a `sem_queda_03` | atividade sem queda | 0 Quedas | 0 Quedas | 3,2–3,8 / 5,0–6,0 |
+
+Todos os 12 clipes batem com o gabarito. Na Queda, são 5 verdadeiros positivos, 0 falsos positivos (nas 3 atividades sem queda e nos 4 clipes de exercício) e 0 falsos negativos. No valgo, são 5 de 5 no clipe rotulado com valgo e 0 no alinhado, com FPPA de no máximo 7° neste último. Em CPU, o processamento leva de 0,5 a 0,65 s por segundo de vídeo, então daria para analisar ao vivo.
+
+**Leitura dos números e limitações.**
+
+- A amostra é pequena: 12 clipes curtos. Os números mostram que as regras separam os casos rotulados, não estimam desempenho em produção.
+- Os limiares de Queda foram escolhidos olhando estes mesmos clipes. Não há conjunto de teste separado.
+- O valgo está perto do limiar. Ao processar 1 a cada 2 frames, em vez de 1 a cada 3, aparece um sexto episódio de 11° na transferência de peso inicial, antes do primeiro agachamento.
+- A amplitude insuficiente e a compensação de tronco estão cobertas por testes com poses sintéticas, mas nenhum clipe público tinha esses erros com rótulo. Os dois agachamentos reais são bem executados e servem de teste de falso positivo.
+- Repetições rasas demais, com o joelho sempre acima de 140°, nem chegam a ser segmentadas.
+- A Queda depende da caixa da pessoa: a câmera precisa ver o paciente inteiro. Num quarto real, móveis e a cama ocluem, e cair na direção da câmera encurta menos a caixa. O UR Fall foi gravado numa sala de escritório, não num quarto de hospital.
+- O vídeo entra no Paciente de Demonstração do mesmo jeito composto das outras modalidades (seção 4).
+
+**Como rodar.**
+
+```bash
+uv run python scripts/download_data.py video
+uv run python -m scripts.processar_video        # Relatórios em results/video/, Alertas no SQLite
+uv run streamlit run app.py                     # Laboratório de Análise > Vídeo (upload)
+```
 
 ### 3.2 Áudio — Azure STT + TA for Health + classificador acústico
 
@@ -205,7 +273,7 @@ _Dono: V. Blasque._
 | --- | --- | --- | --- | --- |
 | `demo-01` | `3002751n` | paciente 10035631, oxicodona no minuto 60 | `day3_consultation04`, início no minuto 136,33 | **crítico**: possível insuficiência respiratória |
 | `demo-02` | `3009891n` | paciente 10005348, metoprolol 12,5 → 50 mg no minuto 60 | `day5_consultation01`, início no minuto 150 | alto: possível efeito adverso de medicação |
-| `demo-03` | `3007382n` | paciente 10021487, hidromorfona no minuto 90 | `day1_consultation03`, início no minuto 120 | nenhum por enquanto: depende da Queda do Analisador de Vídeo |
+| `demo-03` | `3007382n` | paciente 10021487, hidromorfona no minuto 90 | `day1_consultation03`, início no minuto 120 | alto: Queda (clipe `queda_02`, minuto 200) possivelmente associada a medicação |
 
 No `demo-01`, o offset da Consulta faz "short of breath", dito aos 40 s, coincidir com a SpO2 de 85% do minuto 137: o Termo Crítico respiratório e o Sinal Vital caem no mesmo minuto e geram o Alerta Composto crítico. Essa Consulta está entre as únicas com Termo Crítico respiratório, que é o que a regra exige ([ADR 0002](adr/0002-alteracao-vocal-fora-da-fusao.md)).
 
@@ -215,7 +283,7 @@ No `demo-01`, o offset da Consulta faz "short of breath", dito aos 40 s, coincid
 
 **Limitações.**
 
-- O vídeo ainda não faz parte da demonstração: `clipe` está vazio nos três pacientes, à espera do Analisador de Vídeo (#6). Os Alertas de vídeo gravados no SQLite para um `demo-0X` já entram na tela e na Fusão, e a regra "Queda + opioide" está coberta por teste com um Alerta sintético, mas não foi exercitada com dado real.
+- Cada paciente tem um clipe de vídeo (`demo-01`: `unipodal_valgo`; `demo-02`: `agachamento_lateral`; `demo-03`: `queda_02`), e os Alertas de vídeo entram na tela e na Fusão depois de `scripts/processar_video.py`. Como nas outras modalidades, a coincidência entre a Queda e o opioide do `demo-03` é encenada pelo minuto de início do clipe.
 - Os trechos de prescrição foram escolhidos a dedo para a história de cada paciente, o que torna a contagem de Alertas destes pacientes não representativa; a contagem por regra está na seção 3.4.
 - Os registros de Sinais Vitais têm só 4 a 5 horas, então a internação simulada é curta.
 
@@ -241,6 +309,14 @@ Exemplos reais, nos registros do MIMIC-III listados em `data/vitals/selecionados
 - **Desvio em relação à própria história (z-score, média).** Registro `3002751n`: FC 3,6σ acima da média dos 60 minutos anteriores, entre 01:46 e 01:47. O z-score pega variações que não cruzam nenhum limite clínico, mas também gera Alertas sobre oscilações pequenas, por isso a precisão dele é a mais baixa (ver seção 3.3).
 
 Para os números da avaliação com anomalias injetadas (recall, precisão e atraso por técnica), ver a seção 3.3 e `results/vitals/`.
+
+### Vídeo (Marcelo)
+
+Exemplos reais, com o frame de Evidência e o Relatório de Sessão em `results/video/<clipe>/`:
+
+- **Valgo dinâmico (Desvio de Execução, média).** No clipe `unipodal_valgo`, o joelho direito de apoio desvia 18° para dentro aos 8,8 s (limite: 10°). Os 5 mini agachamentos geram um Desvio cada, como no rótulo dos autores. No `demo-01`, esses Desvios entram na internação no minuto 210.
+- **Queda (alta).** No clipe `queda_02`, a pessoa vai de em pé ao chão em 0,6 s: a caixa fica 1,8 vez mais larga que alta, com 48% da altura em pé. No `demo-03`, a Queda cai no minuto 200, depois do início de hidromorfona no minuto 90, e gera o Alerta Composto "Queda possivelmente associada a medicação".
+- **Sem falso positivo.** Os 6 agachamentos bem executados do `agachamento_lateral`, com o joelho chegando a 50–54°, não geram Desvio nem Queda.
 
 ### Áudio (V. Geizler)
 
@@ -295,6 +371,12 @@ _Dono: Renato, com insumo de cada dono._
 - **Anomalias injetadas são artificiais.** Os eventos injetados cruzam exatamente os limites clínicos, o que favorece as regras. O recall das regras é otimista e não deve ser lido como capacidade de detecção em produção.
 - **Anomalias naturais contam como falso positivo.** A precisão baixa das regras inclui Anomalias reais que já estavam nos registros. Sem rótulo clínico, não dá para separar erro de detecção de anomalia verdadeira.
 - **Registros de 1 minuto.** A resolução é de um ponto por minuto. Eventos de poucos segundos, como uma arritmia breve, não são capturados.
+
+**Vídeo (Marcelo):** detalhes na seção 3.1.
+
+- **Poucos clipes e limiares vistos nos mesmos clipes.** Os resultados mostram que as regras separam os casos rotulados; não são uma estimativa de desempenho clínico.
+- **Gabarito de fisioterapia parcial.** Só o valgo tem rótulo externo, dos autores do estudo. Amplitude insuficiente e compensação de tronco foram validadas apenas com poses sintéticas.
+- **Queda depende de ver o corpo inteiro.** Num quarto real, oclusão por móveis e cama e a queda na direção da câmera são os casos difíceis. O UR Fall não é um quarto de hospital.
 
 **Áudio (V. Geizler):**
 

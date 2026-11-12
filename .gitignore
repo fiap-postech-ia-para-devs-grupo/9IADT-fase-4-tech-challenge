@@ -232,6 +232,7 @@ data/vitals/*
 !data/video/
 data/video/*
 !data/video/SOURCES.md
+!data/video/clipes.json
 !data/audio/
 data/audio/*
 !data/audio/primock57_selecionadas.txt
@@ -246,3 +247,5 @@ data/audio/cache_primock57/*
 
 # Cache de pesos do Ultralytics baixados no diretório de trabalho
 *.pt
+# Saídas do upload no Laboratório de Análise (geradas a cada análise)
+results/video/laboratorio/

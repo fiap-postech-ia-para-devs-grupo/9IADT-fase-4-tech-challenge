@@ -284,7 +284,7 @@ def visiveis(eventos: Iterable[EventoAlerta], agora: datetime) -> list[EventoAle
 
 
 def alertas_de_video(conn: sqlite3.Connection, paciente_id: str) -> list[Alerta]:
-    """Alertas gravados pelo Analisador de Vídeo para este paciente (#6)."""
+    """Alertas gravados pelo Analisador de Vídeo (`scripts/processar_video.py`) do paciente."""
     return db.listar(conn, origem=Origem.VIDEO, paciente_id=paciente_id)
 
 

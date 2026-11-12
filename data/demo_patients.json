@@ -14,7 +14,7 @@
         "ancora_min": 60
       },
       "consulta": { "id": "day3_consultation04", "inicio_min": 136.33 },
-      "video": { "clipe": null, "inicio_min": 210 }
+      "video": { "clipe": "unipodal_valgo", "inicio_min": 210 }
     },
     {
       "id": "demo-02",
@@ -29,12 +29,12 @@
         "ancora_min": 60
       },
       "consulta": { "id": "day5_consultation01", "inicio_min": 150 },
-      "video": { "clipe": null, "inicio_min": 200 }
+      "video": { "clipe": "agachamento_lateral", "inicio_min": 200 }
     },
     {
       "id": "demo-03",
       "nome": "Paciente de Demonstração 3: queda após início de opioide",
-      "resumo": "Início de hidromorfona antes da Queda no quarto: o Alerta Composto depende do Analisador de Vídeo (#6).",
+      "resumo": "Início de hidromorfona antes da Queda no quarto: Alerta Composto de queda possivelmente associada a medicação.",
       "internacao_inicio": "2026-10-01T08:00:00",
       "sinais_vitais": { "registro": "30/3007382/3007382n" },
       "prescricoes": {
@@ -44,7 +44,7 @@
         "ancora_min": 90
       },
       "consulta": { "id": "day1_consultation03", "inicio_min": 120 },
-      "video": { "clipe": null, "inicio_min": 200 }
+      "video": { "clipe": "queda_02", "inicio_min": 200 }
     }
   ]
 }

@@ -21,6 +21,7 @@ dependencies = [
     "plotly>=5.20",
     "streamlit>=1.35",
     "python-dotenv>=1.0",
+    "matplotlib>=3.8",                      # gráfico de ângulo do Relatório de Sessão
 ]
 
 [dependency-groups]

@@ -22,7 +22,7 @@ ETAPAS: tuple[tuple[str, str | None, str], ...] = (
     ("sinais vitais", "scripts/replay_vitals.py", ""),
     ("prescrições", "scripts/analisar_prescricoes.py", ""),
     ("áudio (Azure)", "scripts/processar_audio_semantico.py", ""),
-    ("vídeo", None, "Analisador de Vídeo ainda não entregue (#6)"),
+    ("vídeo", "scripts/processar_video.py", ""),
     ("pacientes de demonstração", "scripts/gerar_pacientes_demo.py", ""),
 )
 

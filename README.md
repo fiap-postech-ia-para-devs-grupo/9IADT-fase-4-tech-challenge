@@ -46,7 +46,7 @@ cp .env.example .env
 Os datasets brutos não vão para o git. O script baixa cada um para `data/`:
 
 ```bash
-uv run python scripts/download_data.py mimic3wdb mimic4demo
+uv run python scripts/download_data.py mimic3wdb mimic4demo video
 ```
 
 Os nomes disponíveis são `video`, `primock57`, `coswara`, `mimic3wdb` e `mimic4demo`. Rodar sem argumentos baixa todos.

@@ -113,6 +113,7 @@ markupsafe==3.0.3
     # via jinja2
 matplotlib==3.11.2
     # via
+    #   monitoramento-multimodal-fase4
     #   ultralytics
     #   wfdb
 mpmath==1.3.0

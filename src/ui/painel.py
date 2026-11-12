@@ -273,9 +273,7 @@ def pagina() -> None:
     paciente = st.selectbox("Paciente de Demonstração", pacientes, format_func=lambda p: p.nome)
     st.caption(paciente.resumo)
     if paciente.video.clipe is None:
-        st.caption(
-            "Clipe de vídeo pendente: os Alertas de vídeo aparecem aqui quando o #6 os gravar."
-        )
+        st.caption("Paciente sem clipe de vídeo: nenhum Alerta de vídeo nesta internação.")
 
     if st.session_state.get("replay_paciente") != paciente.id:
         st.session_state.update(replay_paciente=paciente.id, replay_minuto=0, replay_tocando=False)
