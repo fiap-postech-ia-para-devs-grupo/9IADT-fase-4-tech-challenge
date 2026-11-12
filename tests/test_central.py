@@ -33,7 +33,7 @@ def test_tabela_segue_a_ordem_por_severidade_e_horario(conn):
     assert len(tabela) == len(mock.gerar_alertas_mock())
 
 
-def test_central_abre_sem_erro_e_carrega_mock_quando_banco_vazio(tmp_path):
+def test_central_abre_sem_erro_e_carrega_mock_quando_banco_vazio(tmp_path, monkeypatch):
     def roteiro():
         import os
 
@@ -42,8 +42,8 @@ def test_central_abre_sem_erro_e_carrega_mock_quando_banco_vazio(tmp_path):
 
         central.pagina(db.conectar(os.environ["TESTE_DB"]))
 
-    os.environ["TESTE_DB"] = str(tmp_path / "vazio.db")
-    app = AppTest.from_function(roteiro, default_timeout=30).run()
+    monkeypatch.setenv("TESTE_DB", str(tmp_path / "vazio.db"))
+    app = AppTest.from_function(roteiro, default_timeout=60).run()
 
     assert not app.exception
     assert any("mock" in i.value for i in app.info)

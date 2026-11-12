@@ -351,7 +351,8 @@ No `demo-01`, o offset da Consulta faz "short of breath", dito aos 40 s, coincid
 **Como rodar.**
 
 ```bash
-uv run python scripts/download_data.py mimic3wdb mimic4demo
+uv run python scripts/download_data.py mimic3wdb mimic4demo video
+uv run python -m scripts.processar_video        # Alertas de vídeo dos clipes ligados aos pacientes
 uv run streamlit run app.py                     # barra lateral > ▶ Iniciar; Mapa de Leitos e Prontuário
 uv run python -m scripts.gerar_pacientes_demo   # opcional: grava tudo no SQLite sem tocar o replay
 ```
