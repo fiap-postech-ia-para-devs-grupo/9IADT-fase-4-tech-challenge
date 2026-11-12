@@ -187,7 +187,7 @@ class ScoreQueda:
     t: float
     angulo: float  # graus da vertical
     variacao: float  # graus ganhos nos últimos JANELA_BRUSCA s
-    descida: float  # quanto os ombros desceram, em larguras de ombro, nos últimos JANELA_BRUSCA s
+    descida: float  # quanto os ombros desceram, em tamanhos de tronco, nos últimos JANELA_BRUSCA s
     score: int  # 0 a 100
     saiu_por_baixo: bool = False  # caiu para fora da imagem (câmera não vê o chão)
 
@@ -219,6 +219,18 @@ def _faixa(valor: float, zero: float, um: float) -> float:
     return min(max((valor - zero) / (um - zero), 0.0), 1.0)
 
 
+def _escala(pose: Pose) -> float:
+    """Tamanho do tronco em pixels: a largura dos ombros, ou a distância ombros → nariz quando a
+    pessoa está de lado (deitada de lado os ombros se sobrepõem e a largura vai a zero)."""
+    from src.analyzers.video import pose as p
+
+    ombros = _ombros(pose)
+    assert ombros is not None and pose.keypoints is not None
+    meio = (pose.keypoints[p.OMBRO_ESQ, :2] + pose.keypoints[p.OMBRO_DIR, :2]) / 2
+    pescoco = float(((pose.keypoints[p.NARIZ, :2] - meio) ** 2).sum() ** 0.5)
+    return max(ombros[1], pescoco, 1.0)
+
+
 def scores(sequencia: SequenciaPose) -> list[ScoreQueda]:
     """Score de Queda de cada frame com ombros e nariz visíveis."""
     validas = [q for q in sequencia.poses if eixo_cabeca(q) is not None and _ombros(q)]
@@ -231,7 +243,7 @@ def scores(sequencia: SequenciaPose) -> list[ScoreQueda]:
         assert ombros is not None
         # Ombros, não o nariz: girar a cabeça também abaixa o nariz; cair abaixa os ombros.
         alturas = [o[0] for q in anteriores if (o := _ombros(q)) is not None]
-        descida = (ombros[0] - min(alturas)) / ombros[1]
+        descida = (ombros[0] - min(alturas)) / _escala(pose)
         parcial = ScoreQueda(pose.t, angulo, variacao, max(descida, 0.0), 0)
         a, v, d = parcial.componentes
         nota = round(100 * (PESO_INCLINACAO * a + PESO_VARIACAO * v + PESO_DESCIDA * d))
@@ -304,7 +316,7 @@ def detectar_saida_por_baixo(sequencia: SequenciaPose) -> list[Queda]:
             pose.t,
             eixo_cabeca(pose) or 0.0,
             0.0,
-            (ombros[0] - min(antes)) / ombros[1],
+            (ombros[0] - min(antes)) / _escala(pose),
             SCORE_SAIDA,
             saiu_por_baixo=True,
         )
