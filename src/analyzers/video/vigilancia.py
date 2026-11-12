@@ -28,6 +28,7 @@ from src.analyzers.video import pose as p
 from src.analyzers.video.lab import alerta_queda
 from src.analyzers.video.pose import Pose, Recorte, SequenciaPose
 from src.core import db
+from src.core.alerts import Tipo
 
 _RAIZ = Path(__file__).resolve().parents[3]
 PASTA_EVIDENCIA = _RAIZ / "results" / "video" / "camera"
@@ -219,7 +220,8 @@ class Vigilancia:
         conn = db.conectar(self.caminho_db)  # conexão própria: esta é outra thread
         try:
             # Uma Queda aberta por leito: enquanto não for reconhecida, não abre outra.
-            if not db.listar(conn, paciente_id=self.paciente_id, status="novo", origem="video"):
+            abertas = db.listar(conn, paciente_id=self.paciente_id, status="novo", origem="video")
+            if not any(a.tipo is Tipo.QUEDA for a in abertas):
                 db.salvar(conn, alerta)
                 self.estado.quedas.append(alerta.id)
         finally:
