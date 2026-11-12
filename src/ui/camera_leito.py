@@ -194,7 +194,7 @@ def ao_vivo(paciente_id: str) -> None:
             "🟢 vigiando"
             if estado.ativo
             else "🎬 gravação terminou"
-            if estado.fim_da_gravacao
+            if getattr(estado, "fim_da_gravacao", False)
             else "⚪ parada"
         )
         st.caption(

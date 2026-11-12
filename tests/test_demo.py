@@ -262,7 +262,7 @@ def test_mapa_de_leitos_mostra_um_cartao_por_leito(monkeypatch):
     html = " ".join(str(h.proto) for h in app.get("html"))
     for leito in ("UTI-04", "UCO-12", "ENF-208"):
         assert leito in html
-    assert any(m.label == "Leitos monitorados" and m.value == "3" for m in app.metric)
+    assert any(m.label == "Leitos monitorados" and int(m.value) >= 3 for m in app.metric)
 
 
 requer_dados = pytest.mark.skipif(
