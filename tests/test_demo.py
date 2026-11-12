@@ -10,7 +10,7 @@ from src.analyzers.audio.semantic import EntidadeClinica, Trecho
 from src.analyzers.prescriptions import load
 from src.core import db, demo, mock
 from src.core.alerts import Alerta, Origem, Severidade, Status, Tipo
-from src.ui import painel
+from src.ui import graficos
 
 T0 = datetime(2026, 10, 1, 8, 0)
 
@@ -223,8 +223,8 @@ def test_figuras_mostram_so_o_que_ja_surgiu():
     agora = T0 + timedelta(minutes=70)
     surgidos = demo.visiveis(eventos, agora)
 
-    sinais = painel.figura_sinais(i, surgidos, agora)
-    linha = painel.figura_linha_do_tempo(i, surgidos, agora)
+    sinais = graficos.figura_sinais(i, surgidos, agora)
+    linha = graficos.figura_linha_do_tempo(i, surgidos, agora)
 
     assert len(sinais.data[0].x) == 71
     nomes = {t.name for t in linha.data if t.type == "scatter"}
@@ -234,18 +234,35 @@ def test_figuras_mostram_so_o_que_ja_surgiu():
     }
 
 
-def test_painel_abre_sem_erro(tmp_path, monkeypatch):
-    def roteiro():
-        from src.ui import painel
+def _roteiro_tela(nome):
+    import importlib
 
-        painel.pagina()
+    import streamlit as st
 
+    st.cache_resource.clear()  # a internação sintética não vaza para outros testes
+    importlib.import_module(f"src.ui.{nome}").pagina()
+
+
+def test_prontuario_abre_com_os_tres_leitos(monkeypatch):
     monkeypatch.setattr(demo, "montar", lambda p: internacao(p))
-    app = AppTest.from_function(roteiro, default_timeout=60).run()
+    app = AppTest.from_function(_roteiro_tela, args=("prontuario",), default_timeout=60).run()
 
     assert not app.exception
-    assert app.title[0].value == "Painel do Paciente"
-    assert len(app.selectbox[0].options) == 3
+    assert app.title[0].value == "Prontuário"
+    html = " ".join(str(h.proto) for h in app.get("html"))
+    assert "NEWS2 parcial" in html
+    assert "Saturação (SpO2)" in html
+
+
+def test_mapa_de_leitos_mostra_um_cartao_por_leito(monkeypatch):
+    monkeypatch.setattr(demo, "montar", lambda p: internacao(p))
+    app = AppTest.from_function(_roteiro_tela, args=("mapa",), default_timeout=60).run()
+
+    assert not app.exception
+    html = " ".join(str(h.proto) for h in app.get("html"))
+    for leito in ("UTI-04", "UCO-12", "ENF-208"):
+        assert leito in html
+    assert any(m.label == "Leitos monitorados" and m.value == "3" for m in app.metric)
 
 
 requer_dados = pytest.mark.skipif(
@@ -284,27 +301,13 @@ def test_demo_02_dispara_efeito_adverso_e_demo_03_espera_o_video():
 
 
 def test_monitor_usa_o_ultimo_valor_medido_ate_agora():
-    from src.ui import painel
+    from src.ui.sinais import ultimos_sinais
 
     janela = janela_com_spo2_baixa()
     janela.iloc[121, janela.columns.get_loc("FC")] = float("nan")
     i = internacao(janela=janela)
 
-    no_minuto_121 = painel.ultimos_sinais(i, T0 + timedelta(minutes=121))
+    no_minuto_121 = ultimos_sinais(i, T0 + timedelta(minutes=121))
 
     assert no_minuto_121["FC"] == 80.0  # lacuna preenchida com o último valor
-    assert painel.ultimos_sinais(i, T0 + timedelta(minutes=120))["SpO2"] == 85.0
-
-
-def test_painel_mostra_monitor_com_news2(monkeypatch):
-    def roteiro():
-        from src.ui import painel
-
-        painel.pagina()
-
-    monkeypatch.setattr(demo, "montar", lambda p: internacao(p))
-    app = AppTest.from_function(roteiro, default_timeout=60).run()
-
-    rotulos = [m.label for m in app.metric]
-    assert any("NEWS2" in r for r in rotulos)
-    assert any("Saturação" in r for r in rotulos)
+    assert ultimos_sinais(i, T0 + timedelta(minutes=120))["SpO2"] == 85.0

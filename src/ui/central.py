@@ -30,6 +30,9 @@ from src.core.ficha import (
     escopo,
     rotulo_paciente,
 )
+from src.ui import cabecalho, estilo
+from src.ui import plantao_estado as plantao
+from src.ui.estilo import COR_SEVERIDADE, e
 
 RAIZ = Path(__file__).resolve().parents[2]
 
@@ -46,6 +49,7 @@ ESCOPOS = {
     "todos": "Todos",
 }
 SEGUNDOS_ATUALIZACAO = 5
+POR_PAGINA = 15
 
 # Rótulos das chaves de Evidência; o que não está aqui aparece com o nome da chave.
 _CAMPOS: dict[str, str] = {
@@ -260,8 +264,8 @@ def _detalhe(
         st.markdown(f"**{alerta.descricao}**")
         ficha = fichas.get(alerta.paciente_id)
         paciente = rotulo_paciente(alerta.paciente_id, fichas)
-        if ficha is not None and ficha.identificacao:
-            paciente = f"{paciente} ({ficha.identificacao})"
+        if ficha is not None and ficha.idade:
+            paciente = f"{paciente} · {ficha.idade} anos · {ficha.sexo}"
         st.caption(
             f"{paciente} · {ROTULO_ORIGEM[alerta.origem]} · "
             f"{alerta.detectado_em:%d/%m/%Y %H:%M} · **{ROTULO_STATUS[alerta.status]}**"
@@ -298,51 +302,45 @@ def _indicadores(alertas: list[Alerta]) -> None:
 
 
 def _filtros(todos: list[Alerta], fichas: dict[str, Ficha]) -> dict[str, Any]:
-    with st.sidebar:
-        st.header("Plantão")
-        responsavel = st.text_input(
-            "Plantonista",
-            placeholder="ex.: enf. Ana",
-            key="responsavel",
-            help="Quem reconhece os Alertas nesta sessão.",
-        )
-        atualizar = st.toggle(
-            f"Atualizar a cada {SEGUNDOS_ATUALIZACAO} s",
-            key="central_auto",
-            help="Útil com o replay do Painel do Paciente rodando em outra aba.",
-        )
-        st.header("Filtros")
-        recorte = st.radio(
-            "Pacientes",
-            list(ESCOPOS),
-            format_func=ESCOPOS.get,
-            key="central_escopo",
-        )
-        do_recorte = [
-            a for a in todos if recorte == "todos" or escopo(a.paciente_id, fichas) == recorte
-        ]
-        status = st.multiselect(
-            "Status",
-            list(Status),
-            default=[Status.NOVO, Status.RECONHECIDO],
-            format_func=ROTULO_STATUS.get,
-            key="central_status",
-        )
-        severidades = st.multiselect(
-            "Severidade", list(Severidade), format_func=ROTULO_SEVERIDADE.get, key="central_sev"
-        )
-        origens = st.multiselect(
-            "Origem", list(Origem), format_func=ROTULO_ORIGEM.get, key="central_origem"
-        )
-        pacientes = st.multiselect(
-            "Paciente",
-            sorted({a.paciente_id for a in do_recorte}),
-            format_func=lambda p: rotulo_paciente(p, fichas),
-            key="central_paciente",
-        )
+    """Barra de filtros acima da fila (a barra lateral é do plantão: plantonista e relógio)."""
+    recorte_col, status_col, sev_col, origem_col, paciente_col = st.columns([2.2, 2, 2, 2, 2])
+    recorte = recorte_col.selectbox(
+        "Pacientes", list(ESCOPOS), format_func=ESCOPOS.get, key="central_escopo"
+    )
+    do_recorte = [
+        a for a in todos if recorte == "todos" or escopo(a.paciente_id, fichas) == recorte
+    ]
+    status = status_col.multiselect(
+        "Status",
+        list(Status),
+        default=[Status.NOVO, Status.RECONHECIDO],
+        format_func=ROTULO_STATUS.get,
+        key="central_status",
+        placeholder="todos",
+    )
+    severidades = sev_col.multiselect(
+        "Severidade",
+        list(Severidade),
+        format_func=ROTULO_SEVERIDADE.get,
+        key="central_sev",
+        placeholder="todas",
+    )
+    origens = origem_col.multiselect(
+        "Origem",
+        list(Origem),
+        format_func=ROTULO_ORIGEM.get,
+        key="central_origem",
+        placeholder="todas",
+    )
+    pacientes = paciente_col.multiselect(
+        "Paciente",
+        sorted({a.paciente_id for a in do_recorte}),
+        format_func=lambda p: rotulo_paciente(p, fichas),
+        key="central_paciente",
+        placeholder="todos",
+    )
     return {
-        "responsavel": responsavel,
-        "atualizar": atualizar,
+        "responsavel": st.session_state.get("responsavel") or "",
         "ids_recorte": {a.paciente_id for a in do_recorte},
         "status": status,
         "severidades": severidades,
@@ -351,8 +349,27 @@ def _filtros(todos: list[Alerta], fichas: dict[str, Ficha]) -> dict[str, Any]:
     }
 
 
+def _cartao(alerta: Alerta, fichas: dict[str, Ficha], aberto: bool) -> str:
+    paciente = rotulo_paciente(alerta.paciente_id, fichas)
+    borda = "box-shadow:0 0 0 2px #0b6e99;" if aberto else ""
+    return f"""<div class="alerta-cartao" style="--cor:{COR_SEVERIDADE[alerta.severidade]};{borda}">
+      <div class="linha1">
+        {estilo.chip(ROTULO_SEVERIDADE[alerta.severidade], COR_SEVERIDADE[alerta.severidade])}
+        <b>{alerta.detectado_em:%d/%m %H:%M}</b> · {e(paciente)}
+        {estilo.chip_claro(ROTULO_ORIGEM[alerta.origem])}
+        {estilo.chip_claro(ROTULO_STATUS[alerta.status])}
+      </div>
+      <div class="desc">{e(alerta.descricao)}</div></div>"""
+
+
 def _fila(conn: sqlite3.Connection, filtros: dict[str, Any], fichas: dict[str, Ficha]) -> None:
-    no_recorte = db.listar(conn, paciente_id=filtros["pacientes"] or filtros["ids_recorte"])
+    agora = plantao.agora()
+    no_recorte = [
+        a
+        for a in db.listar(conn, paciente_id=filtros["pacientes"] or filtros["ids_recorte"])
+        # Paciente internado segue o relógio do plantão: o que ainda não aconteceu não aparece.
+        if a.paciente_id not in fichas or a.detectado_em <= agora
+    ]
     _indicadores(no_recorte)
     alertas = [
         a
@@ -362,47 +379,69 @@ def _fila(conn: sqlite3.Connection, filtros: dict[str, Any], fichas: dict[str, F
         and (not filtros["origens"] or a.origem in filtros["origens"])
     ]
 
-    lista, detalhe = st.columns([3, 2], gap="large")
+    lista, detalhe = st.columns([1.15, 1], gap="large")
+    aberto = st.session_state.get("alerta_aberto")
     with lista:
-        st.caption(f"{len(alertas)} Alerta(s) na fila · marque a caixa à esquerda para abrir")
+        st.markdown(
+            f'<div class="secao">Fila · {len(alertas)} Alerta(s), mais graves primeiro</div>',
+            unsafe_allow_html=True,
+        )
         if not alertas:
-            st.success("Nenhum Alerta pendente para os filtros escolhidos.")
-        else:
-            selecao = st.dataframe(
-                tabela_alertas(alertas, fichas),
-                hide_index=True,
-                width="stretch",
-                height=min(38 * len(alertas) + 40, 560),
-                on_select="rerun",
-                selection_mode="single-row",
-                key="tabela_alertas",
-                column_config={"Descrição": st.column_config.TextColumn(width="large")},
-            )
-            linhas = selecao.selection.rows
-            if linhas and linhas[0] < len(alertas):
-                st.session_state["alerta_aberto"] = alertas[linhas[0]].id
+            st.success("Nenhum Alerta para os filtros escolhidos.")
+        limite = st.session_state.get("central_limite", POR_PAGINA)
+        with st.container(height=640, border=False):
+            for alerta in alertas[:limite]:
+                cartao, abrir, reconhecer = st.columns([7, 1, 1], vertical_alignment="center")
+                cartao.html(_cartao(alerta, fichas, alerta.id == aberto))
+                if abrir.button(
+                    "", icon=":material/open_in_new:", key=f"abrir_{alerta.id}", help="Abrir"
+                ):
+                    st.session_state["alerta_aberto"] = alerta.id
+                    st.rerun(scope="fragment")
+                if alerta.status is Status.NOVO and reconhecer.button(
+                    "", icon=":material/back_hand:", key=f"rec_{alerta.id}", help="Reconhecer"
+                ):
+                    _reconhecer(conn, alerta, filtros["responsavel"])
+            if len(alertas) > limite:
+                if st.button(f"Mostrar mais ({len(alertas) - limite} restantes)"):
+                    st.session_state["central_limite"] = limite + POR_PAGINA
+                    st.rerun(scope="fragment")
     with detalhe:
-        aberto = st.session_state.get("alerta_aberto")
         # relê do banco para refletir o status mais recente
         escolhido = db.obter(conn, aberto) if aberto else None
         if escolhido is None:
-            st.info("Selecione um Alerta na fila para ver a Evidência e agir.")
+            st.info("Abra um Alerta da fila para ver a Evidência e agir.")
         else:
-            _detalhe(conn, escolhido, filtros["responsavel"], fichas)
+            with st.container(height=640, border=False):
+                _detalhe(conn, escolhido, filtros["responsavel"], fichas)
 
 
-def pagina(conn: sqlite3.Connection) -> None:
+def _reconhecer(conn: sqlite3.Connection, alerta: Alerta, responsavel: str) -> None:
+    if not responsavel.strip():
+        st.toast("Informe o plantonista na barra lateral para reconhecer.", icon="👤")
+        return
+    try:
+        db.reconhecer(conn, alerta.id, por=responsavel.strip())
+    except TransicaoInvalida as erro:
+        st.toast(str(erro))
+        return
+    st.rerun()
+
+
+def _tela(conn: sqlite3.Connection) -> None:
+    cabecalho.barra()
     st.title("Central de Alertas")
-    st.caption(
-        "Fila única de Alertas da equipe: Sinais Vitais, prescrições, Consultas, vídeo e "
-        "Alertas Compostos da Fusão."
-    )
-
+    pedido = st.query_params.get("alerta")
+    if pedido:  # veio do Prontuário
+        st.session_state.update(alerta_aberto=pedido, central_escopo="todos")
+        del st.query_params["alerta"]
     if not db.listar(conn):
         mock.popular_mock(conn)
         st.info("Banco vazio: Alertas mock carregados (rode `scripts/run_batch.py`).")
-
     fichas = _fichas()
     filtros = _filtros(db.listar(conn), fichas)
-    intervalo = SEGUNDOS_ATUALIZACAO if filtros["atualizar"] else None
-    st.fragment(_fila, run_every=intervalo)(conn, filtros, fichas)
+    _fila(conn, filtros, fichas)
+
+
+def pagina(conn: sqlite3.Connection) -> None:
+    st.fragment(_tela, run_every=plantao.intervalo() or SEGUNDOS_ATUALIZACAO)(conn)

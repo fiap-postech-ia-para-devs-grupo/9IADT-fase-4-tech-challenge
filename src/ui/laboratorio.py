@@ -32,6 +32,8 @@ from src.analyzers.video.lab import SAIDA_PADRAO, ResultadoVideo, analyze_video
 from src.core import db, demo
 from src.core.alerts import Alerta
 from src.core.ficha import AVULSO
+from src.ui import cabecalho
+from src.ui import plantao_estado as plantao
 from src.ui.central import ICONE_SEVERIDADE, renderizar_evidencia
 
 RAIZ = Path(__file__).resolve().parents[2]
@@ -65,9 +67,8 @@ FONTES_VIDEO = ("Clipe de exemplo", "Enviar arquivo", "Câmera ao vivo")
 FONTES_AUDIO = ("Enviar arquivo", "Gravar pelo microfone", "Áudio de exemplo")
 
 
-@st.cache_resource
 def _conexao() -> sqlite3.Connection:
-    return db.conectar(check_same_thread=False)
+    return plantao.conexao()
 
 
 @st.cache_resource(show_spinner="Carregando o YOLOv8n-pose...")
@@ -474,6 +475,7 @@ def _secao_audio() -> None:
 
 
 def pagina() -> None:
+    cabecalho.barra(avancar=False)  # o relógio não anda durante uma análise sob demanda
     st.title("Laboratório de Análise")
     st.caption(
         "Análise sob demanda de vídeo (YOLOv8-pose) e áudio (Azure). Os Alertas vão para a "
