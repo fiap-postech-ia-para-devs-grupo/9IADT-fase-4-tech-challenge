@@ -72,7 +72,8 @@ CLASSES_FALA = frozenset(
         "Conversation",
     }
 )
-LIMIAR_FALA = 0.05  # basta um indício de voz para o Whisper ouvir a janela
+LIMIAR_FALA = 0.15  # fala clara (Speech...) para o Whisper ouvir a janela
+LIMIAR_VOZ_DOR = 0.05  # ou um indício de grito/gemido ("ai!", "socorro!" gritado)
 RMS_SILENCIO = 0.0003  # abaixo disso a janela nem é processada (detecção de atividade)
 RMS_ALVO = 0.1  # ganho no máximo útil: microfone baixo não vira 'Door'
 # Radicais, não palavras inteiras: o Whisper tiny erra a grafia de fala gritada ou cortada
@@ -156,7 +157,12 @@ class Classificador:
             return ""
         saida = self._fala(
             {"raw": audio.astype(np.float32), "sampling_rate": TAXA},
-            generate_kwargs={"language": "portuguese", "task": "transcribe", "max_new_tokens": 32},
+            generate_kwargs={
+                "language": "portuguese",
+                "task": "transcribe",
+                "max_new_tokens": 20,
+                "no_repeat_ngram_size": 3,
+            },
         )
         return str(saida.get("text", "")).strip()
 
@@ -176,8 +182,11 @@ class Classificador:
 
     @staticmethod
     def _precisa_fala(top: list[tuple[str, float]]) -> bool:
-        voz = CLASSES_FALA | EVENTOS["grito"][0] | EVENTOS["gemido"][0]
-        return sum(p for nome, p in top if nome in voz) >= LIMIAR_FALA
+        dor = EVENTOS["grito"][0] | EVENTOS["gemido"][0]
+        return (
+            sum(p for nome, p in top if nome in CLASSES_FALA) >= LIMIAR_FALA
+            or sum(p for nome, p in top if nome in dor) >= LIMIAR_VOZ_DOR
+        )
 
 
 def _sem_acento(texto: str) -> str:

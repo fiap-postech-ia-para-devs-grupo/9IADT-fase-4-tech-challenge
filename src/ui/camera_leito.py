@@ -212,7 +212,9 @@ def ao_vivo(paciente_id: str) -> None:
         elif estado.ativo:
             st.caption("Abrindo a câmera e carregando o modelo...")
         situacao = (
-            "🟢 vigiando"
+            "🚨 Queda detectada · câmera parada no quadro da Queda (▶ Iniciar volta a vigiar)"
+            if getattr(estado, "parada_por_queda", False)
+            else "🟢 vigiando"
             if estado.ativo
             else "🎬 gravação terminou"
             if getattr(estado, "fim_da_gravacao", False)
@@ -228,7 +230,7 @@ def ao_vivo(paciente_id: str) -> None:
             st.progress(
                 ponto.score / 100,
                 text=f"Score de Queda {ponto.score}/100 · alerta em ≥ {fall.SCORE_QUEDA} com "
-                f"ângulo ≥ {fall.ANGULO_QUEDA:.0f}° por {fall.PERMANENCIA_DEITADO:.1f} s",
+                f"ângulo ≥ {fall.ANGULO_QUEDA:.0f}°",
             )
             a, v, d = ponto.componentes
             st.caption(

@@ -98,22 +98,24 @@ def test_camera_proxima_queda_de_lado_pelo_eixo_da_cabeca():
 
 
 def test_camera_proxima_curvar_para_frente_nao_e_queda():
-    angulos = [5] * 10 + [60, 120] + [160] * 15  # nariz abaixo dos ombros: se curvou
+    angulos = [5] * 10 + [150] + [165] * 15  # nariz bem abaixo dos ombros: se curvou
     seq = vs.sequencia([_cabeca(a, i) for i, a in enumerate(angulos)])
 
     assert fall.detectar_proxima(seq) == []
 
 
-def test_camera_proxima_inclinar_e_voltar_logo_nao_e_queda():
-    angulos = [5] * 10 + [70] * 5 + [10] * 15  # inclinou meio segundo e voltou
-    seq = vs.sequencia([_cabeca(a, i) for i, a in enumerate(angulos)])
+def test_camera_proxima_queda_vale_no_primeiro_quadro_e_nao_e_anulada():
+    angulos = [5] * 10 + [85] + [10] * 15  # cruzou o limite e logo voltou a ficar ereto
+    seq = vs.sequencia([_cabeca(a, i, descida=0 if i != 10 else 40) for i, a in enumerate(angulos)])
 
-    assert fall.detectar_proxima(seq) == []
+    quedas = fall.detectar_proxima(seq)
+
+    assert len(quedas) == 1
+    assert quedas[0].t == pytest.approx(1.0)
 
 
-def test_camera_proxima_deitar_devagar_nao_e_queda():
-    passos = int(8 * vs.FPS)  # 8 s de sentado a deitado, como quem se deita na cama
-    angulos = [5] * 10 + [5 + 87 * k / passos for k in range(passos)] + [92] * 20
+def test_camera_proxima_inclinar_pouco_nao_e_queda():
+    angulos = [5] * 10 + [45] * 15  # se recostou na cadeira
     seq = vs.sequencia([_cabeca(a, i) for i, a in enumerate(angulos)])
 
     assert fall.detectar_proxima(seq) == []
