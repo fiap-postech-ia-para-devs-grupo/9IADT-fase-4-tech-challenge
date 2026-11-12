@@ -50,6 +50,14 @@ _Avoid_: problema de voz, sintoma vocal
 Medida fisiológica periódica de um paciente internado: frequência cardíaca, frequência respiratória, SpO2 ou pressão arterial.
 _Avoid_: métrica, sensor, vital
 
+**Evento Sonoro**:
+Anomalia de áudio captada pelo microfone do leito: alarme de equipamento, grito, gemido de dor ou o paciente chamando a equipe. Diferente da Alteração Vocal (voz da Consulta) e do Termo Crítico (conteúdo da Consulta).
+_Avoid_: ruído, barulho, som suspeito
+
+**NEWS2 parcial**:
+Escore de alerta precoce (NEWS2) calculado só com FR, SpO2, PAS e FC; é um piso do NEWS2 real. Sua piora (subida de 2+ pontos em até 1 h chegando a 5+) gera Alerta.
+_Avoid_: score, índice de risco
+
 **Monitoramento Contínuo**:
 Análise dos Sinais Vitais janela a janela, à medida que chegam, em vez de todos de uma vez ao final.
 _Avoid_: tempo real, streaming, batch
@@ -57,6 +65,28 @@ _Avoid_: tempo real, streaming, batch
 **Mudança Terapêutica Atípica**:
 Anomalia na evolução das prescrições de um paciente (salto de dose, início de droga de alta vigilância, trocas excessivas, duplicidade terapêutica).
 _Avoid_: erro de prescrição, alteração de medicação
+
+### Unidade
+
+**Leito**:
+Lugar da unidade de internação onde um paciente é monitorado; livre ou ocupado.
+_Avoid_: quarto, cama, vaga
+
+**Admissão**:
+Entrada de um paciente num Leito, ligando as fontes de monitoramento (monitor, prescrição, Consulta, câmera e microfone).
+_Avoid_: cadastro de paciente, check-in
+
+**Monitoramento do Leito**:
+Vigilância contínua pela câmera (Queda) e pelo microfone (Evento Sonoro) do Leito; os dispositivos são simulados com webcam/microfone do computador ou gravações.
+_Avoid_: câmera ao vivo, streaming
+
+**Plantonista**:
+Profissional da equipe que assume o plantão na sessão; reconhece Alertas e assina a Evolução.
+_Avoid_: usuário, operador, responsável
+
+**Evolução**:
+Registro clínico no prontuário do paciente: anotação livre ou a conduta registrada ao reconhecer ou resolver um Alerta.
+_Avoid_: nota, comentário, log
 
 ### Fusão
 
@@ -79,8 +109,24 @@ Registro gerado a partir de uma Anomalia e endereçado à equipe médica, com pa
 _Avoid_: notificação, aviso, alarme
 
 **Central de Alertas**:
-O único canal pelo qual a equipe médica vê e trata Alertas.
+O único canal pelo qual a equipe médica vê e trata Alertas (o Acionamento só avisa).
 _Avoid_: dashboard, fila, inbox
+
+**Luz de Chamada**:
+Sinal visual de que um Leito tem chamado aberto: Alerta crítico, Queda, piora do NEWS2, grito ou chamado sem Reconhecimento. Há uma luz por Leito e a sirene da unidade na barra superior.
+_Avoid_: alarme, notificação
+
+**Acionamento**:
+Aviso ao profissional de plantão por WhatsApp quando a Luz de Chamada acende; um por Leito até o Reconhecimento.
+_Avoid_: notificação push, mensagem, alerta externo
+
+**Escalonamento**:
+Acionamento da equipe médica quando um chamado fica 5 minutos (do plantão) sem Reconhecimento.
+_Avoid_: reenvio, insistência
+
+**Episódio**:
+Grupo de Alertas repetidos do mesmo paciente, regra e sinal a menos de 30 minutos um do outro, mostrado como um só cartão na Central.
+_Avoid_: duplicado, cluster
 
 **Reconhecimento**:
 Ato de um membro da equipe médica declarar que viu um Alerta e assumiu o tratamento dele.
