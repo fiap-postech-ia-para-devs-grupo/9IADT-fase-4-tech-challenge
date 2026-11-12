@@ -43,6 +43,7 @@ class Estado:
     fps: float = 0.0
     ultimo_quadro: np.ndarray | None = None
     quedas: list[str] = field(default_factory=list)  # ids dos Alertas gerados
+    fim_da_gravacao: bool = False
 
 
 class Vigilancia:
@@ -121,12 +122,8 @@ class Vigilancia:
                 if not ok:
                     if self.ao_vivo:
                         raise RuntimeError("A câmera parou de enviar imagem.")
-                    captura.set(cv2.CAP_PROP_POS_FRAMES, 0)  # clipe: recomeça, como um loop
-                    janela.clear()
-                    vistas.clear()
-                    inicio = time.perf_counter()
-                    indice = 0
-                    continue
+                    self.estado.fim_da_gravacao = True  # clipe: toca uma vez, como o evento real
+                    return
                 if self.recorte is not None:
                     x0, y0, x1, y1 = self.recorte
                     quadro = quadro[y0:y1, x0:x1]
@@ -189,7 +186,9 @@ class Vigilancia:
         )
         conn = db.conectar(self.caminho_db)  # conexão própria: esta é outra thread
         try:
-            db.salvar(conn, alerta)
+            # Uma Queda aberta por leito: enquanto não for reconhecida, não abre outra.
+            if not db.listar(conn, paciente_id=self.paciente_id, status="novo", origem="video"):
+                db.salvar(conn, alerta)
+                self.estado.quedas.append(alerta.id)
         finally:
             conn.close()
-        self.estado.quedas.append(alerta.id)

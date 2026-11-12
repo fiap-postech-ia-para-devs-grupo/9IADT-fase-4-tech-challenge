@@ -118,7 +118,7 @@ def _seletor_paciente(chave: str, minuto_padrao: str) -> tuple[str, datetime | N
         value=int(padrao),
         step=5,
         key=f"minuto_{chave}_{escolhido}",
-        help=f"Internação começa em {paciente.internacao_inicio:%d/%m %H:%M}.",
+        help=f"Internação começa em {paciente.internacao_inicio:%H:%M}.",
     )
     inicio = paciente.em(minuto)
     coluna_minuto.caption(f"Gravação às {inicio:%H:%M} da internação.")

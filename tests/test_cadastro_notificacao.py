@@ -93,9 +93,26 @@ def test_chamada_aciona_o_plantao_e_escalona_uma_vez_so(conn):
     )
 
     assert [(n.nivel, n.status) for n in primeira] == [(1, "simulado")]
-    assert [n.nivel for n in depois] == [2]  # sem médico com WhatsApp: escala para quem tem
+    assert depois == []  # sem médico com WhatsApp: ninguém recebe a segunda mensagem
     assert de_novo == []
-    assert len(notificacao.historico(conn)) == 2
+    assert len(notificacao.historico(conn)) == 1
+
+
+def test_escalonamento_vai_para_o_medico(conn):
+    for p in cadastro.equipe(conn):
+        if p.id in {"enf-ana", "med-bruno"}:
+            telefone = "11999990000" if p.id == "enf-ana" else "11988880000"
+            cadastro.salvar_profissional(
+                conn, cadastro.Profissional(p.id, p.nome, p.funcao, "", telefone, True)
+            )
+    critico = _critico()
+
+    notificacao.acionar(conn, [critico], critico.detectado_em, {}, SIMULADO)
+    escalado = notificacao.acionar(
+        conn, [critico], critico.detectado_em + timedelta(minutes=6), {}, SIMULADO
+    )
+
+    assert [(n.nivel, n.profissional_id) for n in escalado] == [(2, "med-bruno")]
 
 
 def test_um_disparo_por_leito_ate_o_reconhecimento(conn):

@@ -152,9 +152,8 @@ def destinatarios(
     equipe: Iterable[cadastro.Profissional], nivel: int
 ) -> list[cadastro.Profissional]:
     com_numero = [p for p in equipe if p.recebe_alertas and numero_valido(p.telefone)]
-    if nivel == 2:
-        medicos = [p for p in com_numero if p.funcao == "Medicina"]
-        return medicos or com_numero
+    if nivel == 2:  # escala só para a equipe médica; quem já foi acionado não recebe de novo
+        return [p for p in com_numero if p.funcao == "Medicina"]
     return com_numero
 
 

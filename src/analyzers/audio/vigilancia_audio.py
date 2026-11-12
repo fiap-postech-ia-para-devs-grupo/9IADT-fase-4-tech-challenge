@@ -25,8 +25,8 @@ from src.core import db
 
 _RAIZ = Path(__file__).resolve().parents[3]
 PASTA_EVIDENCIA = _RAIZ / "results" / "audio" / "leito"
-JANELA_S = 3.0
-PASSO_S = 2.0
+JANELA_S = 5.0  # uma frase inteira para o Whisper reconhecer o chamado
+PASSO_S = 2.5
 INTERVALO_REPETICAO_S = 30.0
 MICROFONE = "microfone"
 
@@ -162,6 +162,10 @@ class VigilanciaAudio:
         )
         conn = db.conectar(self.caminho_db)  # conexão própria: esta é outra thread
         try:
+            abertos = db.listar(conn, paciente_id=self.paciente_id, status="novo", origem="audio")
+            # Um Alerta aberto por tipo de som por leito, até o Reconhecimento.
+            if any(a.evidencia.get("evento") == evento.evento for a in abertos):
+                return
             db.salvar(conn, alerta)
         finally:
             conn.close()

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import sqlite3
 import threading
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 import streamlit as st
 
@@ -214,7 +214,7 @@ def controles() -> None:
     )
     inicio, fim, instante = inicio_plantao(), fim_plantao(), agora()
     st.caption(
-        f"Turno simulado: **{inicio:%d/%m %H:%M} → {fim:%H:%M}**  \n"
+        f"Plantão de hoje ({date.today():%d/%m}): **{inicio:%H:%M} → {fim:%H:%M}**  \n"
         f"Agora: **{instante:%H:%M}** ({minuto() // 60}h{minuto() % 60:02d} de "
         f"{total // 60}h{total % 60:02d})"
     )

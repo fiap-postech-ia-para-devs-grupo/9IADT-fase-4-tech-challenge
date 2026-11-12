@@ -11,6 +11,8 @@ leito tem a sua luz no Mapa de Leitos e no Prontuário.
 
 from __future__ import annotations
 
+from datetime import date
+
 import streamlit as st
 
 from src.core import db
@@ -57,9 +59,9 @@ def barra(avancar: bool = True) -> None:
           <span class="item">Unidade de Internação · {len(internados)} leitos</span>
           <span class="item">👤 {e(plantonista)}</span>
           <span class="direita">
-            <span class="item">Plantão {plantao.inicio_plantao():%H:%M} → {fim:%H:%M}
-              · {estado}</span>
-            <span class="relogio" title="Hora simulada do plantão">🕒 {agora:%d/%m %H:%M}</span>
+            <span class="item">Plantão de hoje ({date.today():%d/%m}) ·
+              {plantao.inicio_plantao():%H:%M} → {fim:%H:%M} · {estado}</span>
+            <span class="relogio" title="Hora do plantão (replay acelerado)">🕒 {agora:%H:%M}</span>
             {_sirene_html(len(chamadas), altos)}
           </span>
         </div>

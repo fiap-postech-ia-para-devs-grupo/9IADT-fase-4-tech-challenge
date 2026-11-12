@@ -45,7 +45,7 @@ def faixa_identificacao(
             ficha.sexo or "",
             ficha.admissao or "",
         ]
-    dados.append(f"internado desde {paciente.internacao_inicio:%d/%m %H:%M}")
+    dados.append(f"internado desde {paciente.internacao_inicio:%H:%M}")
     detalhes = " · ".join(e(d) for d in dados if d)
     nome = ficha.nome if ficha else paciente.nome
     cor = COR_RISCO[escore.risco]
@@ -134,7 +134,7 @@ def _medicacoes(internacao: Internacao, agora: datetime) -> None:
                 )
             ],
             "Via": ativas["route"].fillna("—"),
-            "Início": ativas["starttime"].dt.strftime("%d/%m %H:%M"),
+            "Início": ativas["starttime"].dt.strftime("%H:%M"),
         }
     ).sort_values("Vigilância", ascending=False)
     st.caption(
@@ -242,7 +242,7 @@ def _evolucao(paciente: PacienteDemo) -> None:
     for registro in registros:
         st.html(
             f"""<div class="alerta-cartao" style="--cor:#0b6e99">
-              <div class="linha1">{icones.get(registro.tipo, "📝")} {registro.criado_em:%d/%m %H:%M}
+              <div class="linha1">{icones.get(registro.tipo, "📝")} {registro.criado_em:%H:%M}
                 · {e(registro.autor)} {estilo.chip_claro(registro.tipo)}</div>
               <div class="desc">{e(registro.texto)}</div></div>"""
         )

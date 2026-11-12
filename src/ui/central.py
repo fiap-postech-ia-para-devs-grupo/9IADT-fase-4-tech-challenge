@@ -135,7 +135,7 @@ def tabela_alertas(alertas: list[Alerta], fichas: dict[str, Ficha] | None = None
         [
             {
                 "Severidade": f"{ICONE_SEVERIDADE[a.severidade]} {ROTULO_SEVERIDADE[a.severidade]}",
-                "Horário": a.detectado_em.strftime("%d/%m %H:%M"),
+                "Horário": a.detectado_em.strftime("%H:%M"),
                 "Paciente": rotulo_paciente(a.paciente_id, fichas),
                 "Origem": ROTULO_ORIGEM[a.origem],
                 "Tipo": ROTULO_TIPO[a.tipo],
@@ -283,7 +283,7 @@ def _detalhe(
             paciente = f"{paciente} · {ficha.idade} anos · {ficha.sexo}"
         st.caption(
             f"{paciente} · {ROTULO_ORIGEM[alerta.origem]} · "
-            f"{alerta.detectado_em:%d/%m/%Y %H:%M} · **{ROTULO_STATUS[alerta.status]}**"
+            f"{alerta.detectado_em:%H:%M} · **{ROTULO_STATUS[alerta.status]}**"
         )
         if alerta.reconhecido_por and alerta.reconhecido_em:
             st.caption(
@@ -386,7 +386,7 @@ def _cartao(
     return f"""<div class="alerta-cartao" style="--cor:{COR_SEVERIDADE[alerta.severidade]};{borda}">
       <div class="linha1">
         {estilo.chip(ROTULO_SEVERIDADE[alerta.severidade], COR_SEVERIDADE[alerta.severidade])}
-        <b>{alerta.detectado_em:%d/%m %H:%M}</b> · {e(paciente)}
+        <b>{alerta.detectado_em:%H:%M}</b> · {e(paciente)}
         {estilo.chip_claro(ROTULO_ORIGEM[alerta.origem])}
         {estilo.chip_claro(ROTULO_STATUS[alerta.status])} {extras}
       </div>

@@ -73,8 +73,10 @@ CLASSES_FALA = frozenset(
     }
 )
 LIMIAR_FALA = 0.30
+# Radicais, não palavras inteiras: o Whisper tiny erra a grafia de fala gritada ou cortada
+# ("infirmeira", "socorr..."), e o que importa é o pedido de ajuda.
 PALAVRAS_CHAMADO = re.compile(
-    r"\b(enfermeir[oa]s?|socorro|ajuda|doutor[a]?|medic[oa]|me ajud\w*|help|nurse|doctor)\b"
+    r"(enferm|infirm|socorr|ajud|doutor|medic|chama a|alguem|help|nurse|doctor)"
 )
 
 

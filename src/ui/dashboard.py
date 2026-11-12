@@ -7,7 +7,7 @@ do turno, NEWS2 de cada leito, tempo até o Reconhecimento e a equipe de plantã
 from __future__ import annotations
 
 from collections import Counter
-from datetime import datetime
+from datetime import date, datetime
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -172,7 +172,7 @@ def _equipe() -> None:
     with st.container(border=True):
         st.markdown(f"**👤 Plantonista:** {plantonista}")
         st.markdown(
-            f"**🕒 Turno:** {plantao.inicio_plantao():%d/%m %H:%M} → "
+            f"**🕒 Turno:** hoje ({date.today():%d/%m}), {plantao.inicio_plantao():%H:%M} → "
             f"{plantao.fim_plantao():%H:%M} · agora {plantao.agora():%H:%M}"
         )
         st.markdown(

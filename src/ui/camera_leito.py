@@ -190,7 +190,13 @@ def ao_vivo(paciente_id: str) -> None:
             st.image(estado.ultimo_quadro, channels="BGR", width="stretch")
         elif estado.ativo:
             st.caption("Abrindo a câmera e carregando o modelo...")
-        situacao = "🟢 vigiando" if estado.ativo else "⚪ parada"
+        situacao = (
+            "🟢 vigiando"
+            if estado.ativo
+            else "🎬 gravação terminou"
+            if estado.fim_da_gravacao
+            else "⚪ parada"
+        )
         st.caption(
             f"📷 {situacao} · {estado.fps:.1f} quadros/s · Quedas detectadas: {len(estado.quedas)}"
         )
