@@ -100,7 +100,7 @@ def _indicadores(alertas: list[Alerta], agora: datetime) -> None:
             "sem Reconhecimento",
             COR_SEVERIDADE[sev],
         )
-        for sev in ORDEM
+        for sev in ORDEM[:3]  # crítica, alta e média: baixa não pede ação no plantão
     ]
     st.html(
         '<div class="kpis">'
