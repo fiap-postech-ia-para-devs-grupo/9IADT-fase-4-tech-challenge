@@ -164,6 +164,8 @@ class Vigilancia:
                     keypoints, caixa = p.pessoa_principal(resultado)
                     ultima = Pose(indice, decorrido, keypoints, caixa)
                     self.estado.leitura = _leitura(ultima)
+                    if self.ao_vivo:
+                        self._registrar(ultima, quadro.shape[0])
                     janela.append((ultima, quadro))
                     while janela and decorrido - janela[0][0].t > JANELA_S:
                         janela.popleft()
@@ -178,6 +180,33 @@ class Vigilancia:
                 self.estado.fps = indice / max(time.perf_counter() - inicio, 1e-6)
         finally:
             captura.release()
+
+    def _registrar(self, pose: Pose, altura_quadro: int) -> None:
+        """Trilha quadro a quadro da webcam (para calibrar a Queda em câmera próxima)."""
+        destino = PASTA_EVIDENCIA / self.paciente_id / "trilha.csv"
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        ombros = fall._ombros(pose)
+        eixo = fall.eixo_cabeca(pose)
+        razao = None
+        if pose.caixa is not None:
+            x0, y0, x1, y1 = pose.caixa
+            razao = (x1 - x0) / max(y1 - y0, 1e-6)
+        nariz = None
+        if pose.keypoints is not None and pose.keypoints[p.NARIZ, 2] >= p.CONFIANCA_MINIMA:
+            nariz = float(pose.keypoints[p.NARIZ, 1]) / altura_quadro
+        linha = [
+            f"{pose.t:.2f}",
+            "" if eixo is None else f"{eixo:.0f}",
+            "" if ombros is None else f"{ombros[0] / altura_quadro:.3f}",
+            "" if ombros is None else f"{ombros[1] / altura_quadro:.3f}",
+            "" if nariz is None else f"{nariz:.3f}",
+            "" if razao is None else f"{razao:.2f}",
+        ]
+        novo = not destino.exists()
+        with open(destino, "a", encoding="utf-8") as arquivo:
+            if novo:
+                arquivo.write("t,eixo,ombro_y,ombro_largura,nariz_y,razao_caixa\n")
+            arquivo.write(",".join(linha) + "\n")
 
     def _procurar_queda(self, janela: deque, vistas: set[float]) -> None:
         sequencia = SequenciaPose(
