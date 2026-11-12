@@ -13,7 +13,7 @@ def test_laboratorio_abre_sem_erro_sem_upload():
     assert app.title[0].value == "Laboratório de Análise"
 
 
-def test_laboratorio_tem_abas_de_video_e_audio():
+def test_laboratorio_tem_fontes_de_video_e_faixa_prescrita():
     def roteiro():
         from src.ui import laboratorio
 
@@ -21,8 +21,14 @@ def test_laboratorio_tem_abas_de_video_e_audio():
 
     app = AppTest.from_function(roteiro, default_timeout=30).run()
 
-    assert [aba.label for aba in app.tabs] == ["🎥 Vídeo", "🎙️ Áudio"]
-    assert "Quarto: monitoramento de Queda" in app.selectbox(key="cenario_video").options
+    assert list(app.radio(key="fonte_video").options) == [
+        "Clipe de exemplo",
+        "Enviar arquivo",
+        "Câmera ao vivo",
+    ]
+    app.radio(key="fonte_video").set_value("Enviar arquivo").run()
+    assert "Quarto: monitoramento de Queda" in app.selectbox(key="cenario_upload").options
+    assert any("Faixa esperada" in e.label for e in app.expander)
 
 
 def test_laboratorio_mostra_resultado_de_video(tmp_path, monkeypatch):
@@ -52,4 +58,4 @@ def test_laboratorio_mostra_resultado_de_video(tmp_path, monkeypatch):
 
     assert not app.exception
     assert app.metric[1].value == "1"  # Desvios de Execução
-    assert any("Gravar Alertas" in b.label for b in app.button)
+    assert any("Enviar Alertas" in b.label for b in app.button)

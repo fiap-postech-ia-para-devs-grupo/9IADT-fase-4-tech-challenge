@@ -22,6 +22,7 @@ import pandas as pd
 from src.analyzers.video import pose
 from src.analyzers.video.lab import SAIDA_PADRAO, analyze_video
 from src.core import db, demo
+from src.core.alerts import Status
 
 RAIZ = Path(__file__).resolve().parents[1]
 PASTA_VIDEO = RAIZ / "data" / "video"
@@ -87,9 +88,12 @@ def main() -> int:
                 modelo=modelo,
             )
             for alerta in resultado.alertas:
-                if db.obter(conn, alerta.id) is None:
-                    db.salvar(conn, alerta)
+                gravado = db.obter(conn, alerta.id)
+                if gravado is None:
                     novos += 1
+                # Alerta ainda não tratado é atualizado (Evidência nova); tratado fica como está.
+                if gravado is None or gravado.status is Status.NOVO:
+                    db.salvar(conn, alerta)
             linha = avaliar(clipe, resultado)
             linhas.append(linha)
             print(

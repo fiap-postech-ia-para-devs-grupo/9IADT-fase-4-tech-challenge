@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import pytest
 
-from src.analyzers.video import lab
+from src.analyzers.video import lab, objetos
 from src.analyzers.video import pose as p
 from src.core import db
 from src.core.alerts import Origem, Severidade, Tipo
@@ -32,6 +32,7 @@ def sem_yolo(monkeypatch):
         return estado["sequencia"]
 
     monkeypatch.setattr(p, "estimar", estimar)
+    monkeypatch.setattr(objetos, "detectar", lambda frame, modelo=None: estado.get("objetos", []))
     return estado
 
 
@@ -111,3 +112,44 @@ def test_uploads_de_mesmo_nome_e_conteudo_diferente_tem_ids_diferentes(tmp_path)
 def test_exercicio_desconhecido(tmp_path):
     with pytest.raises(ValueError, match="exercício desconhecido"):
         lab.analyze_video(tmp_path / "x.mp4", exercicio="polichinelo")
+
+
+def test_queda_junto_a_area_critica_entra_na_evidencia(tmp_path, sem_yolo):
+    sem_yolo["sequencia"] = vs.de_caixas([EM_PE] * 10 + [NO_CHAO] * 12)
+    # caixa no chão: (100, 230, 260, 300); a cadeira encosta nela
+    sem_yolo["objetos"] = [objetos.Objeto("cadeira", 0.8, (255.0, 150.0, 320.0, 300.0))]
+    arquivo = _video(tmp_path / "quarto.avi", 22)
+
+    resultado = lab.analyze_video(arquivo, inicio=INICIO, saida=tmp_path / "results")
+
+    queda = resultado.alertas[0]
+    assert queda.evidencia["objetos_proximos"] == ["cadeira"]
+    assert queda.descricao.endswith("junto a cadeira")
+
+
+def test_parametros_prescritos_mudam_a_faixa_esperada(tmp_path, sem_yolo):
+    frames = _unipodal([14])
+    sem_yolo["sequencia"] = vs.de_keypoints(frames)
+    arquivo = _video(tmp_path / "sessao.avi", len(frames))
+    comum = {"exercicio": "agachamento_unipodal", "vista": "frontal", "saida": tmp_path / "r"}
+
+    padrao = lab.analyze_video(arquivo, **comum)
+    tolerante = lab.analyze_video(arquivo, parametros={"valgo_max": 20}, **comum)
+
+    assert len(padrao.desvios) == 1
+    assert tolerante.desvios == []
+    assert tolerante.exercicio is not None and tolerante.exercicio.valgo_max == 20
+
+
+def test_video_anotado_em_webm(tmp_path, sem_yolo):
+    frames = _unipodal([18])
+    sem_yolo["sequencia"] = vs.de_keypoints(frames)
+    arquivo = _video(tmp_path / "sessao.avi", len(frames))
+
+    resultado = lab.analyze_video(
+        arquivo, exercicio="agachamento_unipodal", saida=tmp_path / "r", video_anotado=True
+    )
+
+    assert resultado.video is not None
+    assert resultado.video.suffix == ".webm"
+    assert resultado.video.stat().st_size > 0

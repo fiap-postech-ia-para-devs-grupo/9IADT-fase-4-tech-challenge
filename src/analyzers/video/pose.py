@@ -122,7 +122,7 @@ def ler_frame(caminho: Path, indice: int, recorte: Recorte | None = None) -> np.
     return _recortar(frame, recorte)
 
 
-def _pessoa_principal(resultado: Any) -> tuple[np.ndarray | None, tuple | None]:
+def pessoa_principal(resultado: Any) -> tuple[np.ndarray | None, tuple | None]:
     """A pessoa de maior confiança; num quarto ou sessão há um paciente por clipe."""
     if resultado.keypoints is None or len(resultado.boxes) == 0:
         return None, None
@@ -160,7 +160,7 @@ def estimar(
         if indice % passo:
             continue
         resultado = modelo(frame, verbose=False, device="cpu")[0]
-        keypoints, caixa = _pessoa_principal(resultado)
+        keypoints, caixa = pessoa_principal(resultado)
         poses.append(Pose(indice, indice / fps, keypoints, caixa))
 
     return SequenciaPose(
