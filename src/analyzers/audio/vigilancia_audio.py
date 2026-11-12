@@ -39,6 +39,7 @@ class EstadoAudio:
     ultimas_classes: list[tuple[str, float]] = field(default_factory=list)
     eventos: list[tuple[datetime, str, str]] = field(default_factory=list)  # (quando, evento, id)
     janelas: int = 0
+    carregando: bool = False
 
 
 class VigilanciaAudio:
@@ -48,7 +49,7 @@ class VigilanciaAudio:
         fonte: str,  # MICROFONE ou caminho de arquivo de áudio
         *,
         relogio: datetime,
-        classificador: ambiente.Classificador,
+        classificador: ambiente.Classificador | None = None,
         caminho_db: Path = db.CAMINHO_PADRAO,
     ) -> None:
         self.paciente_id = paciente_id
@@ -78,6 +79,10 @@ class VigilanciaAudio:
 
     def _rodar(self) -> None:
         try:
+            if self.classificador is None:  # modelos carregando em segundo plano
+                self.estado.carregando = True
+                self.classificador = ambiente.classificador()
+                self.estado.carregando = False
             if self.fonte == MICROFONE:
                 self._laco(self._blocos_microfone())
             else:
@@ -134,8 +139,10 @@ class VigilanciaAudio:
             self.estado.nivel = float(np.sqrt(np.mean(audio**2)))
             self.estado.janelas += 1
             eventos = self.classificador.classificar(audio)
-            if self.estado.nivel >= 0.003:
-                self.estado.ultimas_classes = self.classificador.classes(audio, top=3)
+            if self.estado.nivel >= ambiente.RMS_SILENCIO:
+                ganho = ambiente.RMS_ALVO / max(self.estado.nivel, 1e-6)
+                normalizado = np.clip(audio * ganho, -1.0, 1.0)
+                self.estado.ultimas_classes = self.classificador.classes(normalizado, top=3)
             for evento in eventos:
                 agora = time.perf_counter()
                 if agora - ultimos.get(evento.evento, -1e9) < INTERVALO_REPETICAO_S:

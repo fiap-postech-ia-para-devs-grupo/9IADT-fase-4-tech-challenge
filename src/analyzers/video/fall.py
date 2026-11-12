@@ -117,3 +117,78 @@ def detectar(sequencia: SequenciaPose) -> list[Queda]:
             )
             caido = True
     return quedas
+
+
+# --- Câmera próxima (webcam): sem o corpo inteiro no quadro -----------------------------------
+#
+# Com a câmera perto do paciente, a caixa nunca é "em pé" (só aparece o tronco). O sinal
+# usado é o eixo ombros → nariz: vertical com a pessoa sentada ou em pé, horizontal com ela
+# deitada. Queda = eixo passa de até `EIXO_EM_PE` graus da vertical para pelo menos
+# `EIXO_DEITADO` graus em até `TRANSICAO_MAXIMA` s, e fica assim por `PERMANENCIA` s.
+
+EIXO_EM_PE = 30.0
+EIXO_DEITADO = 60.0
+# Acima disso o nariz está abaixo dos ombros: é a pessoa se curvando para a frente (pegar algo,
+# sentar), não deitada de lado; não conta como queda.
+EIXO_CURVADO = 120.0
+
+
+def eixo_cabeca(pose: Pose) -> float | None:
+    """Graus entre o vetor meio-dos-ombros → nariz e a vertical para cima (0 = em pé)."""
+    import math
+
+    from src.analyzers.video import pose as p
+
+    kp = pose.keypoints
+    if kp is None or min(kp[[p.NARIZ, p.OMBRO_ESQ, p.OMBRO_DIR], 2]) < p.CONFIANCA_MINIMA:
+        return None
+    ombros = (kp[p.OMBRO_ESQ, :2] + kp[p.OMBRO_DIR, :2]) / 2
+    dx, dy = kp[p.NARIZ, :2] - ombros
+    if dx == 0 and dy == 0:
+        return None
+    # dy < 0: nariz acima dos ombros (y da imagem cresce para baixo).
+    return math.degrees(math.atan2(abs(dx), -dy))
+
+
+def detectar_proxima(sequencia: SequenciaPose) -> list[Queda]:
+    """Quedas pelo eixo da cabeça, para câmera próxima; uma por vez, como em `detectar`."""
+    poses = [q for q in sequencia.poses if eixo_cabeca(q) is not None]
+    quedas: list[Queda] = []
+    ultimo_em_pe: Pose | None = None
+    caido = False
+    for i, pose in enumerate(poses):
+        eixo = eixo_cabeca(pose)
+        assert eixo is not None
+        if eixo <= EIXO_EM_PE:
+            ultimo_em_pe, caido = pose, False
+            continue
+        if caido or ultimo_em_pe is None or pose.t - ultimo_em_pe.t > TRANSICAO_MAXIMA:
+            continue
+        if not EIXO_DEITADO <= eixo <= EIXO_CURVADO:
+            continue
+        janela = [q for q in poses[i:] if q.t - pose.t <= PERMANENCIA]
+        if len(janela) < MIN_FRAMES_PERMANENCIA or janela[-1].t - pose.t < PERMANENCIA * 0.6:
+            continue
+        mediana = statistics.median(eixo_cabeca(q) or 0 for q in janela)
+        if not EIXO_DEITADO <= mediana <= EIXO_CURVADO:
+            continue
+        quedas.append(
+            Queda(
+                t=pose.t,
+                frame=pose.frame,
+                t_em_pe=ultimo_em_pe.t,
+                razao_caixa=_razao(pose) or 0.0,
+                altura_relativa=1.0,
+            )
+        )
+        caido = True
+    return quedas
+
+
+def detectar_todas(sequencia: SequenciaPose) -> list[Queda]:
+    """Critério do corpo inteiro e, sem ele, o da câmera próxima (sem contar a mesma duas vezes)."""
+    quedas = detectar(sequencia)
+    for queda in detectar_proxima(sequencia):
+        if all(abs(queda.t - q.t) > TRANSICAO_MAXIMA + PERMANENCIA for q in quedas):
+            quedas.append(queda)
+    return sorted(quedas, key=lambda q: q.t)

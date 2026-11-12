@@ -126,8 +126,11 @@ def tocando() -> bool:
 
 
 def intervalo() -> float | None:
-    """`run_every` dos fragmentos que acompanham o relógio."""
-    return SEGUNDOS_POR_QUADRO if tocando() else None
+    """`run_every` dos fragmentos que acompanham o relógio. Com câmera ou microfone do leito
+    ligados, as telas também se atualizam: uma Queda ou um grito acende a sirene na hora."""
+    from src.ui import camera_leito  # import tardio: camera_leito importa este módulo
+
+    return SEGUNDOS_POR_QUADRO if tocando() or camera_leito.algum_ativo() else None
 
 
 def avancar() -> None:

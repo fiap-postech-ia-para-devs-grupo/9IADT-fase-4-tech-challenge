@@ -32,7 +32,8 @@ from src.core import db
 _RAIZ = Path(__file__).resolve().parents[3]
 PASTA_EVIDENCIA = _RAIZ / "results" / "video" / "camera"
 JANELA_S = 8.0  # segundos de pose guardados para o detector de Queda
-PASSO = 2  # pose a cada N quadros
+PASSO = 2  # processamento parcial: pose a cada N quadros; todos os quadros vão para a tela
+TAMANHO_POSE = 320  # resolução da inferência ao vivo (o padrão 640 é ~3x mais lento em CPU)
 
 
 @dataclass
@@ -134,14 +135,18 @@ class Vigilancia:
                         time.sleep(atraso)
                     decorrido = indice / fps_fonte
                 if indice % PASSO == 0:
-                    resultado = modelo(quadro, verbose=False, device="cpu")[0]
+                    resultado = modelo(quadro, verbose=False, device="cpu", imgsz=TAMANHO_POSE)[0]
                     keypoints, caixa = p.pessoa_principal(resultado)
-                    pose = Pose(indice, decorrido, keypoints, caixa)
-                    janela.append((pose, quadro))
+                    ultima = Pose(indice, decorrido, keypoints, caixa)
+                    janela.append((ultima, quadro))
                     while janela and decorrido - janela[0][0].t > JANELA_S:
                         janela.popleft()
-                    self.estado.ultimo_quadro = p.anotar(quadro, pose)
                     self._procurar_queda(janela, vistas)
+                # Quadro intermediário: mostra a imagem nova com o último esqueleto (fluidez).
+                if janela:
+                    self.estado.ultimo_quadro = p.anotar(quadro, janela[-1][0])
+                else:
+                    self.estado.ultimo_quadro = quadro
                 indice += 1
                 self.estado.quadros = indice
                 self.estado.fps = indice / max(time.perf_counter() - inicio, 1e-6)
@@ -160,7 +165,9 @@ class Vigilancia:
             segundos_processamento=0.0,
             poses=[pose for pose, _ in janela],
         )
-        for queda in fall.detectar(sequencia):
+        # Webcam próxima não enquadra o corpo inteiro: soma o critério do eixo da cabeça.
+        detector = fall.detectar_todas if self.ao_vivo else fall.detectar
+        for queda in detector(sequencia):
             # A mesma Queda reaparece enquanto está na janela: conta uma vez.
             if any(abs(queda.t - t) < JANELA_S for t in vistas):
                 continue

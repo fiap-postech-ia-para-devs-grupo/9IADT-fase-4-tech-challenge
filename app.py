@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import streamlit as st
 
+from src.analyzers.audio import ambiente
 from src.core import cadastro
 from src.ui import (
     administracao,
@@ -37,6 +38,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 estilo.aplicar()
+ambiente.pre_carregar()  # modelos de som em segundo plano: o microfone do leito liga sem travar
 
 
 def tela_central() -> None:

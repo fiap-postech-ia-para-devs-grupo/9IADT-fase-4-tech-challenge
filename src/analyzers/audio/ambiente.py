@@ -72,7 +72,9 @@ CLASSES_FALA = frozenset(
         "Conversation",
     }
 )
-LIMIAR_FALA = 0.30
+LIMIAR_FALA = 0.15
+RMS_SILENCIO = 0.0008  # abaixo disso a janela nem é processada (detecção de atividade)
+RMS_ALVO = 0.05  # volume normalizado antes do modelo: microfone baixo não vira 'Door'
 # Radicais, não palavras inteiras: o Whisper tiny erra a grafia de fala gritada ou cortada
 # ("infirmeira", "socorr..."), e o que importa é o pedido de ajuda.
 PALAVRAS_CHAMADO = re.compile(
@@ -86,6 +88,42 @@ class EventoSonoro:
     confianca: float
     classes: tuple[str, ...]  # top classes do AudioSet na janela
     transcricao: str = ""
+
+
+_COMPARTILHADO: dict[str, Any] = {}
+_TRAVA = __import__("threading").Lock()
+_PRONTO = __import__("threading").Event()
+
+
+def pre_carregar() -> None:
+    """Carrega os modelos de som em segundo plano (uma vez por processo), para que ligar o
+    microfone do leito não trave a tela esperando ~2 min de carregamento."""
+    import threading
+
+    def carregar() -> None:
+        with _TRAVA:
+            if "classificador" not in _COMPARTILHADO:
+                try:
+                    _COMPARTILHADO["classificador"] = Classificador()
+                except Exception as erro:  # sem rede/modelo: o microfone mostra o erro
+                    _COMPARTILHADO["erro"] = str(erro)
+        _PRONTO.set()
+
+    if not _PRONTO.is_set() and not _TRAVA.locked():
+        threading.Thread(target=carregar, daemon=True, name="modelos-de-som").start()
+
+
+def classificador_pronto() -> bool:
+    return _PRONTO.is_set() and "classificador" in _COMPARTILHADO
+
+
+def classificador(timeout: float | None = None) -> Classificador:
+    """O classificador compartilhado; espera o carregamento em segundo plano terminar."""
+    pre_carregar()
+    _PRONTO.wait(timeout)
+    if "classificador" not in _COMPARTILHADO:
+        raise RuntimeError(_COMPARTILHADO.get("erro", "modelos de som ainda carregando"))
+    return _COMPARTILHADO["classificador"]
 
 
 class Classificador:
@@ -113,8 +151,10 @@ class Classificador:
         return str(saida.get("text", "")).strip()
 
     def classificar(self, audio: np.ndarray) -> list[EventoSonoro]:
-        if audio.size == 0 or float(np.sqrt(np.mean(audio**2))) < 0.003:
-            return []  # silêncio: nem roda o modelo
+        rms = float(np.sqrt(np.mean(audio**2))) if audio.size else 0.0
+        if rms < RMS_SILENCIO:
+            return []  # processamento parcial: janela sem som não passa pelos modelos
+        audio = np.clip(audio * (RMS_ALVO / rms), -1.0, 1.0)  # ganho automático
         top = self.classes(audio)
         return eventos_de(top, self.transcrever if self._precisa_fala(top) else None, audio)
 
