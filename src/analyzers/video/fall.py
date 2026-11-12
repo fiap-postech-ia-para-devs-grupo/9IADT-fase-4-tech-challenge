@@ -131,6 +131,9 @@ EIXO_DEITADO = 60.0
 # Acima disso o nariz está abaixo dos ombros: é a pessoa se curvando para a frente (pegar algo,
 # sentar), não deitada de lado; não conta como queda.
 EIXO_CURVADO = 120.0
+# Os ombros precisam descer pelo menos isto (em larguras de ombro) em relação à postura ereta:
+# virar a cabeça de perfil sentado inclina o eixo, mas não derruba os ombros.
+QUEDA_OMBROS = 1.0
 
 
 def eixo_cabeca(pose: Pose) -> float | None:
@@ -148,6 +151,17 @@ def eixo_cabeca(pose: Pose) -> float | None:
         return None
     # dy < 0: nariz acima dos ombros (y da imagem cresce para baixo).
     return math.degrees(math.atan2(abs(dx), -dy))
+
+
+def _ombros(pose: Pose) -> tuple[float, float] | None:
+    """(y médio dos ombros, largura dos ombros) em pixels."""
+    from src.analyzers.video import pose as p
+
+    kp = pose.keypoints
+    if kp is None or min(kp[[p.OMBRO_ESQ, p.OMBRO_DIR], 2]) < p.CONFIANCA_MINIMA:
+        return None
+    largura = float(abs(kp[p.OMBRO_ESQ, 0] - kp[p.OMBRO_DIR, 0]))
+    return float((kp[p.OMBRO_ESQ, 1] + kp[p.OMBRO_DIR, 1]) / 2), max(largura, 1.0)
 
 
 def detectar_proxima(sequencia: SequenciaPose) -> list[Queda]:
@@ -172,6 +186,13 @@ def detectar_proxima(sequencia: SequenciaPose) -> list[Queda]:
         mediana = statistics.median(eixo_cabeca(q) or 0 for q in janela)
         if not EIXO_DEITADO <= mediana <= EIXO_CURVADO:
             continue
+        referencia = _ombros(ultimo_em_pe)
+        descidas = [o[0] for q in janela if (o := _ombros(q)) is not None]
+        if referencia is None or not descidas:
+            continue
+        y_em_pe, largura = referencia
+        if statistics.median(descidas) - y_em_pe < QUEDA_OMBROS * largura:
+            continue  # cabeça de lado, mas o corpo não foi ao chão
         quedas.append(
             Queda(
                 t=pose.t,
