@@ -71,13 +71,14 @@ O menu segue a rotina de um plantão:
 
 | Seção | Tela | Para quê |
 | --- | --- | --- |
-| — | **Início** | Painel do plantão (ocupação, chamados, alertas por severidade, origem e tipo, NEWS2 por leito, equipe) e como o sistema funciona |
+| — | **Início** | Painel do plantão em cards e gráficos: ocupação, chamados, alertas por severidade, origem e tipo, NEWS2 por leito, equipe |
 | Monitoramento | **Mapa de Leitos** | Um cartão por leito: sinais atuais, NEWS2, luz de chamada; leitos livres |
 | Monitoramento | **Central de Alertas** | Fila única (episódios agrupados, escalonamento), Evidência, Reconhecimento com conduta |
 | Paciente | **Admissão** | Dar entrada no paciente e ligar as fontes: monitor, prescrição, consulta, câmera |
 | Paciente | **Prontuário** | Monitor de beira de leito, tendências, linha do tempo, medicações, alertas, **câmera e microfone do leito**, evolução e alta |
 | Análise | **Laboratório de Análise** | Vídeo (clipe, upload ou webcam) e áudio (upload, microfone ou exemplo) sob demanda |
 | Administração | **Equipe e Leitos** | Profissionais com WhatsApp, leitos, histórico de acionamentos |
+| Administração | **Ajuda** | Como o sistema funciona, fluxo multimodal, o que é real e o que é simulado, passo a passo |
 
 **Como demonstrar em 5 minutos:** escolha o plantonista na barra lateral, clique em **▶ Iniciar** no relógio do plantão e acompanhe o Mapa de Leitos. Num Prontuário, abra **Câmera e microfone**, ligue vídeo e áudio (clipe `queda_01` e a gravação "Enfermeira! Socorro!") e veja a luz do leito acender, o Alerta chegar à Central e a equipe ser acionada. O tour (🧭 na barra) percorre o sistema todo.
 

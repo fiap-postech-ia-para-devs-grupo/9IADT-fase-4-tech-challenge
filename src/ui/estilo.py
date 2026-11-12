@@ -131,6 +131,15 @@ h2, h3 {color: #0b2545;}
 .sl.alto .txt {color:#e65100}
 .sl.grande .cupula {width:44px; height:32px; border-radius:22px 22px 6px 6px}
 .sl.grande .base {width:56px; height:9px}
+.kpis {display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:.7rem;
+  margin:.2rem 0 1rem}
+.kpi {background:#fff; border:1px solid #e3e9f0; border-left:5px solid var(--cor);
+  border-radius:12px; padding:.7rem .9rem; box-shadow:0 1px 2px rgba(16,42,67,.05),
+  0 4px 12px rgba(16,42,67,.05)}
+.kpi-rot {font-size:.72rem; text-transform:uppercase; letter-spacing:.6px; color:#6b7b8b;
+  font-weight:700}
+.kpi-val {font-size:1.9rem; font-weight:800; color:var(--cor); line-height:1.15; margin-top:.2rem}
+.kpi-sub {font-size:.75rem; color:#7b8a99}
 .secao {font-size:.78rem; text-transform:uppercase; letter-spacing:.8px; color:#5b6b7b;
   font-weight:700; margin:.6rem 0 .3rem}
 </style>

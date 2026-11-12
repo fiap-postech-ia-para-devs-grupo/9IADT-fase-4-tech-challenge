@@ -16,7 +16,7 @@ from src.ui import plantao_estado as plantao
 PASSOS = (
     (
         "🏥 Para que serve",
-        "Início",
+        "Ajuda",
         "Central de vigilância da unidade de internação. Junta sinais vitais, prescrições, áudio "
         "e vídeo de cada leito, detecta sinais precoces de risco e chama a equipe antes que o "
         "paciente piore. Os dados são públicos e os pacientes, fictícios e compostos.",

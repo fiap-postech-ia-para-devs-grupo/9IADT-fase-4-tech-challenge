@@ -45,7 +45,6 @@ def _conteudo() -> None:
 
 
 def _como_funciona() -> None:
-    st.divider()
     st.subheader("Como o sistema funciona")
     st.markdown(
         "Central de vigilância da unidade de internação: junta **sinais vitais, prescrições, "
@@ -91,4 +90,10 @@ def _como_funciona() -> None:
 
 def pagina() -> None:
     st.fragment(_conteudo, run_every=plantao.intervalo())()
+
+
+def pagina_ajuda() -> None:
+    """Ajuda: como o sistema funciona, o que é real e o que é simulado, e o passo a passo."""
+    cabecalho.barra(avancar=False)
+    st.title("Ajuda")
     _como_funciona()

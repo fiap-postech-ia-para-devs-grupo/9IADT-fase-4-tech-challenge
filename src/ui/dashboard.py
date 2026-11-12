@@ -59,31 +59,58 @@ def _indicadores(alertas: list[Alerta], agora: datetime) -> None:
     }
     pendentes = [a for a in alertas if a.status is Status.NOVO]
     tempo = _minutos_ate_reconhecimento(alertas)
-    linha1 = st.columns(4)
-    linha1[0].metric(
-        "🛏️ Ocupação",
-        f"{ocupados}/{len(leitos)}",
-        f"{ocupados / len(leitos):.0%} dos leitos" if leitos else None,
-        delta_color="off",
-    )
-    linha1[1].metric("🚨 Chamados abertos", len(plantao.chamadas(agora)))
-    linha1[2].metric(
-        "🔔 Alertas no plantão", len(alertas), f"{len(pendentes)} pendentes", delta_color="off"
-    )
-    linha1[3].metric(
-        "⏱️ Tempo até o Reconhecimento",
-        f"{tempo:.0f} min" if tempo is not None else "—",
-        help="Média entre a detecção e o Reconhecimento, no relógio do plantão.",
-    )
-    linha2 = st.columns(4)
-    for coluna, severidade in zip(linha2, ORDEM, strict=True):
-        coluna.metric(
-            f"{ROTULO_SEVERIDADE[severidade]} pendentes",
-            sum(a.severidade is severidade for a in pendentes),
+    graves = sum(e.total >= 5 for e in escores.values())
+    chamados = len(plantao.chamadas(agora))
+    cartoes = [
+        (
+            "🛏️",
+            "Ocupação",
+            f"{ocupados}/{len(leitos)}",
+            f"{ocupados / len(leitos):.0%} dos leitos" if leitos else "",
+            "#0b6e99",
+        ),
+        (
+            "🚨",
+            "Chamados abertos",
+            str(chamados),
+            "luz de chamada acesa",
+            "#d32f2f" if chamados else "#2e7d32",
+        ),
+        ("🔔", "Alertas no plantão", str(len(alertas)), f"{len(pendentes)} pendentes", "#ef6c00"),
+        (
+            "📈",
+            "NEWS2 ≥ 5",
+            f"{graves}/{len(escores)}",
+            "leitos em risco médio ou alto",
+            "#d32f2f" if graves else "#2e7d32",
+        ),
+        (
+            "⏱️",
+            "Até o Reconhecimento",
+            f"{tempo:.0f} min" if tempo is not None else "—",
+            "média no relógio do plantão",
+            "#0b2545",
+        ),
+    ]
+    cartoes += [
+        (
+            "",
+            f"{ROTULO_SEVERIDADE[sev]} pendentes",
+            str(sum(a.severidade is sev for a in pendentes)),
+            "sem Reconhecimento",
+            COR_SEVERIDADE[sev],
         )
-    if escores:
-        graves = sum(e.total >= 5 for e in escores.values())
-        st.caption(f"Leitos com NEWS2 ≥ 5 (risco médio ou alto): {graves} de {len(escores)}.")
+        for sev in ORDEM
+    ]
+    st.html(
+        '<div class="kpis">'
+        + "".join(
+            f'<div class="kpi" style="--cor:{cor}"><div class="kpi-rot">{icone} {rotulo}</div>'
+            f'<div class="kpi-val">{valor}</div><div class="kpi-sub">{sub}</div></div>'
+            for icone, rotulo, valor, sub, cor in cartoes
+        )
+        + "</div>"
+    )
 
 
 def _grafico_turno(alertas: list[Alerta], agora: datetime) -> go.Figure:

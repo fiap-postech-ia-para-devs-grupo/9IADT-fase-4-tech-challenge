@@ -62,6 +62,7 @@ paginas = {
     ],
     "Administração": [
         st.Page(administracao.pagina, title="Equipe e Leitos", icon="👥", url_path="equipe"),
+        st.Page(inicio.pagina_ajuda, title="Ajuda", icon="❓", url_path="ajuda"),
     ],
 }
 navegacao.PAGINAS.update({p.title: p for secao in paginas.values() for p in secao})
