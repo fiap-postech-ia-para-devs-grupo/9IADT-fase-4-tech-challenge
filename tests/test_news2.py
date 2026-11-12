@@ -74,3 +74,26 @@ def test_serie_preenche_lacunas_com_o_ultimo_valor():
     )
 
     assert list(news2.serie(sinais)) == [0, 0, 3]
+
+
+def test_tendencia_gera_um_alerta_por_episodio_de_piora():
+    indice = pd.date_range("2026-10-01 08:00", periods=90, freq="1min")
+    sinais = pd.DataFrame({"FR": 16.0, "SpO2": 97.0, "PAS": 125.0, "FC": 80.0}, index=indice)
+    sinais.iloc[30:, sinais.columns.get_loc("FR")] = 26.0  # +3
+    sinais.iloc[30:, sinais.columns.get_loc("SpO2")] = 93.0  # +2 -> NEWS2 5
+
+    alertas = news2.alertas_de_tendencia(sinais, "demo-x")
+
+    assert len(alertas) == 1
+    alerta = alertas[0]
+    assert alerta.severidade.value == "alta"
+    assert alerta.evidencia["tecnica"] == "news2_tendencia"
+    assert alerta.evidencia["news2"] == 5
+    assert "FR" in alerta.evidencia["serie"]
+
+
+def test_escore_alto_estavel_desde_o_inicio_nao_e_tendencia():
+    indice = pd.date_range("2026-10-01 08:00", periods=60, freq="1min")
+    sinais = pd.DataFrame({"FR": 26.0, "SpO2": 93.0, "PAS": 125.0, "FC": 80.0}, index=indice)
+
+    assert news2.alertas_de_tendencia(sinais, "demo-x") == []

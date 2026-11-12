@@ -72,7 +72,24 @@ def conectar(
     conn = sqlite3.connect(caminho, check_same_thread=check_same_thread)
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA)
+    _migrar_checks(conn)
     return conn
+
+
+def _migrar_checks(conn: sqlite3.Connection) -> None:
+    """Banco criado com um enum mais antigo (ex.: sem `evento_sonoro`): recria a tabela com os
+    CHECKs atuais e copia as linhas. Os CHECKs vêm dos enums, então mudam junto com o Contrato."""
+    linha = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'alertas'"
+    ).fetchone()
+    if linha is None or all(f"'{t.value}'" in linha[0] for t in Tipo):
+        return
+    with conn:
+        conn.execute("ALTER TABLE alertas RENAME TO alertas_antiga")
+        conn.execute("DROP INDEX IF EXISTS idx_alertas_paciente")
+        conn.executescript(SCHEMA)
+        conn.execute(f"INSERT INTO alertas SELECT {', '.join(_COLUNAS)} FROM alertas_antiga")
+        conn.execute("DROP TABLE alertas_antiga")
 
 
 def salvar(conn: sqlite3.Connection, alerta: Alerta) -> None:

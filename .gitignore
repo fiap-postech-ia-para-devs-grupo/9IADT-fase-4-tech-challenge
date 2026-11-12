@@ -239,6 +239,10 @@ data/audio/*
 !data/audio/coswara_pastas_selecionadas.txt
 !data/audio/modelo_acustico.joblib
 !data/audio/SOURCES.md
+!data/audio/sons/
+data/audio/sons/*
+!data/audio/sons/SOURCES.md
+!data/audio/sons/chamado_enfermeira.wav
 !data/audio/teste_upload/
 # Respostas do Azure versionadas: reprocessar não gasta cota F0 (os WAVs ficam de fora)
 !data/audio/cache_primock57/
@@ -249,3 +253,7 @@ data/audio/cache_primock57/*
 *.pt
 # Saídas do upload no Laboratório de Análise (geradas a cada análise)
 results/video/laboratorio/
+
+# Evidências geradas pelo monitoramento ao vivo do leito (câmera e microfone)
+results/video/camera/
+results/audio/leito/

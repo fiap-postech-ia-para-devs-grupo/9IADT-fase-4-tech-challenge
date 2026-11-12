@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +19,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.analyzers.video.exercise_rules import DESCRICAO_REGRA as REGRAS_VIDEO
-from src.core import db, demo, mock
+from src.core import cadastro, db, inteligencia, mock
 from src.core.alerts import Alerta, Origem, Severidade, Status, TransicaoInvalida
 from src.core.ficha import (
     ROTULO_ORIGEM,
@@ -26,7 +27,6 @@ from src.core.ficha import (
     ROTULO_STATUS,
     ROTULO_TIPO,
     Ficha,
-    carregar_fichas,
     escopo,
     rotulo_paciente,
 )
@@ -104,9 +104,9 @@ _VALORES = {
 }
 
 
-@st.cache_data(ttl=300, show_spinner=False)
 def _fichas() -> dict[str, Ficha]:
-    return carregar_fichas(demo.carregar_pacientes())
+    """Pacientes internados agora (admissões); os demais ids são Laboratório ou avaliação."""
+    return plantao.fichas()
 
 
 def _fmt(chave: str, valor: Any) -> str:
@@ -222,6 +222,12 @@ def _renderizar_origens(conn: sqlite3.Connection, composto: Alerta) -> None:
 
 
 def _acoes(conn: sqlite3.Connection, alerta: Alerta, responsavel: str) -> None:
+    conduta = st.text_input(
+        "Conduta (vai para a evolução do paciente)",
+        key=f"conduta-{alerta.id}",
+        placeholder="ex.: O2 2 L/min, médico avisado, reavaliar em 30 min",
+        disabled=alerta.status is Status.RESOLVIDO,
+    )
     coluna_a, coluna_b = st.columns(2)
     reconhecer = coluna_a.button(
         "✋ Reconhecer",
@@ -239,17 +245,26 @@ def _acoes(conn: sqlite3.Connection, alerta: Alerta, responsavel: str) -> None:
     )
     if not (reconhecer or resolver):
         return
+    if not responsavel.strip():
+        st.error("Selecione o plantonista na barra lateral.")
+        return
     try:
         if reconhecer:
-            if not responsavel.strip():
-                st.error("Informe o plantonista na barra lateral antes de reconhecer.")
-                return
-            db.reconhecer(conn, alerta.id, por=responsavel.strip())
+            db.reconhecer(conn, alerta.id, por=responsavel.strip(), em=plantao.agora())
         else:
             db.resolver(conn, alerta.id)
     except TransicaoInvalida as erro:
         st.error(str(erro))
         return
+    acao = "Reconheceu" if reconhecer else "Resolveu"
+    texto = f"{acao} o Alerta “{alerta.descricao}”." + (f" Conduta: {conduta}" if conduta else "")
+    if cadastro.obter(conn, alerta.paciente_id) is not None:
+        cadastro.registrar(
+            conn,
+            cadastro.Evolucao(
+                alerta.paciente_id, responsavel, "conduta", texto, plantao.agora(), alerta.id
+            ),
+        )
     st.rerun()
 
 
@@ -349,15 +364,31 @@ def _filtros(todos: list[Alerta], fichas: dict[str, Ficha]) -> dict[str, Any]:
     }
 
 
-def _cartao(alerta: Alerta, fichas: dict[str, Ficha], aberto: bool) -> str:
+def _cartao(
+    episodio: inteligencia.Episodio, fichas: dict[str, Ficha], aberto: bool, agora: datetime
+) -> str:
+    alerta = episodio.principal
     paciente = rotulo_paciente(alerta.paciente_id, fichas)
     borda = "box-shadow:0 0 0 2px #0b6e99;" if aberto else ""
+    extras = ""
+    if len(episodio.alertas) > 1:
+        extras += estilo.chip(
+            f"×{len(episodio.alertas)} em {episodio.inicio:%H:%M}–{episodio.fim:%H:%M}", "#546e7a"
+        )
+    pendente = max(
+        (inteligencia.minutos_sem_reconhecimento(a, agora) or 0 for a in episodio.pendentes),
+        default=None,
+    )
+    if any(inteligencia.escalonado(a, agora) for a in episodio.pendentes):
+        extras += estilo.chip(f"⏫ escalonado · {pendente} min", "#b71c1c")
+    elif pendente:
+        extras += estilo.chip_claro(f"há {pendente} min")
     return f"""<div class="alerta-cartao" style="--cor:{COR_SEVERIDADE[alerta.severidade]};{borda}">
       <div class="linha1">
         {estilo.chip(ROTULO_SEVERIDADE[alerta.severidade], COR_SEVERIDADE[alerta.severidade])}
         <b>{alerta.detectado_em:%d/%m %H:%M}</b> · {e(paciente)}
         {estilo.chip_claro(ROTULO_ORIGEM[alerta.origem])}
-        {estilo.chip_claro(ROTULO_STATUS[alerta.status])}
+        {estilo.chip_claro(ROTULO_STATUS[alerta.status])} {extras}
       </div>
       <div class="desc">{e(alerta.descricao)}</div></div>"""
 
@@ -382,28 +413,44 @@ def _fila(conn: sqlite3.Connection, filtros: dict[str, Any], fichas: dict[str, F
     lista, detalhe = st.columns([1.15, 1], gap="large")
     aberto = st.session_state.get("alerta_aberto")
     with lista:
+        agrupar = st.toggle(
+            "Agrupar Alertas repetidos em episódios",
+            value=True,
+            key="central_agrupar",
+            help="Mesmo paciente, mesma regra e mesmo sinal a menos de 30 min: um cartão só.",
+        )
+        episodios = (
+            inteligencia.agrupar(alertas)
+            if agrupar
+            else [inteligencia.Episodio((a,)) for a in alertas]
+        )
         st.markdown(
-            f'<div class="secao">Fila · {len(alertas)} Alerta(s), mais graves primeiro</div>',
+            f'<div class="secao">Fila · {len(episodios)} cartão(ões) para {len(alertas)} '
+            "Alerta(s), mais graves primeiro</div>",
             unsafe_allow_html=True,
         )
         if not alertas:
             st.success("Nenhum Alerta para os filtros escolhidos.")
         limite = st.session_state.get("central_limite", POR_PAGINA)
         with st.container(height=640, border=False):
-            for alerta in alertas[:limite]:
+            for episodio in episodios[:limite]:
+                alerta = episodio.principal
                 cartao, abrir, reconhecer = st.columns([7, 1, 1], vertical_alignment="center")
-                cartao.html(_cartao(alerta, fichas, alerta.id == aberto))
+                cartao.html(_cartao(episodio, fichas, alerta.id == aberto, agora))
                 if abrir.button(
                     "", icon=":material/open_in_new:", key=f"abrir_{alerta.id}", help="Abrir"
                 ):
                     st.session_state["alerta_aberto"] = alerta.id
                     st.rerun(scope="fragment")
-                if alerta.status is Status.NOVO and reconhecer.button(
-                    "", icon=":material/back_hand:", key=f"rec_{alerta.id}", help="Reconhecer"
+                if episodio.pendentes and reconhecer.button(
+                    "",
+                    icon=":material/back_hand:",
+                    key=f"rec_{alerta.id}",
+                    help=f"Reconhecer ({len(episodio.pendentes)} pendente(s) no episódio)",
                 ):
-                    _reconhecer(conn, alerta, filtros["responsavel"])
-            if len(alertas) > limite:
-                if st.button(f"Mostrar mais ({len(alertas) - limite} restantes)"):
+                    _reconhecer(conn, episodio.pendentes, filtros["responsavel"])
+            if len(episodios) > limite:
+                if st.button(f"Mostrar mais ({len(episodios) - limite} restantes)"):
                     st.session_state["central_limite"] = limite + POR_PAGINA
                     st.rerun(scope="fragment")
     with detalhe:
@@ -416,15 +463,15 @@ def _fila(conn: sqlite3.Connection, filtros: dict[str, Any], fichas: dict[str, F
                 _detalhe(conn, escolhido, filtros["responsavel"], fichas)
 
 
-def _reconhecer(conn: sqlite3.Connection, alerta: Alerta, responsavel: str) -> None:
+def _reconhecer(conn: sqlite3.Connection, alertas: list[Alerta], responsavel: str) -> None:
     if not responsavel.strip():
-        st.toast("Informe o plantonista na barra lateral para reconhecer.", icon="👤")
+        st.toast("Selecione o plantonista na barra lateral para reconhecer.", icon="👤")
         return
-    try:
-        db.reconhecer(conn, alerta.id, por=responsavel.strip())
-    except TransicaoInvalida as erro:
-        st.toast(str(erro))
-        return
+    for alerta in alertas:
+        try:
+            db.reconhecer(conn, alerta.id, por=responsavel.strip(), em=plantao.agora())
+        except TransicaoInvalida:
+            continue
     st.rerun()
 
 

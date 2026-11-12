@@ -279,6 +279,16 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
     efeito_adverso = reconhecer(efeito_adverso, "dr. Bruno", depois(efeito_adverso, 8))
     lab_video = resolver(reconhecer(lab_video, "fisio. Diego", depois(lab_video, 30)))
 
+    # Criado por último para não mudar os ids (sequência do rng) dos Alertas anteriores.
+    som = alerta(
+        215,
+        "demo-03",
+        Origem.AUDIO,
+        Tipo.EVENTO_SONORO,
+        Severidade.ALTA,
+        'Paciente chamando a equipe: "Enfermeira! Socorro!"',
+        {"evento": "chamado", "confianca": 0.87, "trecho": "Enfermeira! Socorro!"},
+    )
     return [
         spo2,
         fr,
@@ -297,6 +307,7 @@ def gerar_alertas_mock(inicio: datetime = INICIO_PADRAO, seed: int = 4) -> list[
         agravamento,
         lab_video,
         lab_audio,
+        som,
     ]
 
 

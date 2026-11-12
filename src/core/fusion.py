@@ -70,6 +70,15 @@ def _audio_dor(a: Alerta) -> bool:
     )
 
 
+def _socorro_sonoro(a: Alerta) -> bool:
+    """Grito ou chamado da equipe captado pelo microfone do leito (ADR 0003)."""
+    return (
+        a.origem is Origem.AUDIO
+        and a.tipo is Tipo.EVENTO_SONORO
+        and a.evidencia.get("evento") in {"grito", "chamado"}
+    )
+
+
 def _queda(a: Alerta) -> bool:
     return a.origem is Origem.VIDEO and a.tipo is Tipo.QUEDA
 
@@ -100,6 +109,13 @@ class Regra:
 
 
 REGRAS: tuple[Regra, ...] = (
+    Regra(
+        "queda_com_pedido_de_ajuda",
+        _queda,
+        _socorro_sonoro,
+        Severidade.CRITICA,
+        "Queda com o paciente gritando ou pedindo ajuda",
+    ),
     Regra(
         "insuficiencia_respiratoria",
         _sinal_respiratorio,

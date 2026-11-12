@@ -263,15 +263,20 @@ def _video_enviado() -> None:
 def _video_da_camera() -> None:
     st.caption(
         "Abre a webcam do computador onde o app está rodando (demonstração local) e mostra o "
-        "esqueleto ao vivo; ao fim, a gravação é analisada como uma Sessão."
+        "esqueleto ao vivo; ao fim, a gravação é analisada como uma Sessão de Fisioterapia."
     )
-    coluna_camera, coluna_tempo = st.columns(2)
-    indice = coluna_camera.number_input("Câmera", 0, 5, 0, key="camera_indice")
-    segundos = coluna_tempo.slider("Duração (s)", 5, 30, 10, key="camera_segundos")
-    opcoes = _opcoes_video("agachamento", Vista.FRONTAL, "camera")
-    if not st.button("📷 Iniciar captura", type="primary", key="camera_iniciar"):
-        return
-    tela = st.empty()
+    controles, imagem = st.columns([2, 3], gap="large")
+    with controles:
+        coluna_camera, coluna_tempo = st.columns(2)
+        indice = coluna_camera.number_input("Câmera", 0, 5, 0, key="camera_indice")
+        segundos = coluna_tempo.slider("Duração (s)", 5, 30, 10, key="camera_segundos")
+        opcoes = _opcoes_video("agachamento", Vista.FRONTAL, "camera")
+        iniciar = st.button("📷 Iniciar captura", type="primary", key="camera_iniciar")
+    with imagem:
+        tela = st.empty()
+        if not iniciar:
+            tela.info("A imagem da câmera aparece aqui, com o esqueleto do YOLOv8-pose.")
+            return
     destino = PASTA_LABORATORIO / f"camera-{datetime.now():%Y%m%d-%H%M%S}.avi"
     try:
         camera.capturar(
@@ -279,7 +284,7 @@ def _video_da_camera() -> None:
             segundos=segundos,
             indice=int(indice),
             modelo=_modelo_pose(),
-            ao_vivo=lambda quadro, _: tela.image(quadro, channels="BGR"),
+            ao_vivo=lambda quadro, _: tela.image(quadro, channels="BGR", width="stretch"),
         )
     except camera.CameraIndisponivel as erro:
         st.error(str(erro))

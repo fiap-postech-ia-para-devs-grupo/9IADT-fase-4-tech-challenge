@@ -27,6 +27,7 @@ ROTULO_TIPO = {
     Tipo.SINAL_VITAL: "Sinal vital",
     Tipo.TERMO_CRITICO: "Termo Crítico",
     Tipo.ALTERACAO_VOCAL: "Alteração Vocal",
+    Tipo.EVENTO_SONORO: "Evento sonoro no leito",
     Tipo.DESVIO_EXECUCAO: "Desvio de Execução",
     Tipo.QUEDA: "Queda",
     Tipo.MUDANCA_TERAPEUTICA: "Mudança Terapêutica",

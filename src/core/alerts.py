@@ -27,6 +27,7 @@ class Tipo(StrEnum):
     QUEDA = "queda"
     TERMO_CRITICO = "termo_critico"
     ALTERACAO_VOCAL = "alteracao_vocal"
+    EVENTO_SONORO = "evento_sonoro"  # som do leito: alarme, grito, gemido, chamado (ADR 0003)
     SINAL_VITAL = "sinal_vital"
     MUDANCA_TERAPEUTICA = "mudanca_terapeutica"
     COMPOSTO = "composto"
@@ -47,7 +48,7 @@ class Status(StrEnum):
 
 TIPOS_POR_ORIGEM: dict[Origem, frozenset[Tipo]] = {
     Origem.VIDEO: frozenset({Tipo.DESVIO_EXECUCAO, Tipo.QUEDA}),
-    Origem.AUDIO: frozenset({Tipo.TERMO_CRITICO, Tipo.ALTERACAO_VOCAL}),
+    Origem.AUDIO: frozenset({Tipo.TERMO_CRITICO, Tipo.ALTERACAO_VOCAL, Tipo.EVENTO_SONORO}),
     Origem.SINAIS_VITAIS: frozenset({Tipo.SINAL_VITAL}),
     Origem.PRESCRICAO: frozenset({Tipo.MUDANCA_TERAPEUTICA}),
     Origem.FUSAO: frozenset({Tipo.COMPOSTO}),

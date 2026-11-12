@@ -1,6 +1,6 @@
 """Estado compartilhado do plantão simulado: relógio único, dados em cache e chegada de Alertas.
 
-Os três Pacientes de Demonstração começam a internação no mesmo instante, então um só relógio
+Os pacientes internados vêm das admissões da unidade (`src/core/cadastro.py`). Um só relógio
 (`relogio_min`, minutos desde o início do plantão) dirige todas as telas: o Mapa de Leitos, o
 Prontuário e a Central mostram o hospital nesse instante. Enquanto o relógio anda, os Alertas
 que já "aconteceram" são gravados no SQLite e chegam à Central, como num plantão real.
@@ -9,40 +9,60 @@ que já "aconteceram" são gravados no SQLite e chegam à Central, como num plan
 from __future__ import annotations
 
 import sqlite3
+import threading
 from datetime import datetime, timedelta
 
 import streamlit as st
 
-from src.core import db, demo
+from src.core import cadastro, db, demo, news2, notificacao
+from src.core.alerts import Alerta
 from src.core.demo import EventoAlerta, Internacao, PacienteDemo
-from src.core.ficha import Ficha, carregar_fichas
+from src.core.ficha import Ficha
 
 SEGUNDOS_POR_QUADRO = 1.0
 VELOCIDADES = {"1×": 1, "5×": 5, "15×": 15, "30×": 30}
+_ENVIANDO = threading.Lock()
 
 
 def conexao() -> sqlite3.Connection:
     """Uma conexão por sessão: o SQLite não aceita a mesma conexão em threads concorrentes, e
     cada sessão do Streamlit (e cada fragmento com timer) roda na sua thread."""
     if "conexao_sqlite" not in st.session_state:
-        st.session_state["conexao_sqlite"] = db.conectar(check_same_thread=False)
+        conn = db.conectar(check_same_thread=False)
+        cadastro.preparar(conn)
+        st.session_state["conexao_sqlite"] = conn
     return st.session_state["conexao_sqlite"]
 
 
-@st.cache_data(ttl=300, show_spinner=False)
+def admissoes() -> list[cadastro.Internacao]:
+    return cadastro.internacoes(conexao())
+
+
 def pacientes() -> list[PacienteDemo]:
-    return demo.carregar_pacientes()
+    """Pacientes internados agora, no formato dos Analisadores (admissões da unidade)."""
+    return [i.como_paciente() for i in admissoes()]
 
 
-@st.cache_data(ttl=300, show_spinner=False)
 def fichas() -> dict[str, Ficha]:
-    return carregar_fichas(pacientes())
+    return {i.id: Ficha(i.id, i.nome, i.leito_id, i.idade, i.sexo, i.motivo) for i in admissoes()}
 
 
-@st.cache_resource(show_spinner="Montando a internação...")
+@st.cache_resource(show_spinner="Conectando as fontes de monitoramento do paciente...")
+def _montar(paciente: PacienteDemo) -> Internacao:
+    return demo.montar(paciente)
+
+
+@st.cache_resource(show_spinner=False)
+def _tendencias(paciente: PacienteDemo) -> list[EventoAlerta]:
+    sinais = _montar(paciente).sinais
+    return [
+        EventoAlerta(a, a.detectado_em) for a in news2.alertas_de_tendencia(sinais, paciente.id)
+    ]
+
+
 def internacao(paciente_id: str) -> Internacao:
-    por_id = {p.id: p for p in demo.carregar_pacientes()}
-    return demo.montar(por_id[paciente_id])
+    por_id = {p.id: p for p in pacientes()}
+    return _montar(por_id[paciente_id])
 
 
 def internacoes() -> dict[str, Internacao]:
@@ -50,17 +70,23 @@ def internacoes() -> dict[str, Internacao]:
     montadas = {}
     for paciente in pacientes():
         try:
-            montadas[paciente.id] = internacao(paciente.id)
+            montadas[paciente.id] = _montar(paciente)
         except demo.DadosAusentes:
             continue
     return montadas
 
 
 def eventos(paciente_id: str) -> list[EventoAlerta]:
-    """Alertas de todas as fontes do paciente, já com os Compostos da Fusão."""
+    """Alertas de todas as fontes do paciente (com a piora do NEWS2) e os Compostos da Fusão."""
+    paciente = next(p for p in pacientes() if p.id == paciente_id)
     return demo.fundir_eventos(
-        internacao(paciente_id).eventos, demo.alertas_de_video(conexao(), paciente_id)
+        [*_montar(paciente).eventos, *_tendencias(paciente)],
+        demo.alertas_de_video(conexao(), paciente_id),
     )
+
+
+def rotulos_pacientes() -> dict[str, str]:
+    return {i.id: f"Leito {i.leito_id} · {i.nome}" for i in admissoes()}
 
 
 def inicio_plantao() -> datetime:
@@ -73,6 +99,10 @@ def duracao_min() -> int:
         return 0
     inicio = inicio_plantao()
     return max(int((i.fim - inicio).total_seconds() // 60) for i in montadas.values())
+
+
+def fim_plantao() -> datetime:
+    return inicio_plantao() + timedelta(minutes=duracao_min())
 
 
 def _iniciar_estado() -> None:
@@ -115,13 +145,46 @@ def avancar() -> None:
 
 
 def sincronizar() -> int:
-    """Grava os Alertas dos pacientes internados já surgidos até o relógio."""
+    """Grava os Alertas surgidos até o relógio e aciona a equipe para os que pedem chamada."""
     instante = agora()
     novos = 0
     for paciente_id in internacoes():
         visiveis = demo.visiveis(eventos(paciente_id), instante)
         novos += demo.gravar(conexao(), (e.alerta for e in visiveis))
+    acionar_equipe(instante)
     return novos
+
+
+def chamadas(instante: datetime | None = None) -> list[Alerta]:
+    """Luz de chamada acesa: Alertas críticos ou Quedas de internados, ainda sem Reconhecimento."""
+    instante = instante or agora()
+    internados = set(internacoes())
+    return [
+        a
+        for a in db.listar(conexao(), status="novo", paciente_id=internados)
+        if notificacao.exige_chamada(a) and a.detectado_em <= instante
+    ]
+
+
+def acionar_equipe(instante: datetime) -> None:
+    """WhatsApp em segundo plano, com conexão própria, para não travar a tela no envio."""
+    pendentes = chamadas(instante)
+    if not pendentes or not st.session_state.get("whatsapp_ativo", True):
+        return
+    rotulos = rotulos_pacientes()
+
+    def enviar() -> None:
+        # Um envio por vez no processo: dois ticks seguidos não mandam a mesma chamada duas vezes.
+        if not _ENVIANDO.acquire(blocking=False):
+            return
+        conn = db.conectar(db.CAMINHO_PADRAO)
+        try:
+            notificacao.acionar(conn, pendentes, instante, rotulos)
+        finally:
+            conn.close()
+            _ENVIANDO.release()
+
+    threading.Thread(target=enviar, daemon=True).start()
 
 
 def controles() -> None:
@@ -149,11 +212,18 @@ def controles() -> None:
         key="relogio_vel",
         label_visibility="collapsed",
     )
+    inicio, fim, instante = inicio_plantao(), fim_plantao(), agora()
+    st.caption(
+        f"Turno simulado: **{inicio:%d/%m %H:%M} → {fim:%H:%M}**  \n"
+        f"Agora: **{instante:%H:%M}** ({minuto() // 60}h{minuto() % 60:02d} de "
+        f"{total // 60}h{total % 60:02d})"
+    )
+    st.progress(minuto() / total if total else 0.0)
     if not tocando() and total:
         # Chave própria: um widget com a chave `relogio_min` perderia o valor nas execuções em
         # que não é desenhado (relógio tocando).
         st.slider(
-            "Ir para o minuto",
+            "Ir para (min desde o início do turno)",
             0,
             total,
             value=minuto(),

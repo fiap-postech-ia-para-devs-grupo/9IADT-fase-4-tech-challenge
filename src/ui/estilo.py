@@ -67,6 +67,70 @@ h2, h3 {color: #0b2545;}
 .alerta-cartao .linha1 {display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;
   font-size:.82rem; color:#5b6b7b}
 .alerta-cartao .desc {font-weight:600; color:#1b2b3a; margin-top:.2rem; font-size:.95rem}
+@keyframes piscar {0%,100% {opacity:1; box-shadow:0 0 18px 6px rgba(255,23,68,.85)}
+  50% {opacity:.35; box-shadow:0 0 4px 1px rgba(255,23,68,.3)}}
+.luz-chamada {display:flex; align-items:center; gap:.8rem; background:#3b0d12; color:#fff;
+  border:2px solid #ff1744; border-radius:10px; padding:.55rem 1rem; margin-bottom:.8rem}
+.luz-chamada .lampada {width:22px; height:22px; border-radius:50%; background:#ff1744;
+  animation: piscar 1s infinite; flex:none}
+.luz-chamada .sirene {font-size:1.6rem; animation: piscar 1s infinite; border-radius:8px}
+.luz-chamada .texto b {color:#ff8a80}
+.luz-apagada {display:flex; align-items:center; gap:.6rem; color:#5b6b7b; font-size:.82rem;
+  margin:-.4rem 0 .6rem}
+.luz-apagada .lampada {width:12px; height:12px; border-radius:50%; background:#9e9e9e}
+.sirene-barra {display:inline-flex; align-items:center; gap:.4rem; background:#13315c;
+  padding:.15rem .6rem .15rem .35rem; border-radius:999px}
+.sirene-barra .cupula {width:18px; height:14px; border-radius:9px 9px 3px 3px;
+  background:#546e7a}
+.sirene-barra .txt {font-size:.75rem; font-weight:700; text-transform:uppercase}
+.sirene-barra.critico .cupula {background:#ff1744; animation: piscar-sirene .8s infinite;
+  box-shadow:0 0 14px 5px rgba(255,23,68,.9)}
+.sirene-barra.alto .cupula {background:#ffab00; animation: piscar-sirene 1.4s infinite;
+  box-shadow:0 0 12px 4px rgba(255,171,0,.8)}
+@keyframes piscar-sirene {0%,100% {opacity:1; filter:brightness(1.3)}
+  50% {opacity:.15; box-shadow:none; filter:brightness(.6)}}
+.lampada-leito {display:inline-block; width:14px; height:14px; border-radius:50%;
+  background:#ff1744; animation: piscar 1s infinite; margin-left:.3rem}
+.leito-livre {border:1px dashed #b0bec5; border-radius:14px; padding:.8rem 1rem; color:#607d8b;
+  background:#fafbfc; margin-bottom:.4rem; min-height:86px}
+.ponto {display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:.35rem;
+  vertical-align:middle}
+.ponto.livre {background:#2e7d32; box-shadow:0 0 0 3px rgba(46,125,50,.15)}
+.ponto.ocupado {background:#d32f2f; box-shadow:0 0 0 3px rgba(211,47,47,.15)}
+.cl-ocupacao {font-size:.72rem; color:#6b7b8b; font-weight:600}
+.cl {position:relative; background:linear-gradient(180deg,#ffffff 0%,#fbfcfe 100%);
+  border:1px solid #e3e9f0; border-radius:14px; padding:1rem 1.1rem .9rem;
+  box-shadow:0 1px 2px rgba(16,42,67,.06), 0 6px 18px rgba(16,42,67,.06);
+  border-top:5px solid var(--cor); transition:box-shadow .2s, transform .2s; margin-bottom:.4rem;
+  min-height:330px; display:flex; flex-direction:column}
+.cl .cl-rodape {margin-top:auto}
+.cl:hover {box-shadow:0 2px 4px rgba(16,42,67,.08), 0 12px 28px rgba(16,42,67,.12);
+  transform:translateY(-1px)}
+.cl-topo {display:flex; justify-content:space-between; align-items:flex-start}
+.cl-leito {font-size:1.45rem; font-weight:800; color:#0b2545; letter-spacing:.3px; line-height:1}
+.cl-unid {font-size:.72rem; text-transform:uppercase; letter-spacing:.8px; color:#7b8a99;
+  margin-top:.2rem}
+.cl-paciente {font-weight:700; color:#1b2b3a; margin-top:.7rem; font-size:1rem}
+.cl-sub {color:#6b7b8b; font-size:.8rem; margin-top:.1rem}
+.cl-news {display:inline-flex; align-items:center; gap:.4rem; margin-top:.55rem;
+  font-size:.78rem; font-weight:700; color:var(--cor-news); background:var(--fundo-news);
+  padding:.15rem .6rem; border-radius:999px}
+.cl-rodape {border-top:1px solid #edf1f5; margin-top:.6rem; padding-top:.5rem}
+.cl-ultimo {color:#6b7b8b; font-size:.76rem; margin-top:.35rem; line-height:1.3}
+.sl {display:flex; flex-direction:column; align-items:center; gap:1px; min-width:44px}
+.sl .cupula {width:30px; height:22px; border-radius:15px 15px 4px 4px; background:#cfd8dc;
+  border:1px solid rgba(0,0,0,.08)}
+.sl .base {width:40px; height:7px; border-radius:2px; background:#37474f}
+.sl .txt {font-size:.6rem; font-weight:700; color:#90a4ae; text-transform:uppercase;
+  letter-spacing:.5px; margin-top:2px}
+.sl.critico .cupula {background:#ff1744; animation: piscar-sirene .8s infinite;
+  box-shadow:0 0 22px 8px rgba(255,23,68,.85)}
+.sl.critico .txt {color:#d50000}
+.sl.alto .cupula {background:#ffab00; animation: piscar-sirene 1.4s infinite;
+  box-shadow:0 0 18px 6px rgba(255,171,0,.7)}
+.sl.alto .txt {color:#e65100}
+.sl.grande .cupula {width:44px; height:32px; border-radius:22px 22px 6px 6px}
+.sl.grande .base {width:56px; height:9px}
 .secao {font-size:.78rem; text-transform:uppercase; letter-spacing:.8px; color:#5b6b7b;
   font-weight:700; margin:.6rem 0 .3rem}
 </style>
@@ -94,4 +158,16 @@ def bloco_sinal(rotulo: str, valor: str, unidade: str, cor: str, tendencia: str 
     return (
         f'<div class="sinal" style="--cor:{cor}"><div class="rot">{e(rotulo)}</div>'
         f'<span class="val">{e(valor)}</span> <span class="uni">{e(unidade)}</span>{tend}</div>'
+    )
+
+
+ROTULO_LUZ = {"critico": "chamado", "alto": "atenção", "apagada": "estável"}
+
+
+def sirene_leito(estado: str, grande: bool = False) -> str:
+    """Luz do leito: vermelha piscando (chamado), âmbar (atenção) ou apagada (estável)."""
+    classe = f"sl {estado}{' grande' if grande else ''}"
+    return (
+        f'<div class="{classe}" title="Luz de chamada do leito"><div class="cupula"></div>'
+        f'<div class="base"></div><div class="txt">{ROTULO_LUZ[estado]}</div></div>'
     )

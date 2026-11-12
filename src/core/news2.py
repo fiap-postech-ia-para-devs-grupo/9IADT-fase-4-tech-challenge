@@ -81,3 +81,65 @@ def serie(sinais: pd.DataFrame) -> pd.Series:
         index=sinais.index,
         name="NEWS2",
     )
+
+
+# --- Alerta por tendência: piora do escore, não só um valor fora da faixa -------------------
+
+JANELA_TENDENCIA_MIN = 60
+SUBIDA_MINIMA = 2
+_NAMESPACE = "news2-tendencia"
+
+
+def alertas_de_tendencia(sinais: pd.DataFrame, paciente_id: str) -> list:
+    """Alerta quando o NEWS2 parcial sobe `SUBIDA_MINIMA` pontos ou mais em até uma hora e chega
+    a risco médio (5+) ou alto (7+). Um Alerta por episódio: só volta a disparar depois que o
+    escore cai abaixo de 5.
+
+    É a piora clínica que o NEWS2 quer captar: o mesmo 5 vindo de 1 é mais grave que um 5
+    estável. Sai no Contrato como Sinal Vital (técnica `news2_tendencia`).
+    """
+    import uuid
+
+    from src.core.alerts import Alerta, Origem, Severidade, Tipo
+
+    escores = serie(sinais)
+    alertas = []
+    em_episodio = False
+    for instante, total in escores.items():
+        if total < 5:
+            em_episodio = False
+            continue
+        janela = escores.loc[instante - pd.Timedelta(minutes=JANELA_TENDENCIA_MIN) : instante]
+        subida = int(total - janela.min())
+        if em_episodio or subida < SUBIDA_MINIMA:
+            continue
+        em_episodio = True
+        linha = sinais.loc[instante, list(PARAMETROS)].ffill()
+        pontos_por = calcular(sinais.loc[:instante, list(PARAMETROS)].ffill().iloc[-1].to_dict())
+        piores = [p for p, v in pontos_por.pontos.items() if v >= 2] or list(pontos_por.pontos)
+        alto = total >= 7
+        momento = pd.Timestamp(instante).to_pydatetime()
+        alertas.append(
+            Alerta(
+                id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"{_NAMESPACE}|{paciente_id}|{momento}")),
+                paciente_id=paciente_id,
+                origem=Origem.SINAIS_VITAIS,
+                tipo=Tipo.SINAL_VITAL,
+                severidade=Severidade.CRITICA if alto else Severidade.ALTA,
+                descricao=(
+                    f"Piora clínica: NEWS2 subiu {subida} pontos em até "
+                    f"{JANELA_TENDENCIA_MIN} min e chegou a {int(total)} "
+                    f"({'risco alto' if alto else 'risco médio'})"
+                ),
+                evidencia={
+                    "tecnica": "news2_tendencia",
+                    "serie": ",".join(piores),
+                    "news2": int(total),
+                    "subida": subida,
+                    "valores": [[round(float(v), 1)] for v in linha.fillna(0).tolist()],
+                    "resposta": pontos_por.resposta,
+                },
+                detectado_em=momento,
+            )
+        )
+    return alertas

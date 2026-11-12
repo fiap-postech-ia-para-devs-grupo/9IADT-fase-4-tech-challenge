@@ -79,6 +79,25 @@ def baixar_video(destino: Path) -> None:
         parcial.replace(alvo)
 
 
+SONS = {
+    "alarme_monitor.mp3": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Heart_Monitor_Beep--freesound.org.mp3",
+    "grito.ogg": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Wilhelm_Scream.ogg",
+    "gemido_choro.ogg": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Male_crying_and_weeping.ogg",
+}
+
+
+@dataset("sons", dono="Marcelo", destino="audio/sons")
+def baixar_sons(destino: Path) -> None:
+    """Sons do leito para o monitoramento de áudio; licenças em data/audio/sons/SOURCES.md."""
+    for arquivo, url in SONS.items():
+        alvo = destino / arquivo
+        if alvo.exists():
+            continue
+        pedido = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(pedido, timeout=120) as resposta, open(alvo, "wb") as saida:
+            shutil.copyfileobj(resposta, saida)
+
+
 PRIMOCK57_AUDIO_URL = "https://media.githubusercontent.com/media/babylonhealth/primock57/main/audio"
 PRIMOCK57_TRANSCRIPT_URL = "https://raw.githubusercontent.com/babylonhealth/primock57/main/transcripts"
 

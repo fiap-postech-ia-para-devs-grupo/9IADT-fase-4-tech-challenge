@@ -1,0 +1,123 @@
+from datetime import datetime, timedelta
+
+import pytest
+
+from src.core import cadastro, db, mock, notificacao
+from src.core.alerts import Severidade, Status
+
+SIMULADO = notificacao.ConfigWhatsApp("", "", "", "http://localhost:8501")
+
+
+@pytest.fixture
+def conn(tmp_path):
+    conexao = db.conectar(tmp_path / "alertas.db")
+    cadastro.preparar(conexao)
+    yield conexao
+    conexao.close()
+
+
+def test_unidade_nasce_com_leitos_equipe_e_admissoes_de_demonstracao(conn):
+    internados = cadastro.internacoes(conn)
+
+    assert {i.id for i in internados} == {"demo-01", "demo-02", "demo-03"}
+    assert all("fictício" in i.nome for i in internados)
+    assert len(cadastro.equipe(conn)) == 4
+    assert len(cadastro.leitos_livres(conn)) == len(cadastro.leitos(conn)) - 3
+
+
+def test_admissao_ocupa_o_leito_e_gera_evolucao(conn):
+    livre = cadastro.leitos_livres(conn)[0]
+    modelo = cadastro.internacoes(conn)[0]
+    nova = cadastro.Internacao(
+        id="pac-x",
+        nome="Maria Teste",
+        idade=70,
+        sexo="feminino",
+        leito_id=livre.id,
+        motivo="Pneumonia",
+        admitido_em=datetime(2026, 10, 1, 9, 0),
+        admitido_por="Enf. Ana Souza",
+        status="internado",
+        fontes=modelo.fontes,
+    )
+
+    cadastro.admitir(conn, nova, "Enf. Ana Souza")
+
+    assert livre.id not in {leito.id for leito in cadastro.leitos_livres(conn)}
+    paciente = cadastro.obter(conn, "pac-x").como_paciente()
+    assert paciente.leito == livre.id
+    assert paciente.internacao_inicio == datetime(2026, 10, 1, 9, 0)
+    assert cadastro.evolucoes(conn, "pac-x")[0].tipo == "admissao"
+    with pytest.raises(cadastro.LeitoOcupado):
+        cadastro.admitir(conn, nova.__class__(**{**nova.__dict__, "id": "pac-y"}), "x")
+
+
+def test_alta_libera_o_leito(conn):
+    cadastro.dar_alta(conn, "demo-01", "Dr(a). Bruno Lima", datetime(2026, 10, 1, 12))
+
+    assert "demo-01" not in {i.id for i in cadastro.internacoes(conn)}
+    assert "UTI-04" in {leito.id for leito in cadastro.leitos_livres(conn)}
+
+
+@pytest.mark.parametrize(
+    ("entrada", "esperado"),
+    [("(79) 99609-7411", "5579996097411"), ("+55 11 98888-7777", "5511988887777"), ("123", None)],
+)
+def test_numero_de_whatsapp(entrada, esperado):
+    assert notificacao.numero_valido(entrada) == esperado
+
+
+def _critico():
+    return next(
+        a
+        for a in mock.gerar_alertas_mock()
+        if a.severidade is Severidade.CRITICA and a.status is Status.NOVO
+    )
+
+
+def test_chamada_aciona_o_plantao_e_escalona_uma_vez_so(conn):
+    ana = next(p for p in cadastro.equipe(conn) if p.id == "enf-ana")
+    cadastro.salvar_profissional(
+        conn, cadastro.Profissional(ana.id, ana.nome, ana.funcao, "", "11999990000", True)
+    )
+    critico = _critico()
+
+    primeira = notificacao.acionar(
+        conn, [critico], critico.detectado_em + timedelta(minutes=1), {}, SIMULADO
+    )
+    depois = notificacao.acionar(
+        conn, [critico], critico.detectado_em + timedelta(minutes=6), {}, SIMULADO
+    )
+    de_novo = notificacao.acionar(
+        conn, [critico], critico.detectado_em + timedelta(minutes=7), {}, SIMULADO
+    )
+
+    assert [(n.nivel, n.status) for n in primeira] == [(1, "simulado")]
+    assert [n.nivel for n in depois] == [2]  # sem médico com WhatsApp: escala para quem tem
+    assert de_novo == []
+    assert len(notificacao.historico(conn)) == 2
+
+
+def test_sem_ninguem_com_whatsapp_nada_e_enviado(conn):
+    critico = _critico()
+
+    assert notificacao.acionar(conn, [critico], critico.detectado_em, {}, SIMULADO) == []
+
+
+def test_alerta_antigo_no_relogio_nao_aciona(conn):
+    ana = cadastro.equipe(conn)[0]
+    cadastro.salvar_profissional(
+        conn, cadastro.Profissional(ana.id, ana.nome, ana.funcao, "", "11999990000", True)
+    )
+    critico = _critico()
+
+    tarde = critico.detectado_em + timedelta(hours=2)
+    assert notificacao.acionar(conn, [critico], tarde, {}, SIMULADO) == []
+
+
+def test_mensagem_tem_sirene_paciente_e_link():
+    texto = notificacao.mensagem(_critico(), "Leito UTI-04 · José", 1, "http://app")
+
+    assert texto.startswith("🚨")
+    assert "Leito UTI-04" in texto
+    assert "http://app/alertas" in texto
