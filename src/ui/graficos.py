@@ -1,25 +1,20 @@
-"""Tela 2: Painel do Paciente (ESTRATEGIA.md, seção 9).
-
-Replay ao vivo dos Sinais Vitais de um Paciente de Demonstração, com os Alertas surgindo sobre o
-gráfico e gravados na Central de Alertas, e linha do tempo de prescrições, Consulta e vídeo.
-"""
+"""Gráficos do Prontuário (ESTRATEGIA.md, seção 9): tendências dos Sinais Vitais com os
+Alertas surgidos e o NEWS2 parcial, e a linha do tempo de prescrições, Consulta e vídeo."""
 
 from __future__ import annotations
 
-import sqlite3
 from datetime import datetime, timedelta
 
 import pandas as pd
 import plotly.graph_objects as go
-import streamlit as st
 from plotly.subplots import make_subplots
 
 from src.analyzers.prescriptions import listas
 from src.analyzers.vitals.detectors import REGRAS_CLINICAS, SERIES
-from src.core import db, demo
-from src.core.alerts import Origem, Severidade
+from src.core import news2
+from src.core.alerts import Origem
 from src.core.demo import EventoAlerta, Internacao
-from src.ui.central import ICONE_SEVERIDADE
+from src.ui.sinais import NOME_SINAL, UNIDADE
 
 COR_ORIGEM = {
     Origem.SINAIS_VITAIS: "#1f77b4",
@@ -28,21 +23,11 @@ COR_ORIGEM = {
     Origem.VIDEO: "#9467bd",
     Origem.FUSAO: "#d62728",
 }
+# Cores de traçado como num monitor: FC verde, FR amarela, SpO2 azul, PA vermelha.
+COR_SINAL = {"FC": "#2e7d32", "FR": "#b28704", "SpO2": "#0277bd", "PAS": "#c62828"}
 LINHA_SINAIS = "Sinais Vitais"
 LINHA_CONSULTA = "Consulta"
 LINHA_VIDEO = "Vídeo"
-SEGUNDOS_POR_QUADRO = 1.0
-
-
-@st.cache_resource
-def _conexao() -> sqlite3.Connection:
-    return db.conectar(check_same_thread=False)
-
-
-@st.cache_resource(show_spinner="Montando a internação...")
-def _internacao(paciente_id: str) -> Internacao:
-    pacientes = {paciente.id: paciente for paciente in demo.carregar_pacientes()}
-    return demo.montar(pacientes[paciente_id])
 
 
 def figura_sinais(
@@ -50,8 +35,14 @@ def figura_sinais(
 ) -> go.Figure:
     """Uma linha por Sinal Vital até `agora`, com os Alertas já surgidos."""
     sinais = internacao.sinais.loc[: pd.Timestamp(agora)]
+    titulos = [f"{NOME_SINAL[s]} ({UNIDADE[s]})" for s in SERIES] + ["NEWS2 parcial"]
     figura = make_subplots(
-        rows=len(SERIES), cols=1, shared_xaxes=True, vertical_spacing=0.03, subplot_titles=SERIES
+        rows=len(SERIES) + 1,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.03,
+        subplot_titles=titulos,
+        row_heights=[1] * len(SERIES) + [0.7],
     )
     for linha, serie in enumerate(SERIES, start=1):
         figura.add_trace(
@@ -59,7 +50,7 @@ def figura_sinais(
                 x=sinais.index,
                 y=sinais[serie],
                 mode="lines",
-                line={"color": COR_ORIGEM[Origem.SINAIS_VITAIS], "width": 1.5},
+                line={"color": COR_SINAL[serie], "width": 1.6},
                 showlegend=False,
                 hovertemplate=f"{serie} %{{y:.0f}}<extra></extra>",
             ),
@@ -95,19 +86,45 @@ def figura_sinais(
             row=linha,
             col=1,
         )
-    for evento in eventos:
-        if evento.alerta.origem is Origem.SINAIS_VITAIS:
-            continue
-        figura.add_vline(
-            x=evento.aparece_em,
-            line={
-                "color": COR_ORIGEM[evento.alerta.origem],
-                "width": 3 if evento.alerta.origem is Origem.FUSAO else 1,
-                "dash": "solid" if evento.alerta.origem is Origem.FUSAO else "dash",
-            },
+    figura.add_trace(
+        go.Scatter(
+            x=sinais.index,
+            y=news2.serie(sinais) if not sinais.empty else [],
+            mode="lines",
+            line={"color": "#8e44ad", "width": 2, "shape": "hv"},
+            fill="tozeroy",
+            showlegend=False,
+            hovertemplate="NEWS2 %{y}<extra></extra>",
+        ),
+        row=len(SERIES) + 1,
+        col=1,
+    )
+    for limite in (5, 7):  # risco médio e alto
+        figura.add_hline(
+            y=limite,
+            line={"dash": "dot", "color": "#c0392b" if limite == 7 else "#e67e22", "width": 1},
+            row=len(SERIES) + 1,  # pyright: ignore[reportArgumentType]
+            col=1,  # pyright: ignore[reportArgumentType]
         )
-    figura.update_xaxes(range=[internacao.inicio, internacao.fim])
-    figura.update_layout(height=620, margin={"l": 10, "r": 10, "t": 30, "b": 10})
+    # Só o Alerta Composto vira marco vertical: os demais eventos estão na Linha do tempo, e uma
+    # linha por Termo Crítico esconderia o traçado.
+    for evento in eventos:
+        if evento.alerta.origem is Origem.FUSAO:
+            figura.add_vline(
+                x=evento.aparece_em, line={"color": COR_ORIGEM[Origem.FUSAO], "width": 2.5}
+            )
+    figura.update_xaxes(
+        range=[internacao.inicio, internacao.fim], showgrid=True, gridcolor="#eef2f6"
+    )
+    figura.update_yaxes(showgrid=True, gridcolor="#eef2f6", zeroline=False)
+    figura.update_annotations(font={"size": 12, "color": "#0b2545"}, xanchor="left", x=0)
+    figura.update_layout(
+        height=720,
+        margin={"l": 10, "r": 10, "t": 30, "b": 10},
+        plot_bgcolor="#ffffff",
+        paper_bgcolor="#ffffff",
+        hovermode="x unified",
+    )
     return figura
 
 
@@ -204,102 +221,3 @@ def figura_linha_do_tempo(
         legend={"orientation": "h"},
     )
     return figura
-
-
-def _mostrar_alertas(eventos: list[EventoAlerta]) -> None:
-    for evento in eventos:
-        if evento.alerta.origem is Origem.FUSAO and evento.alerta.severidade is Severidade.CRITICA:
-            st.error(f"🚨 Alerta Composto crítico: {evento.alerta.descricao}")
-    st.subheader(f"Alertas surgidos ({len(eventos)})")
-    if not eventos:
-        st.caption("Nenhum Alerta até este momento.")
-    recentes = sorted(eventos, key=lambda e: e.aparece_em, reverse=True)
-    st.dataframe(
-        pd.DataFrame(
-            [
-                {
-                    "Horário": e.aparece_em.strftime("%H:%M"),
-                    "Severidade": f"{ICONE_SEVERIDADE[e.alerta.severidade]} {e.alerta.severidade}",
-                    "Origem": str(e.alerta.origem),
-                    "Descrição": e.alerta.descricao,
-                }
-                for e in recentes
-            ],
-            columns=["Horário", "Severidade", "Origem", "Descrição"],
-        ),
-        hide_index=True,
-        width="stretch",
-        height=240,
-    )
-
-
-def _quadro(internacao: Internacao, eventos: list[EventoAlerta], velocidade: int) -> None:
-    """Um quadro do replay; quando o replay está tocando, avança `velocidade` minutos."""
-    total = len(internacao.sinais) - 1
-    if st.session_state["replay_tocando"]:
-        st.session_state["replay_minuto"] = min(
-            st.session_state["replay_minuto"] + velocidade, total
-        )
-
-    minuto = st.session_state["replay_minuto"]
-    agora = internacao.inicio + timedelta(minutes=minuto)
-    surgidos = demo.visiveis(eventos, agora)
-    demo.gravar(_conexao(), (e.alerta for e in surgidos))
-
-    st.progress(minuto / total, text=f"{agora:%H:%M} (minuto {minuto} de {total})")
-    _mostrar_alertas(surgidos)
-    st.subheader("Sinais Vitais")
-    st.plotly_chart(
-        figura_sinais(internacao, surgidos, agora), width="stretch", key="grafico_sinais"
-    )
-    st.subheader("Linha do tempo")
-    st.plotly_chart(
-        figura_linha_do_tempo(internacao, surgidos, agora), width="stretch", key="linha_do_tempo"
-    )
-
-    if st.session_state["replay_tocando"] and minuto >= total:
-        st.session_state["replay_tocando"] = False
-        st.rerun()
-
-
-def pagina() -> None:
-    st.title("Painel do Paciente")
-    st.caption(
-        "Pacientes fictícios, compostos de datasets públicos distintos; os horários foram "
-        "alinhados para a demonstração (ADR 0001)."
-    )
-
-    pacientes = demo.carregar_pacientes()
-    paciente = st.selectbox("Paciente de Demonstração", pacientes, format_func=lambda p: p.nome)
-    st.caption(paciente.resumo)
-    if paciente.video.clipe is None:
-        st.caption(
-            "Clipe de vídeo pendente: os Alertas de vídeo aparecem aqui quando o #6 os gravar."
-        )
-
-    if st.session_state.get("replay_paciente") != paciente.id:
-        st.session_state.update(replay_paciente=paciente.id, replay_minuto=0, replay_tocando=False)
-
-    try:
-        internacao = _internacao(paciente.id)
-    except demo.DadosAusentes as erro:
-        st.error(f"Dados ausentes. {erro}")
-        return
-
-    tocar, reiniciar, velocidade = st.columns([1, 1, 3])
-    rotulo = "Pausar" if st.session_state["replay_tocando"] else "Tocar replay"
-    if tocar.button(rotulo, type="primary", key="replay_tocar"):
-        st.session_state["replay_tocando"] = not st.session_state["replay_tocando"]
-        st.rerun()
-    if reiniciar.button("Reiniciar", key="replay_reiniciar"):
-        st.session_state.update(replay_minuto=0, replay_tocando=False)
-        st.rerun()
-    minutos_por_quadro = velocidade.slider(
-        "Minutos de dado por segundo", 1, 30, 5, key="replay_vel"
-    )
-
-    eventos = demo.fundir_eventos(
-        internacao.eventos, demo.alertas_de_video(_conexao(), paciente.id)
-    )
-    intervalo = SEGUNDOS_POR_QUADRO if st.session_state["replay_tocando"] else None
-    st.fragment(_quadro, run_every=intervalo)(internacao, eventos, minutos_por_quadro)

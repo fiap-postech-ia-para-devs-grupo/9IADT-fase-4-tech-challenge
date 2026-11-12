@@ -47,15 +47,18 @@ def analyze_audio(
     paciente_id: str = "avulso",
     cache_dir: Path = CACHE_DIR_PADRAO,
     caminho_modelo: Path = MODELO_PADRAO,
+    inicio: datetime | None = None,
 ) -> ResultadoLaboratorio:
     """Pipeline completo de um upload de áudio (qualquer formato que o `ffmpeg` leia).
 
     `caminho_modelo` ausente (classificador acústico ainda não treinado, ver
     `scripts/treinar_acustico.py`) não impede o resto: `probabilidade_alteracao_vocal` fica
     `None` e só os Alertas de Termo Crítico são gerados.
+    `inicio` é o começo da gravação (padrão: agora); para um Paciente de Demonstração, o
+    horário da Consulta na internação simulada, para o Alerta entrar na Fusão.
     """
     cache_dir.mkdir(parents=True, exist_ok=True)
-    agora = datetime.now()
+    agora = inicio or datetime.now()
     # O conteúdo entra na identidade: dois uploads "gravacao.wav" diferentes não podem
     # compartilhar cache nem id de Alerta.
     resumo = hashlib.sha256(arquivo.read_bytes()).hexdigest()[:12]

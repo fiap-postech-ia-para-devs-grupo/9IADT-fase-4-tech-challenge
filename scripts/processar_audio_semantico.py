@@ -3,7 +3,8 @@ seções 5 e 15): Azure STT (cacheado), WER contra a transcrição manual, Termo
 for Health) e Sentiment por fala do paciente.
 
 Requer `.env` preenchido (ver `docs/azure-setup.md`) e os dados de
-`uv run python scripts/download_data.py primock57`. Cada Consulta é transcrita/analisada uma
+`uv run python scripts/download_data.py primock57`; sem chaves, roda só do cache versionado (o
+WER exige o PriMock57 baixado). Cada Consulta é transcrita/analisada uma
 única vez: reexecutar lê o cache em `data/audio/cache_primock57/` em vez de gastar cota.
 
     uv run python -m scripts.processar_audio_semantico
@@ -19,7 +20,7 @@ import pathlib
 import pandas as pd
 from dotenv import load_dotenv
 
-from src.analyzers.audio.azure import ConfigAzureIncompleta, carregar_config
+from src.analyzers.audio.azure import AzureConfig, ConfigAzureIncompleta, carregar_config
 from src.analyzers.audio.semantic import processar_consulta
 from src.core import db
 
@@ -37,6 +38,15 @@ def _ler_lista() -> list[str]:
     ]
 
 
+def _em_cache(consulta_id: str) -> bool:
+    arquivos = (
+        f"{consulta_id}_patient_16k.stt.json",
+        f"{consulta_id}.ta_health_v2.json",
+        f"{consulta_id}.sentiment.json",
+    )
+    return all((CACHE_DIR / arquivo).exists() for arquivo in arquivos)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=(__doc__ or "").splitlines()[0])
     parser.add_argument("--gravar", action="store_true", help="grava os Alertas novos no SQLite")
@@ -46,8 +56,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         config = carregar_config(os.environ)
     except ConfigAzureIncompleta as erro:
-        print(erro)
-        return 2
+        sem_cache = [c for c in _ler_lista() if not _em_cache(c)]
+        if sem_cache:
+            print(f"{erro}\nConsultas sem cache: {', '.join(sem_cache)}")
+            return 2
+        # Avaliador sem conta Azure: tudo vem do cache versionado, nenhuma chamada é feita.
+        print(f"Sem chaves do Azure: usando só o cache versionado em {CACHE_DIR}")
+        config = AzureConfig("", "", "", "")
 
     SAIDA.mkdir(parents=True, exist_ok=True)
     linhas_wer: list[dict[str, object]] = []
@@ -80,14 +95,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{consulta_id}: WER={resultado.wer}, {n_termos} Termo(s) Crítico(s)")
 
     tabela_wer = pd.DataFrame(linhas_wer)
-    tabela_wer.to_csv(SAIDA / "wer.csv", index=False)
     pd.DataFrame(linhas_termos).to_csv(SAIDA / "termos_criticos.csv", index=False)
 
-    n_wer = tabela_wer["wer"].notna().sum()
-    print(
-        f"\nWER médio ({n_wer} Consultas): {tabela_wer['wer'].mean():.3f} "
-        f"(sem hesitações: {tabela_wer['wer_sem_hesitacoes'].mean():.3f})"
-    )
+    n_wer = int(tabela_wer["wer"].notna().sum())
+    if n_wer:
+        tabela_wer.to_csv(SAIDA / "wer.csv", index=False)
+        print(
+            f"\nWER médio ({n_wer} Consultas): {tabela_wer['wer'].mean():.3f} "
+            f"(sem hesitações: {tabela_wer['wer_sem_hesitacoes'].mean():.3f})"
+        )
+    else:
+        # Sem as transcrições manuais (PriMock57 não baixado) não há WER: mantém o wer.csv.
+        print("\nWER não recalculado: rode `scripts/download_data.py primock57` para medir.")
     print(f"Termos Críticos no total: {len(linhas_termos)}")
 
     if args.gravar:

@@ -399,7 +399,12 @@ def processar_consulta(
     cache_dir.mkdir(parents=True, exist_ok=True)
     audio_original = pasta_primock57 / "audio" / f"{consulta_id}_patient.wav"
     audio_16k = cache_dir / f"{consulta_id}_patient_16k.wav"
-    audio_pronto = converter_wav(audio_original, audio_16k)
+    # Com a transcrição em cache, o WAV não é lido: dá para reprocessar sem o PriMock57 baixado,
+    # sem ffmpeg e sem chaves do Azure (o cache versionado basta).
+    if (cache_dir / f"{audio_16k.stem}.stt.json").exists():
+        audio_pronto = audio_16k
+    else:
+        audio_pronto = converter_wav(audio_original, audio_16k)
 
     transcricao = transcrever(audio_pronto, config, cache_dir)
 

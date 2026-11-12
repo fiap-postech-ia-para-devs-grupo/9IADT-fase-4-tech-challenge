@@ -20,7 +20,7 @@ def conn(tmp_path):
 def test_tabela_segue_a_ordem_por_severidade_e_horario(conn):
     tabela = central.tabela_alertas(db.listar(conn))
 
-    assert tabela["Severidade"].iloc[0].endswith("critica")
+    assert tabela["Severidade"].iloc[0].endswith("Crítica")
     assert list(tabela.columns) == [
         "Severidade",
         "Horário",
@@ -71,3 +71,57 @@ def test_reconhecer_e_resolver_gravam_no_banco(conn):
 def test_composto_critico_referencia_alertas_existentes(conn):
     composto = next(a for a in db.listar(conn) if a.severidade is Severidade.CRITICA)
     assert all(db.obter(conn, i) is not None for i in composto.alertas_origem)
+
+
+def test_evidencia_em_linguagem_clinica():
+    fatos = dict(
+        central.fatos_da_evidencia(
+            {
+                "frame": "results/video/x.jpg",
+                "regra": "valgo_dinamico",
+                "lado": "dir",
+                "altura_relativa": 0.48,
+                "tecnica": "regras_clinicas",
+                "valores": [[88.0]],
+            }
+        )
+    )
+
+    assert fatos == {
+        "Regra": "valgo dinâmico do joelho",
+        "Lado": "direito",
+        "Altura vs. em pé": "48%",
+        "Técnica": "regra clínica",
+    }
+
+
+def test_rotulos_humanos_na_tabela(conn):
+    tabela = central.tabela_alertas(db.listar(conn, origem=[Origem.SINAIS_VITAIS]))
+
+    assert set(tabela["Origem"]) == {"Sinais vitais"}
+    assert "sinais_vitais" not in tabela.to_string()
+
+
+def test_central_abre_alerta_selecionado_com_acoes(tmp_path):
+    def roteiro():
+        import os
+
+        from src.core import db
+        from src.ui import central
+
+        central.pagina(db.conectar(os.environ["TESTE_DB"]))
+
+    caminho = tmp_path / "alertas.db"
+    conexao = db.conectar(caminho)
+    mock.popular_mock(conexao)
+    critico = next(a for a in db.listar(conexao) if a.severidade is Severidade.CRITICA)
+    os.environ["TESTE_DB"] = str(caminho)
+
+    app = AppTest.from_function(roteiro, default_timeout=30)
+    app.session_state["alerta_aberto"] = critico.id
+    app.session_state["central_escopo"] = "todos"
+    app.run()
+
+    assert not app.exception
+    assert any("Reconhecer" in b.label for b in app.button)
+    assert any("Críticos sem reconhecimento" in m.label for m in app.metric)

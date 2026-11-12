@@ -51,10 +51,51 @@ def dataset(nome: str, *, dono: str, destino: str):
 # --- Datasets (ESTRATEGIA.md, seções 4–7). Cada dono troca o `raise` pelo download real. ---
 
 
+# Wikimedia pede um User-Agent que identifique o projeto; sem ele, devolve 403/429.
+USER_AGENT = (
+    "FIAP-TechChallenge-Fase4/0.1 "
+    "(https://github.com/fiap-postech-ia-para-devs-grupo/9IADT-fase-4-tech-challenge)"
+)
+
+
 @dataset("video", dono="Marcelo", destino="video")
 def baixar_video(destino: Path) -> None:
-    """Clipes Pexels/Pixabay; licença/URL de cada um em data/video/SOURCES.md."""
-    raise NotImplementedError
+    """Clipes de `data/video/clipes.json` (Wikimedia Commons e UR Fall Detection Dataset).
+
+    Licença, autor e página de cada um em `data/video/SOURCES.md`. Os pesos do YOLOv8n-pose
+    são baixados pelo Ultralytics na primeira análise.
+    """
+    import json
+
+    manifesto = json.loads((RAIZ_DADOS / "video" / "clipes.json").read_text(encoding="utf-8"))
+    for clipe in manifesto["clipes"]:
+        alvo = destino / clipe["arquivo"]
+        if alvo.exists():
+            continue
+        parcial = alvo.with_suffix(alvo.suffix + ".part")
+        pedido = urllib.request.Request(clipe["url"], headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(pedido, timeout=120) as resposta, open(parcial, "wb") as saida:
+            shutil.copyfileobj(resposta, saida)
+        parcial.replace(alvo)
+
+
+SONS = {
+    "alarme_monitor.mp3": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Heart_Monitor_Beep--freesound.org.mp3",
+    "grito.ogg": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Wilhelm_Scream.ogg",
+    "gemido_choro.ogg": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Male_crying_and_weeping.ogg",
+}
+
+
+@dataset("sons", dono="Marcelo", destino="audio/sons")
+def baixar_sons(destino: Path) -> None:
+    """Sons do leito para o monitoramento de áudio; licenças em data/audio/sons/SOURCES.md."""
+    for arquivo, url in SONS.items():
+        alvo = destino / arquivo
+        if alvo.exists():
+            continue
+        pedido = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(pedido, timeout=120) as resposta, open(alvo, "wb") as saida:
+            shutil.copyfileobj(resposta, saida)
 
 
 PRIMOCK57_AUDIO_URL = "https://media.githubusercontent.com/media/babylonhealth/primock57/main/audio"

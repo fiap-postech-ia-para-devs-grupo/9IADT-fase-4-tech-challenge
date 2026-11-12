@@ -346,3 +346,29 @@ def test_termo_repetido_no_mesmo_trecho_gera_um_alerta():
         trechos, [[entidade, entidade]], "p1", "c1", datetime(2026, 1, 1)
     )
     assert len(alertas) == 1
+
+
+def test_processar_consulta_do_cache_dispensa_audio_e_azure(tmp_path, monkeypatch):
+    """Avaliador sem PriMock57, ffmpeg nem chaves: o cache versionado basta."""
+    cache = Path("data/audio/cache_primock57")
+    if not (cache / "day3_consultation04_patient_16k.stt.json").exists():
+        pytest.skip("cache versionado do PriMock57 ausente")
+
+    def falhar(*_):
+        raise AssertionError("não deveria converter nem chamar o Azure")
+
+    monkeypatch.setattr(semantic, "converter_wav", falhar)
+    monkeypatch.setattr(semantic, "_reconhecer_continuo", falhar)
+
+    resultado = semantic.processar_consulta(
+        "day3_consultation04",
+        tmp_path / "primock57-ausente",
+        semantic.AzureConfig("", "", "", ""),
+        cache,
+        inicio=datetime(2026, 10, 1, 10, 0),
+    )
+
+    assert resultado.wer is None
+    assert any(
+        a.evidencia.get("categoria") == "respiratorio" for a in resultado.alertas_termo_critico
+    )

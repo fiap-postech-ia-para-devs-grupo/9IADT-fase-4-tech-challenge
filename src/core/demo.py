@@ -77,6 +77,7 @@ class PacienteDemo:
     prescricoes: FontePrescricoes
     consulta: FonteConsulta
     video: FonteVideo
+    leito: str = ""
 
     def em(self, minutos: float) -> datetime:
         return self.internacao_inicio + timedelta(minutes=minutos)
@@ -121,6 +122,7 @@ def _de_dict(dados: dict[str, Any]) -> PacienteDemo:
         ),
         consulta=FonteConsulta(**dados["consulta"]),
         video=FonteVideo(**dados["video"]),
+        leito=dados.get("leito", ""),
     )
 
 
@@ -284,7 +286,7 @@ def visiveis(eventos: Iterable[EventoAlerta], agora: datetime) -> list[EventoAle
 
 
 def alertas_de_video(conn: sqlite3.Connection, paciente_id: str) -> list[Alerta]:
-    """Alertas gravados pelo Analisador de Vídeo para este paciente (#6)."""
+    """Alertas gravados pelo Analisador de Vídeo (`scripts/processar_video.py`) do paciente."""
     return db.listar(conn, origem=Origem.VIDEO, paciente_id=paciente_id)
 
 
