@@ -165,12 +165,20 @@ def acionar(
     rotulo_paciente: dict[str, str],
     cfg: ConfigWhatsApp | None = None,
 ) -> list[Notificacao]:
-    """Aciona a equipe para os Alertas que pedem chamada e ainda não foram reconhecidos."""
+    """Aciona a equipe para os Alertas que pedem chamada e ainda não foram reconhecidos.
+
+    **Um disparo por leito:** enquanto o leito tem chamado acionado e não reconhecido, outros
+    Alertas do mesmo paciente não geram nova mensagem (o mais grave vai primeiro). Depois do
+    Reconhecimento, um evento novo volta a acionar. O escalonamento também é um por leito.
+    """
     _preparar(conn)
     cfg = cfg or config()
     equipe = cadastro.equipe(conn)
+    acionados = leitos_acionados(conn)
     feitas: list[Notificacao] = []
-    for alerta in alertas:
+    pesos = {s: i for i, s in enumerate(Severidade)}
+    ordenados = sorted(alertas, key=lambda a: (pesos[a.severidade], a.detectado_em), reverse=True)
+    for alerta in ordenados:
         if alerta.status is not Status.NOVO or not exige_chamada(alerta):
             continue
         if not (agora - JANELA_RECENTE <= alerta.detectado_em <= agora):
@@ -178,6 +186,9 @@ def acionar(
         atraso = agora - alerta.detectado_em
         niveis = [1] + ([2] if atraso >= timedelta(minutes=MINUTOS_ESCALONAMENTO) else [])
         for nivel in niveis:
+            if (alerta.paciente_id, nivel) in acionados:
+                continue
+            acionados.add((alerta.paciente_id, nivel))
             for profissional in destinatarios(equipe, nivel):
                 if _ja_enviado(conn, alerta.id, nivel, profissional.id):
                     continue
@@ -205,6 +216,16 @@ def acionar(
                     )
                 feitas.append(feita)
     return feitas
+
+
+def leitos_acionados(conn: sqlite3.Connection) -> set[tuple[str, int]]:
+    """(paciente, nível) com mensagem já enviada para um Alerta ainda sem Reconhecimento."""
+    _preparar(conn)
+    linhas = conn.execute(
+        "SELECT DISTINCT a.paciente_id, n.nivel FROM notificacoes n "
+        "JOIN alertas a ON a.id = n.alerta_id WHERE a.status = 'novo'"
+    )
+    return {(paciente, nivel) for paciente, nivel in linhas}
 
 
 def historico(conn: sqlite3.Connection, limite: int = 50) -> list[dict]:

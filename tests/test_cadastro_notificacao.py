@@ -98,6 +98,40 @@ def test_chamada_aciona_o_plantao_e_escalona_uma_vez_so(conn):
     assert len(notificacao.historico(conn)) == 2
 
 
+def test_um_disparo_por_leito_ate_o_reconhecimento(conn):
+    ana = next(p for p in cadastro.equipe(conn) if p.id == "enf-ana")
+    cadastro.salvar_profissional(
+        conn, cadastro.Profissional(ana.id, ana.nome, ana.funcao, "", "11999990000", True)
+    )
+    criticos = [
+        a
+        for a in mock.gerar_alertas_mock()
+        if a.severidade is Severidade.CRITICA and a.status is Status.NOVO
+    ]
+    primeiro = criticos[0]
+    outro = primeiro.__class__(
+        **{**primeiro.para_dict(), "id": "outro", "descricao": "outra chamada"}
+        | {
+            "origem": primeiro.origem,
+            "tipo": primeiro.tipo,
+            "severidade": primeiro.severidade,
+            "status": primeiro.status,
+            "detectado_em": primeiro.detectado_em,
+            "reconhecido_em": None,
+        }
+    )
+    for alerta in (primeiro, outro):
+        db.salvar(conn, alerta)
+    agora = primeiro.detectado_em + timedelta(minutes=1)
+
+    enviadas = notificacao.acionar(conn, [primeiro, outro], agora, {}, SIMULADO)
+    assert len(enviadas) == 1  # mesmo leito: uma mensagem só
+
+    db.reconhecer(conn, enviadas[0].alerta_id, por="Enf. Ana")
+    restante = next(a for a in (primeiro, outro) if a.id != enviadas[0].alerta_id)
+    assert len(notificacao.acionar(conn, [restante], agora, {}, SIMULADO)) == 1
+
+
 def test_sem_ninguem_com_whatsapp_nada_e_enviado(conn):
     critico = _critico()
 
