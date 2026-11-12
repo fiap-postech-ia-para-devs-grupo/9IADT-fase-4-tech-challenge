@@ -212,13 +212,9 @@ def controles() -> None:
         key="relogio_vel",
         label_visibility="collapsed",
     )
-    inicio, fim, instante = inicio_plantao(), fim_plantao(), agora()
-    st.caption(
-        f"Plantão de hoje ({date.today():%d/%m}): **{inicio:%H:%M} → {fim:%H:%M}**  \n"
-        f"Agora: **{instante:%H:%M}** ({minuto() // 60}h{minuto() % 60:02d} de "
-        f"{total // 60}h{total % 60:02d})"
-    )
-    st.progress(minuto() / total if total else 0.0)
+    inicio, fim = inicio_plantao(), fim_plantao()
+    # A hora atual fica na barra superior (que se atualiza); aqui só o turno.
+    st.caption(f"Plantão de hoje ({date.today():%d/%m}): **{inicio:%H:%M} → {fim:%H:%M}**")
     if not tocando() and total:
         # Chave própria: um widget com a chave `relogio_min` perderia o valor nas execuções em
         # que não é desenhado (relógio tocando).
