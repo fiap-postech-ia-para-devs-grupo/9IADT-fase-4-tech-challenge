@@ -5,7 +5,7 @@
 - **Cenário:** Agachamento
 - **Vista da câmera:** lateral
 - **Duração:** 28.2 s (846 frames a 30 fps; pose em 1 a cada 3)
-- **Processamento em CPU:** 17.8 s (0.63× o tempo do clipe)
+- **Processamento em CPU:** 17.4 s (0.62× o tempo do clipe)
 - **Frames com pessoa detectada:** 100%
 
 ## Repetições (6)

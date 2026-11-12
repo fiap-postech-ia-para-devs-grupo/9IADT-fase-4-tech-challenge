@@ -20,6 +20,7 @@ from src.analyzers.video.exercise_rules import (  # noqa: E402
     DESCRICAO_REGRA,
     joelho_mais_flexionado,
 )
+from src.core.alerts import Tipo  # noqa: E402
 
 if TYPE_CHECKING:
     from src.analyzers.video.lab import ResultadoVideo
@@ -129,6 +130,12 @@ def markdown(resultado: ResultadoVideo, pasta: Path) -> str:
 
     partes += [f"## Quedas ({len(resultado.quedas)})", ""]
     if resultado.quedas:
+        # Áreas críticas (YOLOv8 de objetos) ficam na Evidência do Alerta de cada Queda.
+        perto = {
+            a.evidencia["t"]: ", ".join(a.evidencia.get("objetos_proximos", [])) or "—"
+            for a in resultado.alertas
+            if a.tipo is Tipo.QUEDA
+        }
         partes.append(
             _tabela(
                 [
@@ -137,10 +144,11 @@ def markdown(resultado: ResultadoVideo, pasta: Path) -> str:
                         f"{q.duracao_transicao:.1f} s",
                         f"{q.razao_caixa:.2f}",
                         f"{q.altura_relativa:.0%}",
+                        perto.get(round(q.t, 2), "—"),
                     ]
                     for q in resultado.quedas
                 ],
-                ["no chão em", "transição", "largura/altura", "altura vs. em pé"],
+                ["no chão em", "transição", "largura/altura", "altura vs. em pé", "junto a"],
             )
         )
     else:

@@ -5,7 +5,7 @@
 - **Cenário:** Agachamento unipodal (mini agachamento em uma perna)
 - **Vista da câmera:** frontal
 - **Duração:** 16.2 s (404 frames a 25 fps; pose em 1 a cada 3)
-- **Processamento em CPU:** 7.9 s (0.49× o tempo do clipe)
+- **Processamento em CPU:** 8.4 s (0.52× o tempo do clipe)
 - **Frames com pessoa detectada:** 100%
 
 ## Repetições (0)

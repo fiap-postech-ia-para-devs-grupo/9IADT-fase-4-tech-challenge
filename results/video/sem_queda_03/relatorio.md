@@ -5,7 +5,7 @@
 - **Cenário:** quarto (monitoramento de Queda)
 - **Vista da câmera:** lateral
 - **Duração:** 6.0 s (180 frames a 30 fps; pose em 1 a cada 3)
-- **Processamento em CPU:** 3.5 s (0.59× o tempo do clipe)
+- **Processamento em CPU:** 3.6 s (0.61× o tempo do clipe)
 - **Frames com pessoa detectada:** 100%
 
 ## Quedas (0)
