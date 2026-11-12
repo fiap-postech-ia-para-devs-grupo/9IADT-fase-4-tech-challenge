@@ -281,3 +281,30 @@ def test_demo_02_dispara_efeito_adverso_e_demo_03_espera_o_video():
         "Possível efeito adverso de medicação"
     ]
     assert compostos(demo.fundir_eventos(demo.montar(terceiro).eventos)) == []
+
+
+def test_monitor_usa_o_ultimo_valor_medido_ate_agora():
+    from src.ui import painel
+
+    janela = janela_com_spo2_baixa()
+    janela.iloc[121, janela.columns.get_loc("FC")] = float("nan")
+    i = internacao(janela=janela)
+
+    no_minuto_121 = painel.ultimos_sinais(i, T0 + timedelta(minutes=121))
+
+    assert no_minuto_121["FC"] == 80.0  # lacuna preenchida com o último valor
+    assert painel.ultimos_sinais(i, T0 + timedelta(minutes=120))["SpO2"] == 85.0
+
+
+def test_painel_mostra_monitor_com_news2(monkeypatch):
+    def roteiro():
+        from src.ui import painel
+
+        painel.pagina()
+
+    monkeypatch.setattr(demo, "montar", lambda p: internacao(p))
+    app = AppTest.from_function(roteiro, default_timeout=60).run()
+
+    rotulos = [m.label for m in app.metric]
+    assert any("NEWS2" in r for r in rotulos)
+    assert any("Saturação" in r for r in rotulos)

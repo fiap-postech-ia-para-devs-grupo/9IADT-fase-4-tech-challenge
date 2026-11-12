@@ -77,6 +77,7 @@ class PacienteDemo:
     prescricoes: FontePrescricoes
     consulta: FonteConsulta
     video: FonteVideo
+    leito: str = ""
 
     def em(self, minutos: float) -> datetime:
         return self.internacao_inicio + timedelta(minutes=minutos)
@@ -121,6 +122,7 @@ def _de_dict(dados: dict[str, Any]) -> PacienteDemo:
         ),
         consulta=FonteConsulta(**dados["consulta"]),
         video=FonteVideo(**dados["video"]),
+        leito=dados.get("leito", ""),
     )
 
 

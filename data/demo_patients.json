@@ -3,6 +3,7 @@
   "pacientes": [
     {
       "id": "demo-01",
+      "leito": "UTI-04",
       "nome": "Paciente de Demonstração 1: piora respiratória",
       "resumo": "A queda de SpO2 coincide com a Consulta em que o paciente relata falta de ar: Alerta Composto crítico.",
       "internacao_inicio": "2026-10-01T08:00:00",
@@ -18,6 +19,7 @@
     },
     {
       "id": "demo-02",
+      "leito": "UCO-12",
       "nome": "Paciente de Demonstração 2: instabilidade após ajuste de beta-bloqueador",
       "resumo": "Hipotensão logo depois de um salto de dose de metoprolol: Alerta Composto de possível efeito adverso.",
       "internacao_inicio": "2026-10-01T08:00:00",
@@ -33,6 +35,7 @@
     },
     {
       "id": "demo-03",
+      "leito": "ENF-208",
       "nome": "Paciente de Demonstração 3: queda após início de opioide",
       "resumo": "Início de hidromorfona antes da Queda no quarto: Alerta Composto de queda possivelmente associada a medicação.",
       "internacao_inicio": "2026-10-01T08:00:00",
