@@ -11,6 +11,7 @@
 | 3.2 Áudio | V. Geizler | #9, #10, #14 |
 | 3.3 Sinais Vitais | Antonio | #7 |
 | 3.4 Prescrições | V. Blasque | #8 |
+| 3.5 Monitoramento do Leito (câmera e microfone) | Marcelo | #6, #13 |
 | 4. Fusão e Pacientes de Demonstração | V. Blasque | #12 |
 | 5. Resultados e Exemplos de Anomalias Detectadas | cada dono, nas suas seções; Renato consolida | #17 |
 | 6. Integração com Azure | V. Geizler | #14, #21 |
@@ -29,37 +30,46 @@ Cada modalidade tem o seu Analisador, que lê uma fonte pública e emite Alertas
 
 ```mermaid
 flowchart LR
-    subgraph Fontes públicas
-        V[Clipes Pexels/Pixabay]
-        A[PriMock57 e Coswara]
-        S[MIMIC-III numerics]
-        P[MIMIC-IV Demo]
+    subgraph Fontes ligadas na Admissão
+        S[Monitor multiparamétrico: MIMIC-III numerics]
+        P[Prescrição eletrônica: MIMIC-IV Demo]
+        A[Consulta gravada: PriMock57 / Coswara]
+        V[Câmera do leito / sessão: Wikimedia Commons, UR Fall]
+        M[Microfone do leito: AudioSet via AST, gravações]
     end
     subgraph Analisadores
-        AV[video: YOLOv8-pose]
-        AA[audio: Azure e acústica]
-        AS[vitals: regras, z-score, IF]
+        AS[vitals: regras, z-score, IF + piora do NEWS2]
         AP[prescriptions: regras]
+        AA[audio: Azure STT + TA for Health + acústica]
+        AV[video: YOLOv8-pose + YOLOv8 objetos]
+        AM[audio do leito: AST + Whisper]
     end
     DB[(alertas.db)]
     F[Fusão: src/core/fusion.py]
-    C[Central de Alertas e Painel]
-    V --> AV
-    A --> AA
+    C[Central de Alertas, Mapa de Leitos, Prontuário]
+    L[Luz de Chamada + Acionamento WhatsApp + Escalonamento]
     S --> AS
     P --> AP
-    AV --> DB
-    AA --> DB
+    A --> AA
+    V --> AV
+    M --> AM
     AS --> DB
     AP --> DB
+    AA --> DB
+    AV --> DB
+    AM --> DB
     DB --> F
     F -->|Alerta Composto| DB
     DB --> C
+    DB --> L
+    L --> C
 ```
 
-**Monitoramento contínuo.** Os sinais vitais não são analisados em lote. O `src/analyzers/vitals/stream.py` reproduz o registro minuto a minuto (1 minuto de dado por segundo de parede, por padrão) e grava cada Alerta no banco no instante em que a Anomalia aparece pela primeira vez. Isso é o que a Tela 2 vai mostrar ao vivo. O replay sem pausa (`scripts/replay_vitals.py`) grava o mesmo conjunto de Alertas, sem esperar.
+**Monitoramento contínuo.** Os sinais vitais não são analisados em lote. O `src/analyzers/vitals/stream.py` reproduz o registro minuto a minuto (1 minuto de dado por segundo de parede, por padrão) e grava cada Alerta no banco no instante em que a Anomalia aparece pela primeira vez. Isso é o que o Mapa de Leitos e o Prontuário mostram ao vivo, conforme o relógio do plantão anda. O replay sem pausa (`scripts/replay_vitals.py`) grava o mesmo conjunto de Alertas, sem esperar.
 
 **Identidade dos Alertas.** Os ids são determinísticos (UUID v5 a partir do conteúdo da Anomalia), então rodar de novo o mesmo registro não duplica Alertas. Isso faz do banco um resultado reprodutível, e não um acúmulo de execuções.
+
+**Plantão simulado.** Um relógio único (barra lateral) toca o turno de todos os leitos em velocidade acelerada; a barra superior mostra o plantão de hoje (início → fim) e a hora atual. Cada tela mostra o hospital nesse instante, e os Alertas chegam à Central quando "acontecem". A câmera e o microfone do leito (seção 3.5) rodam em tempo real e emitem Alertas no horário do relógio.
 
 **Limite da Fusão.** Os Pacientes de Demonstração são compostos (ver seção 4). Os Alertas de origens diferentes vêm de registros de bases públicas distintas, então a Fusão mostra a regra e a janela, não uma correlação clínica real.
 
@@ -261,6 +271,41 @@ uv run python -m scripts.analisar_prescricoes --gravar   # contagem, linhas do t
 uv run pytest tests/test_prescriptions.py
 ```
 
+### 3.5 Monitoramento do Leito — câmera e microfone (YOLOv8, AST/AudioSet, Whisper)
+
+_Dono: Marcelo._ Decisão em [ADR 0003](adr/0003-monitoramento-do-leito-e-evento-sonoro.md).
+
+**Por quê.** Os Analisadores de vídeo e áudio das seções 3.1 e 3.2 rodam em lote ou sob demanda. Num monitoramento real, a câmera e o microfone ficam ligados ao leito, e o risco é detectado quando acontece. Na Admissão, cada paciente recebe esses dispositivos, e no Prontuário a seção **Câmera e microfone** liga vídeo e/ou áudio. A integração é **simulada**: a webcam e o microfone do computador onde o app roda, ou gravações públicas tocadas em tempo real.
+
+**Câmera** (`src/analyzers/video/vigilancia.py`). Uma thread por leito lê os quadros, estima a pose (YOLOv8n-pose, 1 a cada 2 quadros) e roda o detector de Queda da seção 3.1 numa janela deslizante de 8 s. No frame da Queda, o **YOLOv8n de objetos** detecta as áreas críticas de transferência (cama, cadeira, sofá, vaso sanitário) junto ao paciente; elas entram na Evidência e na descrição ("… junto a cadeira"). Nos 5 clipes de queda do UR Fall, a área crítica apontada foi cadeira (e cadeira + sofá num deles). Cada leito mantém uma Queda aberta até o Reconhecimento.
+
+**Score de Queda (webcam ao vivo).** Com a câmera perto do paciente o corpo inteiro não aparece, e o critério da caixa (seção 3.1) não se aplica. Para a webcam, cada quadro recebe um **Score de Queda de 0 a 100**, mostrado ao vivo no Prontuário com seus componentes:
+
+| Componente | Medida | 0 → 1 | Peso |
+| --- | --- | --- | --- |
+| Inclinação | ângulo do eixo ombros → nariz com a vertical | 30° → 60° | 40% |
+| Mudança brusca | graus ganhos nos últimos 3 s | 0° → 45° | 40% |
+| Descida | quanto os ombros desceram em 3 s, em larguras de ombro | 0 → 1 | 20% |
+
+O **ângulo que caracteriza a Queda é 60° ou mais** (90° = deitado de lado; acima de 120° o nariz está abaixo dos ombros, a pessoa se curvou e não conta). O Alerta sai com **score ≥ 70 e o ângulo mantido ≥ 60° por 1,5 s**. Uma segunda regra cobre a webcam na altura da mesa, que não enxerga o chão: ombros descendo na faixa de baixo da imagem e cabeça fora da imagem por 3 s (score 80). Score, ângulo, variação e descida vão para a Evidência. Calibrado com a trilha quadro a quadro de um teste real (`results/video/camera/<paciente>/trilha.csv`): as duas quedas do teste foram detectadas, e nenhum Alerta nos outros ~8 min (sentado, virando de perfil, levantando). É uma calibração de um teste, não uma métrica: o critério da caixa (12/12 nos clipes) continua sendo o validado.
+
+**Processamento parcial.** A webcam roda em 640×480 com pose a 320 px a cada 2 quadros (os intermediários mostram o último esqueleto); o som usa metade dos núcleos da CPU e um único passe do AST por janela, e o Whisper só roda quando há indício de voz.
+
+**Microfone** (`src/analyzers/audio/ambiente.py`, `vigilancia_audio.py`). A cada 2,5 s, os últimos 5 s de áudio passam pelo **AST** (Audio Spectrogram Transformer) treinado no **AudioSet** — o dataset de áudio sugerido no enunciado — e as 527 classes viram eventos clínicos:
+
+| Evento Sonoro | Classes do AudioSet | Severidade |
+| --- | --- | --- |
+| alarme de equipamento | Beep/bleep, Alarm, Busy signal, Dial tone, Buzzer… | média |
+| grito | Screaming, Shout, Yell… | alta (aciona) |
+| gemido / choro | Groan, Whimper, Wail/moan, Crying… | média |
+| chamado da equipe | fala + Whisper tiny (pt) com "enfermeira", "socorro", "ajuda", "doutor", "ai", "ui", "dói", "dor"… | alta (aciona) |
+
+Nas gravações de teste (`data/audio/sons/`): o alarme do monitor saiu como alarme em 4 de 4 janelas (AudioSet "Busy signal"/"Beep"); o grito curto como grito (0,33) e gemido; o choro como gemido numa das janelas; e a frase sintética "Enfermeira! Socorro! Alguém me ajuda" como chamado, com o Whisper transcrevendo "Enfermeira. Socorro." e "alguém me ajuda por favor". O Whisper tiny erra a grafia de fala cortada ("infirmei"), por isso a janela é de 5 s e as palavras de chamado são radicais. Cada leito mantém um Alerta aberto por tipo de evento.
+
+**Fusão.** Nova regra crítica: **Queda + grito ou chamado** do mesmo paciente ("Queda com o paciente gritando ou pedindo ajuda").
+
+**Limitações.** Não há métrica formal para os sons (só gravações rotuladas pelo nome); em CPU, câmera e microfone juntos rendem ~3 quadros/s, e o carregamento dos modelos de som leva ~2 min na primeira vez.
+
 ## 4. Fusão e Pacientes de Demonstração
 
 _Dono: V. Blasque._
@@ -279,7 +324,23 @@ No `demo-01`, o offset da Consulta faz "short of breath", dito aos 40 s, coincid
 
 **Fusão.** Tardia e por regras (`src/core/fusion.py`, seção 8 da ESTRATEGIA.md): dois Alertas do mesmo paciente, de modalidades diferentes, numa janela de 24 h. Como a internação simulada dura poucas horas, quase todo par coincide. Por isso, a demonstração mantém um Alerta Composto por regra, o do par mais próximo no tempo.
 
-**Painel do Paciente (Tela 2).** O replay avança o relógio da internação e cada Alerta surge no minuto em que ficaria visível: os de Sinais Vitais quando o detector os emite, os demais no seu horário e o Composto quando a última origem aparece. Os Alertas surgidos vão para a Central de Alertas, onde a equipe os reconhece; reiniciar o replay não desfaz um Reconhecimento. A linha do tempo mostra prescrições monitoradas, Consulta e vídeo, com os marcadores de Alerta.
+**Unidade, Admissão e Prontuário.** Os Pacientes de Demonstração entram como admissões já feitas em leitos da unidade (`src/core/cadastro.py`), com identidade fictícia e idade/sexo da fonte do MIMIC-IV. Novas admissões escolhem um leito livre e ligam as fontes (registro de Sinais Vitais, internação do MIMIC-IV, Consulta em cache e câmera); o paciente passa a ser monitorado a partir da hora do plantão. A equipe é cadastrada com função, registro e WhatsApp; o plantonista é escolhido dela e assina Reconhecimentos e a evolução.
+
+**Prontuário (Tela 2).** O replay avança o relógio da internação e cada Alerta surge no minuto em que ficaria visível: os de Sinais Vitais quando o detector os emite, os demais no seu horário e o Composto quando a última origem aparece. Os Alertas surgidos vão para a Central de Alertas, onde a equipe os reconhece; reiniciar o replay não desfaz um Reconhecimento. A linha do tempo mostra prescrições monitoradas, Consulta e vídeo, com os marcadores de Alerta.
+
+**Alertas inteligentes** (`src/core/news2.py`, `inteligencia.py`).
+
+- **Piora do NEWS2 parcial:** o escore (FR, SpO2, PAS e FC; sem temperatura, consciência e O2, então é um piso do NEWS2 real) subir 2+ pontos em até 1 h e chegar a 5+ (alto se 7+) gera um Alerta de Sinal Vital, um por episódio. O monitor de cada leito mostra o escore e a conduta recomendada pelo NEWS2.
+- **Episódios:** Alertas repetidos do mesmo paciente, regra e sinal a menos de 30 min viram um cartão só na Central, contra a fadiga de alarme.
+- **Escalonamento:** chamado sem Reconhecimento em 5 min do plantão é marcado como escalonado e aciona a equipe médica.
+
+**Do Alerta à equipe médica (fluxo final).**
+
+1. O Analisador grava o Alerta no SQLite (Contrato único). A Fusão grava o Composto quando modalidades se confirmam.
+2. Se o Alerta pede chamada — crítico, Queda, piora do NEWS2, grito ou chamado —, a **luz do leito** acende (vermelha, piscando) no Mapa de Leitos e no Prontuário, a **sirene** da unidade acende na barra superior e a faixa de chamada de emergência lista os leitos.
+3. A equipe de plantão com WhatsApp cadastrado é **acionada** pela Evolution API (`src/core/notificacao.py`), com o leito, o paciente, o Alerta e o link da Central — **um disparo por leito** até o Reconhecimento. Sem configuração, o acionamento é simulado e registrado.
+4. Sem Reconhecimento em 5 min, o chamado **escala** para a equipe médica.
+5. Na **Central de Alertas**, o plantonista abre a Evidência (frame anotado, trecho de áudio, janela do sinal), **reconhece** e registra a **conduta**, que vai para a **evolução** do paciente; depois **resolve**. A luz do leito apaga.
 
 **Limitações.**
 
@@ -291,7 +352,7 @@ No `demo-01`, o offset da Consulta faz "short of breath", dito aos 40 s, coincid
 
 ```bash
 uv run python scripts/download_data.py mimic3wdb mimic4demo
-uv run streamlit run app.py                     # Painel do Paciente > Tocar replay
+uv run streamlit run app.py                     # barra lateral > ▶ Iniciar; Mapa de Leitos e Prontuário
 uv run python -m scripts.gerar_pacientes_demo   # opcional: grava tudo no SQLite sem tocar o replay
 ```
 
@@ -378,6 +439,13 @@ _Dono: Renato, com insumo de cada dono._
 - **Gabarito de fisioterapia parcial.** Só o valgo tem rótulo externo, dos autores do estudo. Amplitude insuficiente e compensação de tronco foram validadas apenas com poses sintéticas.
 - **Queda depende de ver o corpo inteiro.** Num quarto real, oclusão por móveis e cama e a queda na direção da câmera são os casos difíceis. O UR Fall não é um quarto de hospital.
 
+**Monitoramento do Leito, NEWS2 e acionamento (Marcelo):**
+
+- **Dispositivos simulados.** A câmera e o microfone do leito são a webcam/microfone do computador do app ou gravações; não há integração com câmera IP nem central de áudio hospitalar.
+- **Sons sem métrica formal.** O AST/AudioSet e o Whisper foram verificados só com gravações rotuladas pelo nome; o Whisper tiny erra grafia em fala cortada.
+- **NEWS2 parcial.** Sem temperatura, nível de consciência e O2 suplementar, o escore é um piso do NEWS2 real; não substitui a avaliação clínica.
+- **WhatsApp depende de serviço externo.** O acionamento usa a Evolution API de um integrante; num hospital, o canal oficial seria o sistema de chamada de enfermagem.
+
 **Áudio (V. Geizler):**
 
 - **Termos Críticos sem medida formal de precisão e recall.** Não há rótulo de referência no PriMock57: a revisão manual achou 6 Alertas duvidosos ou errados em 49 (seção 5). A lista curada também limita o recall: variantes como "pain in my chest" não casam.
@@ -389,3 +457,28 @@ _Dono: Renato, com insumo de cada dono._
 ## 8. Conclusão e Trabalhos Futuros
 
 _Dono: Renato._ AWS Textract/Comprehend, OpenAI, TORGO, notificação externa. <!-- TODO -->
+
+## Apêndice A — Cobertura do enunciado
+
+Rastreabilidade de cada item do `docs/IADT - Fase 4 - Tech challenge.pdf` até o que foi entregue.
+
+| Enunciado | Onde está | Evidência |
+| --- | --- | --- |
+| Vídeo: processar sessões de fisioterapia | `src/analyzers/video/`, Laboratório (clipe, upload, webcam) | seção 3.1, `results/video/` |
+| Vídeo: OpenPose/postura | YOLOv8-pose (keypoints COCO-17, ângulos articulares) | seção 3.1 |
+| Vídeo: YOLOv8 para objetos e áreas críticas | YOLOv8n de objetos no frame da Queda (cama, cadeira, sofá, vaso) | seção 3.5, `results/video/queda_0*/` |
+| Vídeo: relatórios automáticos de desvios | Relatório de Sessão (`report.py`) | `results/video/<clipe>/relatorio.md` |
+| Áudio: processar consultas | PriMock57, upload/microfone no Laboratório | seção 3.2 |
+| Áudio: alterações vocais (cansaço, dificuldade respiratória) | classificador acústico (Coswara) | seção 3.2 |
+| Áudio: Azure Speech to Text | `semantic.py` | seção 3.2, seção 6, WER |
+| Áudio: termos críticos e sentimentos com Azure Text Analytics | TA for Health + Sentiment | seção 3.2 |
+| Anomalias em sinais vitais | regras, z-score, Isolation Forest, piora do NEWS2 | seções 3.3 e 4 |
+| Anomalias em prescrições | regras de Mudança Terapêutica Atípica | seção 3.4 |
+| Padrões de movimentação durante a internação | Queda pela câmera do leito (contínua) | seções 3.1 e 3.5 |
+| Alertas automáticos à equipe médica | Central, luz de chamada, WhatsApp, escalonamento | seção 4 (fluxo final) |
+| Fusão de dados (texto, áudio, vídeo) | Fusão tardia por regras (5 regras, entre elas Queda + grito/chamado) | seção 4, ADRs 0001–0003 |
+| Tempo real / monitoramento preventivo | relógio do plantão, câmera e microfone do leito | seções 2, 3.5 |
+| Serviços em nuvem (Azure) | Speech + Language (F0) | seção 6 |
+| Sugestão de datasets: PhysioNet, AudioSet | MIMIC-III/IV (PhysioNet), AST treinado no AudioSet | seções 3.3, 3.4, 3.5 |
+| Relatório: fluxo, modelos, resultados, exemplos | este documento | seções 2, 3, 5 |
+| Vídeo de até 15 min | roteiro na ESTRATEGIA.md, seção 13 | entrega final (#18) |

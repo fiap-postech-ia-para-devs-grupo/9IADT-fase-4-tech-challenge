@@ -13,9 +13,10 @@ Roteiro para conferir, em cerca de 5 minutos, o caminho completo do upload de á
 
 1. Atualize a branch com `git pull`.
 2. Rode `uv run streamlit run app.py`.
-3. No menu, abra **Laboratório de Análise**.
-4. Em **Áudio da Consulta**, envie [`data/audio/teste_upload/teste_falta_de_ar.wav`](../data/audio/teste_upload/teste_falta_de_ar.wav). O seletor abre no seu computador: se você usa devcontainer e não encontrar o arquivo, baixe-o pelo painel do VS Code (botão direito → *Download*).
-5. Clique em **Analisar** e aguarde.
+3. No menu, em **Análise**, abra **Laboratório de Análise** e escolha **🎙️ Áudio** no topo.
+4. Em **Fonte**, escolha **Áudio de exemplo** (é o [`data/audio/teste_upload/teste_falta_de_ar.wav`](../data/audio/teste_upload/teste_falta_de_ar.wav)). Também dá para usar **Enviar arquivo** ou **Gravar pelo microfone**.
+5. Opcional: em **Paciente**, escolha um leito para o Alerta entrar na internação e na Fusão; sem isso, ele fica como avulso.
+6. Clique em **Analisar** e aguarde.
 
 ## Resultado esperado
 
@@ -29,7 +30,7 @@ O clipe tem 60 s, em inglês, e é a fala de um paciente relatando falta de ar.
 
 Ter Alerta de Alteração Vocal não indica sucesso nem falha do teste: o classificador acusa alteração em quase todas as Consultas do PriMock57 (17 de 18), e o resultado neste clipe curto pode ser diferente.
 
-O botão **Gravar Alertas no Banco** é opcional e só altera o banco local.
+O botão **Enviar Alertas à Central** é opcional e só altera o banco local.
 
 ## Teste opcional: sintoma negado
 

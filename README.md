@@ -35,7 +35,9 @@ O `--extra-index-url` é necessário no Linux, porque o `torch` CPU vem do índi
 
 **2. Credenciais do Azure**
 
-Copie `.env.example` para `.env` e preencha as quatro variáveis. O `.env` não vai para o git.
+Copie `.env.example` para `.env` e preencha as variáveis do Azure. O `.env` não vai para o git. Sem as chaves, o lote de áudio roda só do cache versionado (o upload de áudio no Laboratório precisa delas).
+
+Opcional: para a equipe receber as chamadas de emergência no WhatsApp, preencha `EVOLUTION_URL`, `EVOLUTION_APIKEY` e `EVOLUTION_INSTANCE` (Evolution API) e `APP_URL` (link da Central na mensagem). Sem elas, o acionamento fica simulado e só é registrado.
 
 ```bash
 cp .env.example .env
@@ -46,10 +48,10 @@ cp .env.example .env
 Os datasets brutos não vão para o git. O script baixa cada um para `data/`:
 
 ```bash
-uv run python scripts/download_data.py mimic3wdb mimic4demo video
+uv run python scripts/download_data.py mimic3wdb mimic4demo video sons
 ```
 
-Os nomes disponíveis são `video`, `primock57`, `coswara`, `mimic3wdb` e `mimic4demo`. Rodar sem argumentos baixa todos.
+Os nomes disponíveis são `video`, `sons`, `primock57`, `coswara`, `mimic3wdb` e `mimic4demo`. Rodar sem argumentos baixa todos. Os pesos do YOLOv8 e dos modelos de som (AST/AudioSet e Whisper) são baixados na primeira execução.
 
 **4. Processar tudo e popular o banco**
 
@@ -65,7 +67,20 @@ O script roda cada modalidade em sequência (sinais vitais, prescrições, áudi
 uv run streamlit run app.py
 ```
 
-A interface tem três telas: a **Central de Alertas** (com Reconhecimento e Resolução), o **Painel do Paciente** (replay ao vivo dos sinais vitais) e o **Laboratório de Análise** (upload de vídeo e de áudio).
+O menu segue a rotina de um plantão:
+
+| Seção | Tela | Para quê |
+| --- | --- | --- |
+| — | **Início** | Painel do plantão em cards e gráficos: ocupação, chamados, alertas por severidade, origem e tipo, NEWS2 por leito, equipe |
+| Monitoramento | **Mapa de Leitos** | Um cartão por leito: sinais atuais, NEWS2, luz de chamada; leitos livres |
+| Monitoramento | **Central de Alertas** | Fila única (episódios agrupados, escalonamento), Evidência, Reconhecimento com conduta |
+| Paciente | **Admissão** | Dar entrada no paciente e ligar as fontes: monitor, prescrição, consulta, câmera |
+| Paciente | **Prontuário** | Monitor de beira de leito, tendências, linha do tempo, medicações, alertas, **câmera e microfone do leito**, evolução e alta |
+| Análise | **Laboratório de Análise** | Vídeo (clipe, upload ou webcam) e áudio (upload, microfone ou exemplo) sob demanda |
+| Administração | **Equipe e Leitos** | Profissionais com WhatsApp, leitos, histórico de acionamentos |
+| Administração | **Ajuda** | Como o sistema funciona, fluxo multimodal, o que é real e o que é simulado, passo a passo |
+
+**Como demonstrar em 5 minutos:** escolha o plantonista na barra lateral, clique em **▶ Iniciar** no relógio do plantão e acompanhe o Mapa de Leitos. Num Prontuário, abra **Câmera e microfone**, ligue vídeo e áudio (clipe `queda_01` e a gravação "Enfermeira! Socorro!") e veja a luz do leito acender, o Alerta chegar à Central e a equipe ser acionada. O tour (🧭 na barra) percorre o sistema todo.
 
 ## Testes
 
@@ -79,8 +94,9 @@ Os testes de áudio usam o Azure mockado, então rodam sem chave.
 ## Estrutura
 
 ```
-app.py                 interface Streamlit (3 telas)
-src/core/              contrato do Alerta, SQLite, Fusão e Pacientes de Demonstração
+app.py                 interface Streamlit (menu por seções)
+src/core/              contrato do Alerta, SQLite, Fusão, Pacientes de Demonstração, cadastros
+                       (leitos, equipe, admissões, evolução), NEWS2, triagem e acionamento WhatsApp
 src/analyzers/         um Analisador por modalidade: video, audio, vitals, prescriptions
 src/ui/                telas do Streamlit
 scripts/               download, processamento em lote e avaliações

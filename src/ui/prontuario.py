@@ -50,7 +50,7 @@ def faixa_identificacao(
     nome = ficha.nome if ficha else paciente.nome
     cor = COR_RISCO[escore.risco]
     return f"""
-    <div class="cl" style="--cor:{cor}">
+    <div class="cl faixa" style="--cor:{cor}">
       <div class="cl-topo">
         <div><div class="cl-leito">🛏️ {e(paciente.leito or paciente.id)} · {e(nome)}</div>
           <div class="cl-sub" style="margin-top:.45rem">{e(paciente.id)} · {detalhes} ·
@@ -212,6 +212,11 @@ def _quadro(paciente: PacienteDemo, secao: str) -> None:
     elif secao == ALERTAS:
         _alertas_do_paciente(paciente.id, agora)
     elif secao == TENDENCIAS:
+        if agora <= internacao.inicio + timedelta(minutes=2):
+            st.info(
+                "As curvas de FC, FR, SpO2, PA e NEWS2 aparecem conforme o plantão anda: clique "
+                "em ▶ Iniciar na barra lateral ou arraste **Ir para** até um horário."
+            )
         st.plotly_chart(figura_sinais(internacao, surgidos, agora), width="stretch", key="sinais")
 
 
@@ -299,7 +304,7 @@ def pagina() -> None:
     st.fragment(_quadro, run_every=plantao.intervalo())(paciente, secao)
     if secao == CAMERA:
         admissao = cadastro.obter(plantao.conexao(), paciente.id)
-        controles_col, imagem_col = st.columns([2, 3], gap="large")
+        controles_col, imagem_col = st.columns([1, 1], gap="large")
         with controles_col:
             camera_leito.controles(paciente, admissao.fontes.camera if admissao else None)
         with imagem_col:

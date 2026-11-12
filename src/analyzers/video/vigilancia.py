@@ -28,11 +28,14 @@ from src.analyzers.video import pose as p
 from src.analyzers.video.lab import alerta_queda
 from src.analyzers.video.pose import Pose, Recorte, SequenciaPose
 from src.core import db
+from src.core.alerts import Tipo
 
 _RAIZ = Path(__file__).resolve().parents[3]
 PASTA_EVIDENCIA = _RAIZ / "results" / "video" / "camera"
 JANELA_S = 8.0  # segundos de pose guardados para o detector de Queda
-PASSO = 2  # pose a cada N quadros
+PASSO = 2  # processamento parcial: pose a cada N quadros; todos os quadros vão para a tela
+TAMANHO_POSE = 320  # resolução da inferência ao vivo: o bastante para ombros e nariz, e leve
+LARGURA_WEBCAM, ALTURA_WEBCAM = 640, 480  # menos pixels por quadro: vídeo mais fluido
 
 
 @dataclass
@@ -44,6 +47,27 @@ class Estado:
     ultimo_quadro: np.ndarray | None = None
     quedas: list[str] = field(default_factory=list)  # ids dos Alertas gerados
     fim_da_gravacao: bool = False
+    leitura: str = ""  # o que o detector vê agora: postura, eixo da cabeça, caixa
+    score: fall.ScoreQueda | None = None  # Score de Queda do último quadro (webcam)
+
+
+def _leitura(pose: Pose) -> str:
+    """Resumo legível do que o detector de Queda está vendo neste quadro."""
+    if pose.caixa is None:
+        return "ninguém no quadro"
+    x0, y0, x1, y1 = pose.caixa
+    razao = (x1 - x0) / max(y1 - y0, 1e-6)
+    eixo = fall.eixo_cabeca(pose)
+    if eixo is not None and fall.ANGULO_QUEDA <= eixo <= fall.EIXO_CURVADO:
+        postura = "deitado de lado"
+    elif razao >= fall.RAZAO_NO_CHAO:
+        postura = "corpo na horizontal"
+    elif razao < fall.RAZAO_EM_PE:
+        postura = "em pé (corpo inteiro)"
+    else:
+        postura = "sentado / parcial"
+    eixo_txt = f"{eixo:.0f}°" if eixo is not None else "—"
+    return f"{postura} · eixo da cabeça {eixo_txt} · caixa largura/altura {razao:.2f}"
 
 
 class Vigilancia:
@@ -67,6 +91,7 @@ class Vigilancia:
         self.modelo_objetos = modelo_objetos
         self.estado = Estado()
         self._parar = threading.Event()
+        self._altura_quadro = 0
         self._thread: threading.Thread | None = None
 
     @property
@@ -92,7 +117,10 @@ class Vigilancia:
             import sys
 
             backend = cv2.CAP_DSHOW if sys.platform == "win32" else cv2.CAP_ANY
-            return cv2.VideoCapture(int(self.fonte), backend)
+            captura = cv2.VideoCapture(int(self.fonte), backend)
+            captura.set(cv2.CAP_PROP_FRAME_WIDTH, LARGURA_WEBCAM)
+            captura.set(cv2.CAP_PROP_FRAME_HEIGHT, ALTURA_WEBCAM)
+            return captura
         return cv2.VideoCapture(str(self.fonte))
 
     def _rodar(self) -> None:
@@ -133,34 +161,78 @@ class Vigilancia:
                     if atraso > 0:
                         time.sleep(atraso)
                     decorrido = indice / fps_fonte
+                self._altura_quadro = quadro.shape[0]
                 if indice % PASSO == 0:
-                    resultado = modelo(quadro, verbose=False, device="cpu")[0]
+                    resultado = modelo(quadro, verbose=False, device="cpu", imgsz=TAMANHO_POSE)[0]
                     keypoints, caixa = p.pessoa_principal(resultado)
-                    pose = Pose(indice, decorrido, keypoints, caixa)
-                    janela.append((pose, quadro))
+                    ultima = Pose(indice, decorrido, keypoints, caixa)
+                    self.estado.leitura = _leitura(ultima)
+                    janela.append((ultima, quadro))
                     while janela and decorrido - janela[0][0].t > JANELA_S:
                         janela.popleft()
-                    self.estado.ultimo_quadro = p.anotar(quadro, pose)
+                    if self.ao_vivo:
+                        pontos = fall.scores(self._sequencia(janela))
+                        recente = pontos[-1] if pontos and pontos[-1].t == ultima.t else None
+                        self.estado.score = recente
+                        self._registrar(ultima, quadro.shape[0], recente)
                     self._procurar_queda(janela, vistas)
+                # Quadro intermediário: mostra a imagem nova com o último esqueleto (fluidez).
+                if janela:
+                    self.estado.ultimo_quadro = p.anotar(quadro, janela[-1][0])
+                else:
+                    self.estado.ultimo_quadro = quadro
                 indice += 1
                 self.estado.quadros = indice
                 self.estado.fps = indice / max(time.perf_counter() - inicio, 1e-6)
         finally:
             captura.release()
 
-    def _procurar_queda(self, janela: deque, vistas: set[float]) -> None:
-        sequencia = SequenciaPose(
+    def _registrar(self, pose: Pose, altura_quadro: int, ponto: fall.ScoreQueda | None) -> None:
+        """Trilha quadro a quadro da webcam (para calibrar a Queda em câmera próxima)."""
+        destino = PASTA_EVIDENCIA / self.paciente_id / "trilha.csv"
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        ombros = fall._ombros(pose)
+        eixo = fall.eixo_cabeca(pose)
+        razao = None
+        if pose.caixa is not None:
+            x0, y0, x1, y1 = pose.caixa
+            razao = (x1 - x0) / max(y1 - y0, 1e-6)
+        nariz = None
+        if pose.keypoints is not None and pose.keypoints[p.NARIZ, 2] >= p.CONFIANCA_MINIMA:
+            nariz = float(pose.keypoints[p.NARIZ, 1]) / altura_quadro
+        linha = [
+            f"{pose.t:.2f}",
+            "" if eixo is None else f"{eixo:.0f}",
+            "" if ombros is None else f"{ombros[0] / altura_quadro:.3f}",
+            "" if ombros is None else f"{ombros[1] / altura_quadro:.3f}",
+            "" if nariz is None else f"{nariz:.3f}",
+            "" if razao is None else f"{razao:.2f}",
+            "" if ponto is None else str(ponto.score),
+        ]
+        novo = not destino.exists()
+        with open(destino, "a", encoding="utf-8") as arquivo:
+            if novo:
+                arquivo.write("t,eixo,ombro_y,ombro_largura,nariz_y,razao_caixa,score\n")
+            arquivo.write(",".join(linha) + "\n")
+
+    def _sequencia(self, janela: deque) -> SequenciaPose:
+        return SequenciaPose(
             arquivo=str(self.fonte),
             fps=self.estado.fps or 15.0,
             largura=0,
-            altura=0,
+            altura=self._altura_quadro,
             total_frames=len(janela),
             passo=PASSO,
             recorte=None,
             segundos_processamento=0.0,
             poses=[pose for pose, _ in janela],
         )
-        for queda in fall.detectar(sequencia):
+
+    def _procurar_queda(self, janela: deque, vistas: set[float]) -> None:
+        sequencia = self._sequencia(janela)
+        # Webcam próxima não enquadra o corpo inteiro: soma o critério do eixo da cabeça.
+        detector = fall.detectar_todas if self.ao_vivo else fall.detectar
+        for queda in detector(sequencia):
             # A mesma Queda reaparece enquanto está na janela: conta uma vez.
             if any(abs(queda.t - t) < JANELA_S for t in vistas):
                 continue
@@ -187,7 +259,8 @@ class Vigilancia:
         conn = db.conectar(self.caminho_db)  # conexão própria: esta é outra thread
         try:
             # Uma Queda aberta por leito: enquanto não for reconhecida, não abre outra.
-            if not db.listar(conn, paciente_id=self.paciente_id, status="novo", origem="video"):
+            abertas = db.listar(conn, paciente_id=self.paciente_id, status="novo", origem="video")
+            if not any(a.tipo is Tipo.QUEDA for a in abertas):
                 db.salvar(conn, alerta)
                 self.estado.quedas.append(alerta.id)
         finally:

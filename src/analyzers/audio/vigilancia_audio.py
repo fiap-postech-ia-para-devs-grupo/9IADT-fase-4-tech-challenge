@@ -39,6 +39,8 @@ class EstadoAudio:
     ultimas_classes: list[tuple[str, float]] = field(default_factory=list)
     eventos: list[tuple[datetime, str, str]] = field(default_factory=list)  # (quando, evento, id)
     janelas: int = 0
+    carregando: bool = False
+    transcricao: str = ""  # o que o Whisper ouviu na última janela com fala
 
 
 class VigilanciaAudio:
@@ -48,7 +50,7 @@ class VigilanciaAudio:
         fonte: str,  # MICROFONE ou caminho de arquivo de áudio
         *,
         relogio: datetime,
-        classificador: ambiente.Classificador,
+        classificador: ambiente.Classificador | None = None,
         caminho_db: Path = db.CAMINHO_PADRAO,
     ) -> None:
         self.paciente_id = paciente_id
@@ -78,6 +80,10 @@ class VigilanciaAudio:
 
     def _rodar(self) -> None:
         try:
+            if self.classificador is None:  # modelos carregando em segundo plano
+                self.estado.carregando = True
+                self.classificador = ambiente.classificador()
+                self.estado.carregando = False
             if self.fonte == MICROFONE:
                 self._laco(self._blocos_microfone())
             else:
@@ -133,15 +139,35 @@ class VigilanciaAudio:
             audio = np.concatenate(list(janela))
             self.estado.nivel = float(np.sqrt(np.mean(audio**2)))
             self.estado.janelas += 1
-            eventos = self.classificador.classificar(audio)
-            if self.estado.nivel >= 0.003:
-                self.estado.ultimas_classes = self.classificador.classes(audio, top=3)
+            eventos = self.classificador.classificar(audio)  # um passe só do AST por janela
+            self.estado.ultimas_classes = list(getattr(self.classificador, "ultimas_classes", []))
+            self.estado.transcricao = getattr(self.classificador, "ultima_transcricao", "")
+            if self.fonte == MICROFONE:
+                self._registrar(eventos)
             for evento in eventos:
                 agora = time.perf_counter()
                 if agora - ultimos.get(evento.evento, -1e9) < INTERVALO_REPETICAO_S:
                     continue
                 ultimos[evento.evento] = agora
                 self._emitir(evento, audio)
+
+    def _registrar(self, eventos: list[ambiente.EventoSonoro]) -> None:
+        """Trilha janela a janela do microfone: volume, classes, fala e eventos."""
+        destino = PASTA_EVIDENCIA / self.paciente_id / "trilha.csv"
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        classes = " | ".join(f"{nome} {p:.2f}" for nome, p in self.estado.ultimas_classes)
+        linha = [
+            f"{datetime.now():%H:%M:%S}",
+            f"{self.estado.nivel:.4f}",
+            classes.replace(",", ";"),
+            self.estado.transcricao.replace(",", ";"),
+            " ".join(e.evento for e in eventos),
+        ]
+        novo = not destino.exists()
+        with open(destino, "a", encoding="utf-8") as arquivo:
+            if novo:
+                arquivo.write("hora,rms,classes,transcricao,eventos\n")
+            arquivo.write(",".join(linha) + "\n")
 
     def _emitir(self, evento: ambiente.EventoSonoro, audio: np.ndarray) -> None:
         detectado = self.relogio

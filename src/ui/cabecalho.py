@@ -74,21 +74,29 @@ def barra(avancar: bool = True) -> None:
 
 
 def _chamados_abertos(chamadas: list) -> None:
-    """Faixa de chamado de emergência (só quando há chamado) e um aviso por chamado novo."""
+    """Faixa de chamado de emergência, uma linha por leito (o Alerta mais grave de cada um),
+    e um aviso por chamado novo."""
     if not chamadas:
         return
     rotulos = plantao.rotulos_pacientes()
-    linhas = "<br>".join(
-        f"<b>{e(rotulos.get(a.paciente_id, a.paciente_id))}</b> · "
-        f"{e(ROTULO_SEVERIDADE[a.severidade])} · {e(a.descricao[:90])} ({a.detectado_em:%H:%M})"
-        for a in chamadas[:3]
-    )
-    resto = f"<br>+{len(chamadas) - 3} outro(s)" if len(chamadas) > 3 else ""
+    pesos = {s: i for i, s in enumerate(Severidade)}
+    por_leito: dict[str, list] = {}
+    for alerta in chamadas:
+        por_leito.setdefault(alerta.paciente_id, []).append(alerta)
+    linhas = []
+    for paciente_id, alertas in por_leito.items():
+        pior = max(alertas, key=lambda a: (pesos[a.severidade], a.detectado_em))
+        extra = f" · +{len(alertas) - 1} alerta(s)" if len(alertas) > 1 else ""
+        linhas.append(
+            f"<b>{e(rotulos.get(paciente_id, paciente_id))}</b> · "
+            f"{e(ROTULO_SEVERIDADE[pior.severidade])} · {e(pior.descricao[:80])} "
+            f"({pior.detectado_em:%H:%M}){extra}"
+        )
     st.html(
         f"""<div class="luz-chamada"><span class="lampada"></span>
-        <div class="texto"><b>🚨 CHAMADA DE EMERGÊNCIA — {len(chamadas)} aberta(s)</b><br>
-        {linhas}{resto}<br><small>Equipe acionada no WhatsApp · reconheça na Central de
-        Alertas</small></div></div>"""
+        <div class="texto"><b>🚨 CHAMADA DE EMERGÊNCIA — {len(por_leito)} leito(s)</b><br>
+        {"<br>".join(linhas)}<br><small>Equipe acionada no WhatsApp (um disparo por leito) ·
+        reconheça na Central de Alertas</small></div></div>"""
     )
     for alerta in chamadas:
         chave = f"toast_{alerta.id}"

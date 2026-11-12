@@ -15,15 +15,15 @@ from pathlib import Path
 
 import streamlit as st
 
-from src.analyzers.audio import ambiente
 from src.analyzers.audio.vigilancia_audio import MICROFONE, VigilanciaAudio
-from src.analyzers.video import objetos, pose
+from src.analyzers.video import fall, objetos, pose
 from src.analyzers.video.vigilancia import Vigilancia
 from src.core import fontes
 from src.core.demo import PacienteDemo
 from src.ui import plantao_estado as plantao
 
-SEGUNDOS_TELA = 0.5
+SEGUNDOS_TELA = 0.25
+LARGURA_IMAGEM = 460  # px: quadro menor, sobra espaço para o restante do prontuário
 _SONS = Path(fontes._DADOS) / "audio" / "sons"
 SONS_EXEMPLO = {
     "alarme_monitor.mp3": "Gravação: alarme do monitor",
@@ -41,11 +41,6 @@ def _registro() -> dict[str, dict]:
 @st.cache_resource(show_spinner="Carregando o YOLOv8 (pose e objetos)...")
 def _modelos_video():
     return pose.carregar_modelo(), objetos.carregar_modelo()
-
-
-@st.cache_resource(show_spinner="Carregando os modelos de som (AST/AudioSet e Whisper)...")
-def _classificador_audio() -> ambiente.Classificador:
-    return ambiente.Classificador()
 
 
 def _do_leito(paciente_id: str) -> dict:
@@ -101,8 +96,8 @@ def _ligar_video(paciente: PacienteDemo, escolha: str) -> None:
 
 def _ligar_audio(paciente: PacienteDemo, escolha: str) -> None:
     nova = VigilanciaAudio(
-        paciente.id, escolha, relogio=plantao.agora(), classificador=_classificador_audio()
-    )
+        paciente.id, escolha, relogio=plantao.agora()
+    )  # sem classificador: a thread usa o compartilhado, carregado em segundo plano
     _do_leito(paciente.id)["audio"] = nova
     nova.iniciar()
 
@@ -169,10 +164,36 @@ def controles(paciente: PacienteDemo, camera_admissao: str | None) -> None:
         )
 
 
+def _alarme(paciente_id: str, video, audio) -> None:
+    """Alarme visual imediato quando a câmera ou o microfone do leito detectam algo."""
+    eventos = []
+    if video is not None and video.estado.quedas:
+        eventos.append("QUEDA DETECTADA")
+    if audio is not None:
+        criticos = [e for _, e, _ in audio.estado.eventos if e in {"grito", "chamado"}]
+        if criticos:
+            eventos.append(
+                "PACIENTE CHAMANDO A EQUIPE" if "chamado" in criticos else "GRITO DETECTADO"
+            )
+    if not eventos:
+        return
+    st.html(
+        f"""<div class="luz-chamada"><span class="lampada"></span>
+        <div class="texto"><b>🚨 {" · ".join(eventos)}</b><br>
+        <small>Alerta enviado à Central, luz do leito acesa e equipe acionada no WhatsApp.
+        </small></div></div>"""
+    )
+    chave = f"alarme_{paciente_id}_{'_'.join(eventos)}"
+    if not st.session_state.get(chave):
+        st.session_state[chave] = True
+        st.toast(f"🚨 {' · '.join(eventos)}", icon="🚨")
+
+
 def ao_vivo(paciente_id: str) -> None:
     """Imagem da câmera e medidor do microfone (dentro de um fragmento que se atualiza)."""
     leito = _do_leito(paciente_id)
     video, audio = leito["video"], leito["audio"]
+    _alarme(paciente_id, video, audio)
     if video is None and audio is None:
         st.info(
             "Monitoramento do leito desligado. Marque vídeo e/ou áudio e clique em ▶ Iniciar: "
@@ -187,7 +208,7 @@ def ao_vivo(paciente_id: str) -> None:
         if estado.erro:
             st.error(f"Câmera: {estado.erro}")
         if estado.ultimo_quadro is not None:
-            st.image(estado.ultimo_quadro, channels="BGR", width="stretch")
+            st.image(estado.ultimo_quadro, channels="BGR", width=LARGURA_IMAGEM)
         elif estado.ativo:
             st.caption("Abrindo a câmera e carregando o modelo...")
         situacao = (
@@ -200,17 +221,41 @@ def ao_vivo(paciente_id: str) -> None:
         st.caption(
             f"📷 {situacao} · {estado.fps:.1f} quadros/s · Quedas detectadas: {len(estado.quedas)}"
         )
+        if getattr(estado, "leitura", ""):
+            st.caption(f"Leitura do detector: {estado.leitura}")
+        ponto = getattr(estado, "score", None)
+        if ponto is not None:
+            st.progress(
+                ponto.score / 100,
+                text=f"Score de Queda {ponto.score}/100 · alerta em ≥ {fall.SCORE_QUEDA} com "
+                f"ângulo ≥ {fall.ANGULO_QUEDA:.0f}° por {fall.PERMANENCIA_DEITADO:.1f} s",
+            )
+            a, v, d = ponto.componentes
+            st.caption(
+                f"Ângulo {ponto.angulo:.0f}° ({a:.0%} × {fall.PESO_INCLINACAO:.0%}) · "
+                f"variação {ponto.variacao:+.0f}° em {fall.JANELA_BRUSCA:.0f} s "
+                f"({v:.0%} × {fall.PESO_VARIACAO:.0%}) · ombros desceram "
+                f"{ponto.descida:.1f} largura ({d:.0%} × {fall.PESO_DESCIDA:.0%})"
+            )
     if audio is not None:
         audio.relogio = agora
         estado = audio.estado
         if estado.erro:
             st.error(f"Microfone: {estado.erro}")
         nivel = min(estado.nivel * 8, 1.0)
-        situacao = "🟢 ouvindo" if estado.ativo else "⚪ parado"
+        situacao = (
+            "⏳ carregando os modelos de som (AST/AudioSet e Whisper)…"
+            if getattr(estado, "carregando", False)
+            else "🟢 ouvindo"
+            if estado.ativo
+            else "⚪ parado"
+        )
         st.progress(nivel, text=f"🎙️ {situacao} · nível do som")
         if estado.ultimas_classes:
             st.caption(
                 "AudioSet: " + ", ".join(f"{nome} {p:.0%}" for nome, p in estado.ultimas_classes)
             )
+        if getattr(estado, "transcricao", ""):
+            st.caption(f'Whisper ouviu: "{estado.transcricao}"')
         for quando, evento, _ in reversed(estado.eventos[-4:]):
             st.warning(f"🔊 {quando:%H:%M} · {evento} detectado → Alerta enviado à Central")

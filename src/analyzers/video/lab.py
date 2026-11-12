@@ -239,6 +239,16 @@ def alerta_queda(
         "transicao_s": round(queda.duracao_transicao, 2),
         "razao_caixa": round(queda.razao_caixa, 2),
         "altura_relativa": round(queda.altura_relativa, 2),
+        **(
+            {
+                "score_queda": queda.score.score,
+                "angulo_inclinacao": round(queda.score.angulo, 1),
+                "variacao_angulo": round(queda.score.variacao, 1),
+                "descida_cabeca": round(queda.score.descida, 2),
+            }
+            if queda.score is not None
+            else {}
+        ),
         "clipe": clipe_id,
     }
     descricao = queda.descricao
