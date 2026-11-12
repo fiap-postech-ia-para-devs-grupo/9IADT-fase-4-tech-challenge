@@ -28,7 +28,6 @@ from src.analyzers.video import pose as p
 from src.analyzers.video.lab import alerta_queda
 from src.analyzers.video.pose import Pose, Recorte, SequenciaPose
 from src.core import db
-from src.core.alerts import Tipo
 
 _RAIZ = Path(__file__).resolve().parents[3]
 PASTA_EVIDENCIA = _RAIZ / "results" / "video" / "camera"
@@ -48,6 +47,7 @@ class Estado:
     quedas: list[str] = field(default_factory=list)  # ids dos Alertas gerados
     fim_da_gravacao: bool = False
     leitura: str = ""  # o que o detector vê agora: postura, eixo da cabeça, caixa
+    parada_por_queda: bool = False  # parou no quadro da Queda; Iniciar volta a vigiar
     score: fall.ScoreQueda | None = None  # Score de Queda do último quadro (webcam)
 
 
@@ -176,6 +176,9 @@ class Vigilancia:
                         self.estado.score = recente
                         self._registrar(ultima, quadro.shape[0], recente)
                     self._procurar_queda(janela, vistas)
+                    if vistas:  # Queda detectada: a câmera para e a Queda fica valendo
+                        self.estado.parada_por_queda = True
+                        return
                 # Quadro intermediário: mostra a imagem nova com o último esqueleto (fluidez).
                 if janela:
                     self.estado.ultimo_quadro = p.anotar(quadro, janela[-1][0])
@@ -248,6 +251,7 @@ class Vigilancia:
         destino = PASTA_EVIDENCIA / self.paciente_id / f"queda_{detectado:%Y%m%d_%H%M%S}.jpg"
         destino.parent.mkdir(parents=True, exist_ok=True)
         cv2.imwrite(str(destino), anotado)
+        self.estado.ultimo_quadro = anotado  # a tela congela no quadro da Queda
         alerta = alerta_queda(
             queda,
             self.paciente_id,
@@ -258,9 +262,10 @@ class Vigilancia:
         )
         conn = db.conectar(self.caminho_db)  # conexão própria: esta é outra thread
         try:
-            # Uma Queda aberta por leito: enquanto não for reconhecida, não abre outra.
+            # Uma Queda aberta por sessão da câmera: enquanto a desta sessão não for reconhecida,
+            # não abre outra. Quedas antigas (de outro teste ou da gravação) não bloqueiam.
             abertas = db.listar(conn, paciente_id=self.paciente_id, status="novo", origem="video")
-            if not any(a.tipo is Tipo.QUEDA for a in abertas):
+            if not any(a.id in self.estado.quedas for a in abertas):
                 db.salvar(conn, alerta)
                 self.estado.quedas.append(alerta.id)
         finally:

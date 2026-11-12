@@ -141,7 +141,7 @@ EIXO_EM_PE = 30.0
 EIXO_DEITADO = 60.0
 # Acima disso o nariz está abaixo dos ombros: é a pessoa se curvando para a frente (pegar algo,
 # sentar), não deitada de lado; não conta como queda.
-EIXO_CURVADO = 120.0
+EIXO_CURVADO = 140.0
 
 
 def eixo_cabeca(pose: Pose) -> float | None:
@@ -179,8 +179,7 @@ ANGULO_QUEDA = EIXO_DEITADO  # a partir disto, corpo deitado: o ângulo que cara
 VARIACAO_BRUSCA = 45.0  # graus ganhos em até JANELA_BRUSCA segundos = mudança brusca total
 JANELA_BRUSCA = 3.0  # s
 PESO_INCLINACAO, PESO_VARIACAO, PESO_DESCIDA = 0.4, 0.4, 0.2
-SCORE_QUEDA = 70  # score que dispara o Alerta...
-PERMANENCIA_DEITADO = 1.5  # ...se o ângulo continuar >= ANGULO_QUEDA por este tempo (s)
+SCORE_QUEDA = 60  # score que dispara o Alerta na hora, com o ângulo em ANGULO_QUEDA..EIXO_CURVADO
 
 
 @dataclass(frozen=True)
@@ -241,8 +240,9 @@ def scores(sequencia: SequenciaPose) -> list[ScoreQueda]:
 
 
 def detectar_proxima(sequencia: SequenciaPose) -> list[Queda]:
-    """Quedas pelo Score de Queda: score >= SCORE_QUEDA e o ângulo >= ANGULO_QUEDA mantido
-    por PERMANENCIA_DEITADO segundos. Uma por vez, até a pessoa voltar a ficar ereta."""
+    """Quedas pelo Score de Queda: vale no primeiro quadro com score >= SCORE_QUEDA e o corpo
+    deitado (ângulo >= ANGULO_QUEDA), sem esperar confirmação: uma Queda detectada não é
+    anulada depois. Uma por vez, até a pessoa voltar a ficar ereta."""
     pontos = scores(sequencia)
     por_t = {q.t: q for q in sequencia.poses}
     quedas: list[Queda] = []
@@ -252,11 +252,6 @@ def detectar_proxima(sequencia: SequenciaPose) -> list[Queda]:
             caido = False
         deitado = ANGULO_QUEDA <= ponto.angulo <= EIXO_CURVADO
         if caido or ponto.score < SCORE_QUEDA or not deitado:
-            continue
-        depois = [q for q in pontos[i:] if q.t - ponto.t <= PERMANENCIA_DEITADO * 1.5]
-        if depois[-1].t - ponto.t < PERMANENCIA_DEITADO:
-            continue  # ainda não deu tempo de confirmar
-        if not ANGULO_QUEDA <= statistics.median(q.angulo for q in depois) <= EIXO_CURVADO:
             continue
         pose = por_t[ponto.t]
         inicio = min(
