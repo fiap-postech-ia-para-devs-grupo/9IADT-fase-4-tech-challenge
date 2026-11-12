@@ -279,6 +279,18 @@ _Dono: Marcelo._ Decisão em [ADR 0003](adr/0003-monitoramento-do-leito-e-evento
 
 **Câmera** (`src/analyzers/video/vigilancia.py`). Uma thread por leito lê os quadros, estima a pose (YOLOv8n-pose, 1 a cada 2 quadros) e roda o detector de Queda da seção 3.1 numa janela deslizante de 8 s. No frame da Queda, o **YOLOv8n de objetos** detecta as áreas críticas de transferência (cama, cadeira, sofá, vaso sanitário) junto ao paciente; elas entram na Evidência e na descrição ("… junto a cadeira"). Nos 5 clipes de queda do UR Fall, a área crítica apontada foi cadeira (e cadeira + sofá num deles). Cada leito mantém uma Queda aberta até o Reconhecimento.
 
+**Score de Queda (webcam ao vivo).** Com a câmera perto do paciente o corpo inteiro não aparece, e o critério da caixa (seção 3.1) não se aplica. Para a webcam, cada quadro recebe um **Score de Queda de 0 a 100**, mostrado ao vivo no Prontuário com seus componentes:
+
+| Componente | Medida | 0 → 1 | Peso |
+| --- | --- | --- | --- |
+| Inclinação | ângulo do eixo ombros → nariz com a vertical | 30° → 60° | 40% |
+| Mudança brusca | graus ganhos nos últimos 3 s | 0° → 45° | 40% |
+| Descida | quanto os ombros desceram em 3 s, em larguras de ombro | 0 → 1 | 20% |
+
+O **ângulo que caracteriza a Queda é 60° ou mais** (90° = deitado de lado; acima de 120° o nariz está abaixo dos ombros, a pessoa se curvou e não conta). O Alerta sai com **score ≥ 70 e o ângulo mantido ≥ 60° por 1,5 s**. Uma segunda regra cobre a webcam na altura da mesa, que não enxerga o chão: ombros descendo na faixa de baixo da imagem e cabeça fora da imagem por 3 s (score 80). Score, ângulo, variação e descida vão para a Evidência. Calibrado com a trilha quadro a quadro de um teste real (`results/video/camera/<paciente>/trilha.csv`): as duas quedas do teste foram detectadas, e nenhum Alerta nos outros ~8 min (sentado, virando de perfil, levantando). É uma calibração de um teste, não uma métrica: o critério da caixa (12/12 nos clipes) continua sendo o validado.
+
+**Processamento parcial.** A webcam roda em 640×480 com pose a 320 px a cada 2 quadros (os intermediários mostram o último esqueleto); o som usa metade dos núcleos da CPU e um único passe do AST por janela, e o Whisper só roda quando há indício de voz.
+
 **Microfone** (`src/analyzers/audio/ambiente.py`, `vigilancia_audio.py`). A cada 2,5 s, os últimos 5 s de áudio passam pelo **AST** (Audio Spectrogram Transformer) treinado no **AudioSet** — o dataset de áudio sugerido no enunciado — e as 527 classes viram eventos clínicos:
 
 | Evento Sonoro | Classes do AudioSet | Severidade |
@@ -286,7 +298,7 @@ _Dono: Marcelo._ Decisão em [ADR 0003](adr/0003-monitoramento-do-leito-e-evento
 | alarme de equipamento | Beep/bleep, Alarm, Busy signal, Dial tone, Buzzer… | média |
 | grito | Screaming, Shout, Yell… | alta (aciona) |
 | gemido / choro | Groan, Whimper, Wail/moan, Crying… | média |
-| chamado da equipe | fala + Whisper tiny (pt) com "enfermeira", "socorro", "ajuda", "doutor"… | alta (aciona) |
+| chamado da equipe | fala + Whisper tiny (pt) com "enfermeira", "socorro", "ajuda", "doutor", "ai", "ui", "dói", "dor"… | alta (aciona) |
 
 Nas gravações de teste (`data/audio/sons/`): o alarme do monitor saiu como alarme em 4 de 4 janelas (AudioSet "Busy signal"/"Beep"); o grito curto como grito (0,33) e gemido; o choro como gemido numa das janelas; e a frase sintética "Enfermeira! Socorro! Alguém me ajuda" como chamado, com o Whisper transcrevendo "Enfermeira. Socorro." e "alguém me ajuda por favor". O Whisper tiny erra a grafia de fala cortada ("infirmei"), por isso a janela é de 5 s e as palavras de chamado são radicais. Cada leito mantém um Alerta aberto por tipo de evento.
 

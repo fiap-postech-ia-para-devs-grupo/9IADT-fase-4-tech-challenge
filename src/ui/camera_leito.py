@@ -16,7 +16,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.analyzers.audio.vigilancia_audio import MICROFONE, VigilanciaAudio
-from src.analyzers.video import objetos, pose
+from src.analyzers.video import fall, objetos, pose
 from src.analyzers.video.vigilancia import Vigilancia
 from src.core import fontes
 from src.core.demo import PacienteDemo
@@ -223,6 +223,20 @@ def ao_vivo(paciente_id: str) -> None:
         )
         if getattr(estado, "leitura", ""):
             st.caption(f"Leitura do detector: {estado.leitura}")
+        ponto = getattr(estado, "score", None)
+        if ponto is not None:
+            st.progress(
+                ponto.score / 100,
+                text=f"Score de Queda {ponto.score}/100 · alerta em ≥ {fall.SCORE_QUEDA} com "
+                f"ângulo ≥ {fall.ANGULO_QUEDA:.0f}° por {fall.PERMANENCIA_DEITADO:.1f} s",
+            )
+            a, v, d = ponto.componentes
+            st.caption(
+                f"Ângulo {ponto.angulo:.0f}° ({a:.0%} × {fall.PESO_INCLINACAO:.0%}) · "
+                f"variação {ponto.variacao:+.0f}° em {fall.JANELA_BRUSCA:.0f} s "
+                f"({v:.0%} × {fall.PESO_VARIACAO:.0%}) · ombros desceram "
+                f"{ponto.descida:.1f} largura ({d:.0%} × {fall.PESO_DESCIDA:.0%})"
+            )
     if audio is not None:
         audio.relogio = agora
         estado = audio.estado
@@ -241,5 +255,7 @@ def ao_vivo(paciente_id: str) -> None:
             st.caption(
                 "AudioSet: " + ", ".join(f"{nome} {p:.0%}" for nome, p in estado.ultimas_classes)
             )
+        if getattr(estado, "transcricao", ""):
+            st.caption(f'Whisper ouviu: "{estado.transcricao}"')
         for quando, evento, _ in reversed(estado.eventos[-4:]):
             st.warning(f"🔊 {quando:%H:%M} · {evento} detectado → Alerta enviado à Central")

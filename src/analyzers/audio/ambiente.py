@@ -50,13 +50,13 @@ EVENTOS: dict[str, tuple[frozenset[str], float, Severidade, str]] = {
     ),
     "grito": (
         frozenset({"Screaming", "Shout", "Yell", "Bellow", "Battle cry"}),
-        0.20,
+        0.12,
         Severidade.ALTA,
         "Paciente gritando",
     ),
     "gemido": (
         frozenset({"Groan", "Whimper", "Wail, moan", "Crying, sobbing", "Grunt", "Sigh"}),
-        0.15,
+        0.10,
         Severidade.MEDIA,
         "Possível dor: gemido ou choro do paciente",
     ),
@@ -72,13 +72,15 @@ CLASSES_FALA = frozenset(
         "Conversation",
     }
 )
-LIMIAR_FALA = 0.15
-RMS_SILENCIO = 0.0008  # abaixo disso a janela nem é processada (detecção de atividade)
-RMS_ALVO = 0.05  # volume normalizado antes do modelo: microfone baixo não vira 'Door'
+LIMIAR_FALA = 0.05  # basta um indício de voz para o Whisper ouvir a janela
+RMS_SILENCIO = 0.0003  # abaixo disso a janela nem é processada (detecção de atividade)
+RMS_ALVO = 0.1  # ganho no máximo útil: microfone baixo não vira 'Door'
 # Radicais, não palavras inteiras: o Whisper tiny erra a grafia de fala gritada ou cortada
 # ("infirmeira", "socorr..."), e o que importa é o pedido de ajuda.
+# Também interjeições de dor ("ai", "ui", "aaai", "dói") e "grito"/"gemido" ditos em voz alta.
 PALAVRAS_CHAMADO = re.compile(
-    r"(enferm|infirm|socorr|ajud|doutor|medic|chama a|alguem|help|nurse|doctor)"
+    r"(enferm|infirm|socorr|ajud|doutor|medic|chama a|alguem|help|nurse|doctor"
+    r"|\ba+i+\b|\bu+i+\b|\bdoi|\bdor\b|grit|gemid)"
 )
 
 
@@ -130,10 +132,18 @@ class Classificador:
     """Carrega os dois modelos uma vez e classifica janelas de áudio mono a 16 kHz."""
 
     def __init__(self, com_fala: bool = True) -> None:
+        import os
+
+        import torch
         from transformers import pipeline  # import tardio: carregar o transformers é lento
+
+        # Metade dos núcleos: o som não disputa a CPU inteira com a câmera (vídeo fluido).
+        torch.set_num_threads(max(1, (os.cpu_count() or 2) // 2))
 
         self._eventos = pipeline("audio-classification", model=MODELO_EVENTOS, device="cpu")
         self._fala: Any = None
+        self.ultimas_classes: list[tuple[str, float]] = []  # da última janela (para a tela)
+        self.ultima_transcricao = ""
         if com_fala:
             self._fala = pipeline("automatic-speech-recognition", model=MODELO_FALA, device="cpu")
 
@@ -156,11 +166,18 @@ class Classificador:
             return []  # processamento parcial: janela sem som não passa pelos modelos
         audio = np.clip(audio * (RMS_ALVO / rms), -1.0, 1.0)  # ganho automático
         top = self.classes(audio)
-        return eventos_de(top, self.transcrever if self._precisa_fala(top) else None, audio)
+        self.ultimas_classes, self.ultima_transcricao = top[:3], ""
+
+        def transcrever(trecho: np.ndarray) -> str:
+            self.ultima_transcricao = self.transcrever(trecho)
+            return self.ultima_transcricao
+
+        return eventos_de(top, transcrever if self._precisa_fala(top) else None, audio)
 
     @staticmethod
     def _precisa_fala(top: list[tuple[str, float]]) -> bool:
-        return sum(p for nome, p in top if nome in CLASSES_FALA) >= LIMIAR_FALA
+        voz = CLASSES_FALA | EVENTOS["grito"][0] | EVENTOS["gemido"][0]
+        return sum(p for nome, p in top if nome in voz) >= LIMIAR_FALA
 
 
 def _sem_acento(texto: str) -> str:
