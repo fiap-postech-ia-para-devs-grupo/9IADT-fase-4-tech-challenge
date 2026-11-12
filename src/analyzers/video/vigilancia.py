@@ -33,7 +33,8 @@ _RAIZ = Path(__file__).resolve().parents[3]
 PASTA_EVIDENCIA = _RAIZ / "results" / "video" / "camera"
 JANELA_S = 8.0  # segundos de pose guardados para o detector de Queda
 PASSO = 2  # processamento parcial: pose a cada N quadros; todos os quadros vão para a tela
-TAMANHO_POSE = 320  # resolução da inferência ao vivo (o padrão 640 é ~3x mais lento em CPU)
+TAMANHO_POSE = 480  # resolução da inferência ao vivo: corpo inteiro longe da câmera ainda aparece
+LARGURA_WEBCAM, ALTURA_WEBCAM = 1280, 720  # campo de visão maior que o 640x480 padrão
 
 
 @dataclass
@@ -45,6 +46,26 @@ class Estado:
     ultimo_quadro: np.ndarray | None = None
     quedas: list[str] = field(default_factory=list)  # ids dos Alertas gerados
     fim_da_gravacao: bool = False
+    leitura: str = ""  # o que o detector vê agora: postura, eixo da cabeça, caixa
+
+
+def _leitura(pose: Pose) -> str:
+    """Resumo legível do que o detector de Queda está vendo neste quadro."""
+    if pose.caixa is None:
+        return "ninguém no quadro"
+    x0, y0, x1, y1 = pose.caixa
+    razao = (x1 - x0) / max(y1 - y0, 1e-6)
+    eixo = fall.eixo_cabeca(pose)
+    if eixo is not None and fall.EIXO_DEITADO <= eixo <= fall.EIXO_CURVADO:
+        postura = "deitado de lado"
+    elif razao >= fall.RAZAO_NO_CHAO:
+        postura = "corpo na horizontal"
+    elif razao < fall.RAZAO_EM_PE:
+        postura = "em pé (corpo inteiro)"
+    else:
+        postura = "sentado / parcial"
+    eixo_txt = f"{eixo:.0f}°" if eixo is not None else "—"
+    return f"{postura} · eixo da cabeça {eixo_txt} · caixa largura/altura {razao:.2f}"
 
 
 class Vigilancia:
@@ -93,7 +114,10 @@ class Vigilancia:
             import sys
 
             backend = cv2.CAP_DSHOW if sys.platform == "win32" else cv2.CAP_ANY
-            return cv2.VideoCapture(int(self.fonte), backend)
+            captura = cv2.VideoCapture(int(self.fonte), backend)
+            captura.set(cv2.CAP_PROP_FRAME_WIDTH, LARGURA_WEBCAM)
+            captura.set(cv2.CAP_PROP_FRAME_HEIGHT, ALTURA_WEBCAM)
+            return captura
         return cv2.VideoCapture(str(self.fonte))
 
     def _rodar(self) -> None:
@@ -138,6 +162,7 @@ class Vigilancia:
                     resultado = modelo(quadro, verbose=False, device="cpu", imgsz=TAMANHO_POSE)[0]
                     keypoints, caixa = p.pessoa_principal(resultado)
                     ultima = Pose(indice, decorrido, keypoints, caixa)
+                    self.estado.leitura = _leitura(ultima)
                     janela.append((ultima, quadro))
                     while janela and decorrido - janela[0][0].t > JANELA_S:
                         janela.popleft()

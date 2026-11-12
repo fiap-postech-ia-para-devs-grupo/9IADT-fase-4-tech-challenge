@@ -221,6 +221,8 @@ def ao_vivo(paciente_id: str) -> None:
         st.caption(
             f"📷 {situacao} · {estado.fps:.1f} quadros/s · Quedas detectadas: {len(estado.quedas)}"
         )
+        if getattr(estado, "leitura", ""):
+            st.caption(f"Leitura do detector: {estado.leitura}")
     if audio is not None:
         audio.relogio = agora
         estado = audio.estado
