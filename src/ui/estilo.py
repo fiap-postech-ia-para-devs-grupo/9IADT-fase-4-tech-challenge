@@ -104,6 +104,9 @@ h2, h3 {color: #0b2545;}
   border-top:5px solid var(--cor); transition:box-shadow .2s, transform .2s; margin-bottom:.4rem;
   min-height:330px; display:flex; flex-direction:column}
 .cl .cl-rodape {margin-top:auto}
+.cl.faixa {min-height:0; padding:.7rem 1rem; margin-bottom:.6rem}
+.cl.faixa .cl-leito {font-size:1.2rem}
+.cl.faixa:hover {transform:none}
 .cl:hover {box-shadow:0 2px 4px rgba(16,42,67,.08), 0 12px 28px rgba(16,42,67,.12);
   transform:translateY(-1px)}
 .cl-topo {display:flex; justify-content:space-between; align-items:flex-start}

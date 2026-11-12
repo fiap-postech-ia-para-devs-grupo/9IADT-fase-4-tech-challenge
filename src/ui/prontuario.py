@@ -50,7 +50,7 @@ def faixa_identificacao(
     nome = ficha.nome if ficha else paciente.nome
     cor = COR_RISCO[escore.risco]
     return f"""
-    <div class="cl" style="--cor:{cor}">
+    <div class="cl faixa" style="--cor:{cor}">
       <div class="cl-topo">
         <div><div class="cl-leito">🛏️ {e(paciente.leito or paciente.id)} · {e(nome)}</div>
           <div class="cl-sub" style="margin-top:.45rem">{e(paciente.id)} · {detalhes} ·
