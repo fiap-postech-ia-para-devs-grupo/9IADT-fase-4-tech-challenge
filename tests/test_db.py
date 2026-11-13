@@ -150,3 +150,50 @@ def test_transicao_invalida_nao_altera_o_banco(conn):
 def test_atualizar_alerta_inexistente_falha(conn):
     with pytest.raises(KeyError):
         db.reconhecer(conn, "nao-existe", por="enf. Ana")
+
+
+def _banco_com_enum_antigo(caminho):
+    """Banco criado antes do `evento_sonoro` entrar no Contrato, com um Alerta gravado."""
+    import sqlite3
+
+    schema_antigo = db.SCHEMA.replace("'evento_sonoro', ", "")
+    assert schema_antigo != db.SCHEMA
+    original = alerta(severidade="critica")
+    with sqlite3.connect(caminho) as antigo:
+        antigo.executescript(schema_antigo)
+        linha = db._para_linha(original)
+        colunas = ", ".join(linha)
+        antigo.execute(
+            f"INSERT INTO alertas ({colunas}) VALUES ({', '.join('?' for _ in linha)})",
+            list(linha.values()),
+        )
+    return original
+
+
+def test_banco_com_enum_antigo_e_migrado_sem_perder_alertas(tmp_path):
+    caminho = tmp_path / "alertas.db"
+    original = _banco_com_enum_antigo(caminho)
+
+    with db.conectar(caminho) as conn:
+        assert db.obter(conn, original.id) == original
+        db.salvar(conn, alerta(origem="audio", tipo="evento_sonoro"))
+        tabelas = {r[0] for r in conn.execute("SELECT name FROM sqlite_master")}
+    assert "alertas_antiga" not in tabelas
+
+
+def test_migracao_interrompida_e_retomada_na_proxima_conexao(tmp_path):
+    """Estado deixado pela migração antiga com bug: Alertas presos em `alertas_antiga` e
+    `alertas` já no schema novo, vazia. A próxima conexão traz as linhas de volta."""
+    import sqlite3
+
+    caminho = tmp_path / "alertas.db"
+    original = _banco_com_enum_antigo(caminho)
+    with sqlite3.connect(caminho) as cru:
+        cru.execute("ALTER TABLE alertas RENAME TO alertas_antiga")
+        cru.execute("DROP INDEX IF EXISTS idx_alertas_paciente")
+        cru.executescript(db.SCHEMA)
+
+    with db.conectar(caminho) as conn:
+        assert db.obter(conn, original.id) == original
+        tabelas = {r[0] for r in conn.execute("SELECT name FROM sqlite_master")}
+    assert "alertas_antiga" not in tabelas
