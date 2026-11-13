@@ -8,8 +8,11 @@ import pytest
 from azure.ai.textanalytics import DocumentError
 
 from src.analyzers.audio import semantic
+from src.analyzers.audio.azure import AzureConfig
 from src.analyzers.audio.semantic import EntidadeClinica, SentimentoTrecho, Trecho
 from src.core.alerts import Origem, Severidade, Tipo
+
+CONFIG_FALSA = AzureConfig("chave", "eastus", "chave", "https://exemplo")  # Azure mockado
 
 # --- converter_wav (ffmpeg real, sem rede) --------------------------------------------------
 
@@ -190,7 +193,7 @@ def test_transcrever_usa_cache_na_segunda_chamada(tmp_path, monkeypatch):
     monkeypatch.setattr(semantic, "_reconhecer_continuo", fake_reconhecer)
     audio = tmp_path / "c.wav"
     audio.write_bytes(b"\x00")
-    config = object()
+    config = CONFIG_FALSA
 
     r1 = semantic.transcrever(audio, config, tmp_path)
     r2 = semantic.transcrever(audio, config, tmp_path)
@@ -208,7 +211,7 @@ def test_extrair_entidades_saude_usa_cache(tmp_path, monkeypatch):
         return [[EntidadeClinica("chest pain", "SymptomOrSign", 0.9)]]
 
     monkeypatch.setattr(semantic, "_extrair_entidades_azure", fake_extrair)
-    config = object()
+    config = CONFIG_FALSA
 
     e1 = semantic.extrair_entidades_saude(trechos, config, tmp_path, "c1")
     e2 = semantic.extrair_entidades_saude(trechos, config, tmp_path, "c1")
@@ -224,7 +227,7 @@ def test_analisar_sentimento_usa_cache_e_mapeia_por_trecho(tmp_path, monkeypatch
         return [{"sentimento": "negative", "positivo": 0.1, "neutro": 0.1, "negativo": 0.8}]
 
     monkeypatch.setattr(semantic, "_analisar_sentimento_azure", fake_sentimento)
-    config = object()
+    config = CONFIG_FALSA
 
     [resultado] = semantic.analisar_sentimento(trechos, config, tmp_path, "c1")
     assert resultado == SentimentoTrecho(trechos[0], "negative", 0.1, 0.1, 0.8)
@@ -260,7 +263,7 @@ def test_sentimento_respeita_limite_de_10_documentos_por_chamada(monkeypatch):
     cliente = _ClienteFalso()
     monkeypatch.setattr(semantic, "_cliente_language", lambda _config: cliente)
 
-    resultado = semantic._analisar_sentimento_azure(_trechos(23), object())
+    resultado = semantic._analisar_sentimento_azure(_trechos(23), CONFIG_FALSA)
 
     assert cliente.lotes == [10, 10, 3]
     assert len(resultado) == 23
@@ -272,7 +275,7 @@ def test_documento_recusado_falha_e_nao_vai_para_o_cache(tmp_path, monkeypatch):
     monkeypatch.setattr(semantic, "_cliente_language", lambda _config: cliente)
 
     with pytest.raises(RuntimeError, match="recusou"):
-        semantic.analisar_sentimento(_trechos(1), object(), tmp_path, "c1")
+        semantic.analisar_sentimento(_trechos(1), CONFIG_FALSA, tmp_path, "c1")
 
     assert not (tmp_path / "c1.sentiment.json").exists()
 
@@ -333,7 +336,7 @@ def test_extracao_guarda_certeza_e_associacao(monkeypatch):
 
     monkeypatch.setattr(semantic, "_cliente_language", lambda _config: Cliente())
 
-    [[com, sem]] = semantic._extrair_entidades_azure(_trechos(1), object())
+    [[com, sem]] = semantic._extrair_entidades_azure(_trechos(1), CONFIG_FALSA)
 
     assert (com.certeza, com.associacao) == ("negative", "subject")
     assert (sem.certeza, sem.associacao) == (None, None)

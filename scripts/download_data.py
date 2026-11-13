@@ -99,7 +99,9 @@ def baixar_sons(destino: Path) -> None:
 
 
 PRIMOCK57_AUDIO_URL = "https://media.githubusercontent.com/media/babylonhealth/primock57/main/audio"
-PRIMOCK57_TRANSCRIPT_URL = "https://raw.githubusercontent.com/babylonhealth/primock57/main/transcripts"
+PRIMOCK57_TRANSCRIPT_URL = (
+    "https://raw.githubusercontent.com/babylonhealth/primock57/main/transcripts"
+)
 
 
 @dataset("primock57", dono="V. Geizler", destino="audio/primock57")

@@ -42,7 +42,7 @@ def test_para_json_e_de_json_convertem_tipos_nao_nativos(tmp_path):
     )
     assert resultado == [Ponto(1, 2), Ponto(3, 4)]
 
-    def falharia():
+    def falharia() -> list[Ponto]:
         raise AssertionError("não devia computar de novo: já está em cache")
 
     do_cache = obter_ou_computar(

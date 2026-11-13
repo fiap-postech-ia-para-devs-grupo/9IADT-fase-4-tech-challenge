@@ -44,7 +44,9 @@ def test_admissao_ocupa_o_leito_e_gera_evolucao(conn):
     cadastro.admitir(conn, nova, "Enf. Ana Souza")
 
     assert livre.id not in {leito.id for leito in cadastro.leitos_livres(conn)}
-    paciente = cadastro.obter(conn, "pac-x").como_paciente()
+    internacao = cadastro.obter(conn, "pac-x")
+    assert internacao is not None
+    paciente = internacao.como_paciente()
     assert paciente.leito == livre.id
     assert paciente.internacao_inicio == datetime(2026, 10, 1, 9, 0)
     assert cadastro.evolucoes(conn, "pac-x")[0].tipo == "admissao"

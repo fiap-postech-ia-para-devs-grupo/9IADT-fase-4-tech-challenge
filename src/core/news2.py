@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from datetime import datetime
+from typing import cast
 
 import pandas as pd
 
@@ -105,7 +107,7 @@ def alertas_de_tendencia(sinais: pd.DataFrame, paciente_id: str) -> list:
     escores = serie(sinais)
     alertas = []
     em_episodio = False
-    for instante, total in escores.items():
+    for instante, total in zip(pd.DatetimeIndex(escores.index), escores, strict=True):
         if total < 5:
             em_episodio = False
             continue
@@ -118,7 +120,7 @@ def alertas_de_tendencia(sinais: pd.DataFrame, paciente_id: str) -> list:
         pontos_por = calcular(sinais.loc[:instante, list(PARAMETROS)].ffill().iloc[-1].to_dict())
         piores = [p for p, v in pontos_por.pontos.items() if v >= 2] or list(pontos_por.pontos)
         alto = total >= 7
-        momento = pd.Timestamp(instante).to_pydatetime()
+        momento = cast(datetime, instante.to_pydatetime())  # índice sem NaT
         alertas.append(
             Alerta(
                 id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"{_NAMESPACE}|{paciente_id}|{momento}")),

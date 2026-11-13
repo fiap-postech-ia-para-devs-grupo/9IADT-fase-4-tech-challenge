@@ -189,7 +189,7 @@ def _whatsapp() -> None:
     else:
         tabela = pd.DataFrame(historico).drop(columns=["alerta_id", "detalhe"])
         tabela["numero"] = tabela["numero"].map(notificacao.mascarar)
-        tabela["nivel"] = tabela["nivel"].map({1: "plantão", 2: "⏫ escalonado"})
+        tabela["nivel"] = tabela["nivel"].map(lambda n: {1: "plantão", 2: "⏫ escalonado"}[n])
         st.dataframe(tabela, hide_index=True, width="stretch")
     if st.button("Limpar histórico (reapresentar a demonstração)", key="adm_limpar"):
         notificacao.limpar_historico(conn)

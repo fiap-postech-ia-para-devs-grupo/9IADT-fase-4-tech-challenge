@@ -1,6 +1,12 @@
 from src.analyzers.audio import termos
 
 
+def _casa(texto: str) -> termos.TermoCritico:
+    casado = termos.localizar(texto, "SymptomOrSign")
+    assert casado is not None, texto
+    return casado
+
+
 def test_localiza_termo_respiratorio_exato():
     termo = termos.localizar("shortness of breath", "SymptomOrSign")
     assert termo is not None
@@ -42,12 +48,12 @@ def test_texto_vazio_nao_casa():
 
 
 def test_plural_casa_com_o_termo_no_singular():
-    assert termos.localizar("chest pains", "SymptomOrSign").termo == "chest pain"
-    assert termos.localizar("headaches", "SymptomOrSign").termo == "headache"
-    assert termos.localizar("palpitations", "SymptomOrSign").termo == "palpitation"
+    assert _casa("chest pains").termo == "chest pain"
+    assert _casa("headaches").termo == "headache"
+    assert _casa("palpitations").termo == "palpitation"
 
 
 def test_variantes_vistas_nas_consultas_reais_casam():
-    assert termos.localizar("can't breathe", "SymptomOrSign").categoria == "respiratorio"
-    assert termos.localizar("breathless", "SymptomOrSign").categoria == "respiratorio"
-    assert termos.localizar("nauseous", "SymptomOrSign").termo == "nauseous"
+    assert _casa("can't breathe").categoria == "respiratorio"
+    assert _casa("breathless").categoria == "respiratorio"
+    assert _casa("nauseous").termo == "nauseous"

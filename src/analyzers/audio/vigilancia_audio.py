@@ -139,9 +139,11 @@ class VigilanciaAudio:
             audio = np.concatenate(list(janela))
             self.estado.nivel = float(np.sqrt(np.mean(audio**2)))
             self.estado.janelas += 1
-            eventos = self.classificador.classificar(audio)  # um passe só do AST por janela
-            self.estado.ultimas_classes = list(getattr(self.classificador, "ultimas_classes", []))
-            self.estado.transcricao = getattr(self.classificador, "ultima_transcricao", "")
+            classificador = self.classificador
+            assert classificador is not None  # carregado antes do laço (ver acima)
+            eventos = classificador.classificar(audio)  # um passe só do AST por janela
+            self.estado.ultimas_classes = list(getattr(classificador, "ultimas_classes", []))
+            self.estado.transcricao = getattr(classificador, "ultima_transcricao", "")
             if self.fonte == MICROFONE:
                 self._registrar(eventos)
             for evento in eventos:

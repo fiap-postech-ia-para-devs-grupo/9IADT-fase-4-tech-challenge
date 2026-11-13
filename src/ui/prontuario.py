@@ -8,6 +8,7 @@ relógio é o mesmo do Mapa de Leitos e da Central; os Alertas surgem conforme e
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+from typing import cast
 
 import pandas as pd
 import streamlit as st
@@ -116,9 +117,10 @@ def _avisos(surgidos: list[EventoAlerta]) -> None:
 def _medicacoes(internacao: Internacao, agora: datetime) -> None:
     prescricoes = internacao.prescricoes
     instante = pd.Timestamp(agora)
-    ativas = prescricoes[
-        (prescricoes["starttime"] <= instante) & (prescricoes["stoptime"] >= instante)
-    ]
+    ativas = cast(
+        pd.DataFrame,
+        prescricoes[(prescricoes["starttime"] <= instante) & (prescricoes["stoptime"] >= instante)],
+    )
     if ativas.empty:
         st.caption("Nenhuma prescrição ativa neste momento.")
         return

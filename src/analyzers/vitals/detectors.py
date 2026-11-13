@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import Callable
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -149,12 +150,19 @@ def zscore_movel(janela: pd.DataFrame, paciente_id: str) -> list[Alerta]:
 
 
 def isolation_forest(janela: pd.DataFrame, paciente_id: str) -> list[Alerta]:
-    features = janela[list(SERIES)].rolling(JANELA_IF, min_periods=JANELA_IF).mean()
-    features = features.dropna()
+    medias = cast(
+        pd.DataFrame, janela[list(SERIES)].rolling(JANELA_IF, min_periods=JANELA_IF).mean()
+    )
+    features = medias.dropna()
     if len(features) < MIN_AMOSTRAS_IF:
         return []
 
-    modelo = IsolationForest(n_estimators=200, contamination=CONTAMINACAO_IF, random_state=0)
+    # sklearn não anota parâmetros: o pyright deduz `str` do padrão 'auto', mas float é válido
+    modelo = IsolationForest(
+        n_estimators=200,
+        contamination=CONTAMINACAO_IF,  # pyright: ignore[reportArgumentType]
+        random_state=0,
+    )
     rotulos = modelo.fit_predict(features.to_numpy())
     # features começa depois das primeiras JANELA_IF-1 amostras; realinha com `janela`
     posicoes = np.flatnonzero(janela.index.isin(features.index))

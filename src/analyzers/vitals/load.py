@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -52,7 +53,8 @@ def de_sinais(brutos: pd.DataFrame) -> pd.DataFrame:
         if origem is None:
             saida[canonica] = pd.Series(float("nan"), index=minutos)
         else:
-            saida[canonica] = reamostrar(brutos[origem].astype(float)).reindex(minutos)
+            coluna = cast(pd.Series, brutos[origem]).astype(float)
+            saida[canonica] = reamostrar(coluna).reindex(minutos)
     return pd.DataFrame(saida, index=minutos)
 
 
@@ -61,6 +63,8 @@ def carregar(caminho_base: str | Path) -> pd.DataFrame:
     import wfdb  # import tardio: o restante do módulo funciona sem wfdb instalado
 
     registro = wfdb.rdrecord(str(caminho_base))
+    # numerics é um registro de segmento único: Record (não MultiRecord), com p_signal lido
+    assert isinstance(registro, wfdb.Record) and registro.p_signal is not None
     inicio = getattr(registro, "base_datetime", None) or ORIGEM_PADRAO
     segundos = np.arange(registro.p_signal.shape[0]) / registro.fs
     instantes = pd.to_datetime(inicio) + pd.to_timedelta(segundos, unit="s")

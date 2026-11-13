@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -172,8 +174,8 @@ def test_de_sinais_coluna_ausente_vira_nan():
 
     quadro = load.de_sinais(brutos)
 
-    assert quadro["SpO2"].isna().all()
-    assert quadro["FC"].notna().all()
+    assert bool(quadro["SpO2"].isna().all())
+    assert bool(quadro["FC"].notna().all())
 
 
 def test_reamostrar_interpola_lacuna_curta_e_mantem_longa():
@@ -199,7 +201,7 @@ def test_alerta_de_sinal_vital_eh_valido_no_contrato():
         severidade=Severidade.ALTA,
         descricao="teste",
         evidencia={"serie": "FC", "janela": [0.0, 60.0], "valores": [130.0]},
-        detectado_em=pd.Timestamp("2150-01-01 01:00").to_pydatetime(),
+        detectado_em=datetime(2150, 1, 1, 1, 0),
     )
     assert alerta.para_dict()["origem"] == "sinais_vitais"
 

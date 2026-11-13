@@ -97,7 +97,7 @@ def main(argv: list[str] | None = None) -> int:
     tabela_wer = pd.DataFrame(linhas_wer)
     pd.DataFrame(linhas_termos).to_csv(SAIDA / "termos_criticos.csv", index=False)
 
-    n_wer = int(tabela_wer["wer"].notna().sum())
+    n_wer = int(tabela_wer["wer"].notna().to_numpy().sum())
     if n_wer:
         tabela_wer.to_csv(SAIDA / "wer.csv", index=False)
         print(
