@@ -78,17 +78,28 @@ def conectar(
 
 def _migrar_checks(conn: sqlite3.Connection) -> None:
     """Banco criado com um enum mais antigo (ex.: sem `evento_sonoro`): recria a tabela com os
-    CHECKs atuais e copia as linhas. Os CHECKs vêm dos enums, então mudam junto com o Contrato."""
-    linha = conn.execute(
+    CHECKs atuais e copia as linhas. Os CHECKs vêm dos enums, então mudam junto com o Contrato.
+
+    Se uma migração anterior parou no meio (sobrou `alertas_antiga`), retoma a cópia: o
+    `executescript` faz commit sozinho, então o RENAME pode ter sido gravado sem a cópia."""
+    tabelas = {
+        nome for (nome,) in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+    }
+    sql_atual = conn.execute(
         "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'alertas'"
-    ).fetchone()
-    if linha is None or all(f"'{t.value}'" in linha[0] for t in Tipo):
+    ).fetchone()[0]
+    enum_atualizado = all(f"'{t.value}'" in sql_atual for t in Tipo)
+    if enum_atualizado and "alertas_antiga" not in tabelas:
         return
-    with conn:
+    if not enum_atualizado:
         conn.execute("ALTER TABLE alertas RENAME TO alertas_antiga")
         conn.execute("DROP INDEX IF EXISTS idx_alertas_paciente")
         conn.executescript(SCHEMA)
-        conn.execute(f"INSERT INTO alertas SELECT {', '.join(_COLUNAS)} FROM alertas_antiga")
+    colunas = ", ".join(_COLUNAS)  # explícitas: a ordem do dataclass não é a da tabela
+    with conn:
+        conn.execute(
+            f"INSERT OR IGNORE INTO alertas ({colunas}) SELECT {colunas} FROM alertas_antiga"
+        )
         conn.execute("DROP TABLE alertas_antiga")
 
 
