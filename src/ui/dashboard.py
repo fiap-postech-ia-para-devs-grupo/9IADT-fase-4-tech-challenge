@@ -202,9 +202,7 @@ def _equipe() -> None:
             f"**🕒 Turno:** hoje ({date.today():%d/%m}), {plantao.inicio_plantao():%H:%M} → "
             f"{plantao.fim_plantao():%H:%M} · agora {plantao.agora():%H:%M}"
         )
-        st.markdown(
-            "**📲 Recebem chamadas no WhatsApp:** " + (", ".join(recebem) or "ninguém cadastrado")
-        )
+        st.markdown("**📲 Recebem chamadas:** " + (", ".join(recebem) or "ninguém cadastrado"))
         st.caption(f"Chamadas: {cfg.canal} · equipe e números em Administração › Equipe e Leitos")
 
 

@@ -11,6 +11,7 @@ rodando quando a pessoa troca de tela.
 
 from __future__ import annotations
 
+import html
 from pathlib import Path
 
 import streamlit as st
@@ -18,7 +19,7 @@ import streamlit as st
 from src.analyzers.audio.vigilancia_audio import MICROFONE, VigilanciaAudio
 from src.analyzers.video import fall, objetos, pose
 from src.analyzers.video.vigilancia import Vigilancia
-from src.core import fontes
+from src.core import fontes, notificacao
 from src.core.demo import PacienteDemo
 from src.ui import plantao_estado as plantao
 
@@ -180,7 +181,8 @@ def _alarme(paciente_id: str, video, audio) -> None:
     st.html(
         f"""<div class="luz-chamada"><span class="lampada"></span>
         <div class="texto"><b>🚨 {" · ".join(eventos)}</b><br>
-        <small>Alerta enviado à Central, luz do leito acesa e equipe acionada no WhatsApp.
+        <small>Alerta enviado à Central e luz do leito acesa ·
+        {html.escape(notificacao.situacao_acionamento(plantao.conexao()))}.
         </small></div></div>"""
     )
     chave = f"alarme_{paciente_id}_{'_'.join(eventos)}"
@@ -198,7 +200,7 @@ def ao_vivo(paciente_id: str) -> None:
         st.info(
             "Monitoramento do leito desligado. Marque vídeo e/ou áudio e clique em ▶ Iniciar: "
             "uma Queda, um grito ou um chamado vira Alerta deste paciente, acende a luz do leito "
-            "e aciona a equipe no WhatsApp."
+            "e aciona a equipe de plantão."
         )
         return
     agora = plantao.agora()

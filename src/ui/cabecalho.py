@@ -15,7 +15,7 @@ from datetime import date
 
 import streamlit as st
 
-from src.core import db
+from src.core import db, notificacao
 from src.core.alerts import Severidade, Status
 from src.core.ficha import ROTULO_SEVERIDADE
 from src.ui import estilo
@@ -92,10 +92,11 @@ def _chamados_abertos(chamadas: list) -> None:
             f"{e(ROTULO_SEVERIDADE[pior.severidade])} · {e(pior.descricao[:80])} "
             f"({pior.detectado_em:%H:%M}){extra}"
         )
+    acionamento = notificacao.situacao_acionamento(plantao.conexao())
     st.html(
         f"""<div class="luz-chamada"><span class="lampada"></span>
         <div class="texto"><b>🚨 CHAMADA DE EMERGÊNCIA — {len(por_leito)} leito(s)</b><br>
-        {"<br>".join(linhas)}<br><small>Equipe acionada no WhatsApp (um disparo por leito) ·
+        {"<br>".join(linhas)}<br><small>{e(acionamento)} ·
         reconheça na Central de Alertas</small></div></div>"""
     )
     for alerta in chamadas:

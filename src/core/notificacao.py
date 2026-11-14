@@ -274,6 +274,17 @@ def acionar(
     return feitas
 
 
+def situacao_acionamento(conn: sqlite3.Connection, cfg: ConfigWhatsApp | None = None) -> str:
+    """Uma frase para as faixas de chamado: por onde a equipe é acionada, ou por que não é."""
+    cfg = cfg or config()
+    if not destinatarios(cadastro.equipe(conn), 1):
+        return "Ninguém recebe chamadas: marque 🔔 e informe o telefone em Equipe e Leitos"
+    if not cfg.ativo:
+        return "Acionamento da equipe simulado (nenhum canal configurado no .env)"
+    canal = "WhatsApp" if cfg.evolution else "Telegram"
+    return f"Equipe acionada no {canal} (um disparo por leito)"
+
+
 def leitos_acionados(conn: sqlite3.Connection) -> set[tuple[str, int]]:
     """(paciente, nível) com mensagem já enviada para um Alerta ainda sem Reconhecimento."""
     _preparar(conn)
