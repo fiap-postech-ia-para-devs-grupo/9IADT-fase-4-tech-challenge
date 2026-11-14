@@ -94,7 +94,13 @@ class VigilanciaAudio:
             self.estado.ativo = False
 
     def _blocos_microfone(self):
-        import sounddevice as sd
+        try:
+            import sounddevice as sd
+        except OSError as erro:  # sem PortAudio (ex.: contêiner sem placa de som)
+            raise RuntimeError(
+                "Não há microfone disponível onde o app roda (biblioteca de áudio PortAudio "
+                "ausente). Escolha uma gravação em Fonte do microfone."
+            ) from erro
 
         fila: queue.Queue[np.ndarray] = queue.Queue()
         with sd.InputStream(

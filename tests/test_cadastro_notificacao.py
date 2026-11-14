@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import json
+from dataclasses import replace
 from datetime import datetime, timedelta
 from email.message import Message
 
@@ -235,3 +236,17 @@ def test_telegram_recusa_o_markdown_e_reenvia_sem_formatacao(monkeypatch):
 
     assert notificacao.enviar_telegram(cfg, "leito_04 *") == ("enviado", "telegram:7")
     assert formatos == ["Markdown", None]
+
+
+def test_situacao_acionamento_diz_quando_ninguem_recebe_e_qual_canal(conn):
+    telegram = notificacao.ConfigWhatsApp("", "", "", "http://app", "TOKEN", "1")
+    for p in cadastro.equipe(conn):
+        cadastro.salvar_profissional(conn, replace(p, recebe_alertas=False))
+    assert notificacao.situacao_acionamento(conn, telegram).startswith("Ninguém recebe")
+
+    primeiro = cadastro.equipe(conn)[0]
+    cadastro.salvar_profissional(
+        conn, replace(primeiro, recebe_alertas=True, telefone="11999998888")
+    )
+    assert "Telegram" in notificacao.situacao_acionamento(conn, telegram)
+    assert "simulado" in notificacao.situacao_acionamento(conn, SIMULADO)
