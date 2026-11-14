@@ -104,7 +104,7 @@ PRIMOCK57_TRANSCRIPT_URL = (
 )
 
 
-@dataset("primock57", dono="V. Geizler", destino="audio/primock57")
+@dataset("primock57", dono="V. Geisler", destino="audio/primock57")
 def baixar_primock57(destino: Path) -> None:
     """Canal do paciente das Consultas de `data/audio/primock57_selecionadas.txt`.
 
@@ -198,7 +198,7 @@ def _extrair_arquivos_uteis(partes: list[Path], pasta: str, extraido: Path) -> N
         concatenado.unlink(missing_ok=True)
 
 
-@dataset("coswara", dono="V. Geizler", destino="audio/coswara")
+@dataset("coswara", dono="V. Geisler", destino="audio/coswara")
 def baixar_coswara(destino: Path) -> None:
     """Pastas de `data/audio/coswara_pastas_selecionadas.txt` (rationale no próprio arquivo):
     `combined_data.csv` (rótulos `bd`/`ftg`/`covid_status`) + `counting-normal.wav` e

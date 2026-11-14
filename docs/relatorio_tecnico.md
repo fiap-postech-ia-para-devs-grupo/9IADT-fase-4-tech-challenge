@@ -8,13 +8,13 @@
 | 1. Contexto | Renato | #17 |
 | 2. Fluxo Multimodal | Antonio | #11 |
 | 3.1 Vídeo | Marcelo | #6, #13 |
-| 3.2 Áudio | V. Geizler | #9, #10, #14 |
+| 3.2 Áudio | V. Geisler | #9, #10, #14 |
 | 3.3 Sinais Vitais | Antonio | #7 |
 | 3.4 Prescrições | V. Blasque | #8 |
 | 3.5 Monitoramento do Leito (câmera e microfone) | Marcelo | #6, #13 |
 | 4. Fusão e Pacientes de Demonstração | V. Blasque | #12 |
 | 5. Resultados e Exemplos de Anomalias Detectadas | cada dono, nas suas seções; Renato consolida | #17 |
-| 6. Integração com Azure | V. Geizler | #14, #21 |
+| 6. Integração com Azure | V. Geisler | #14, #21 |
 | 7. Limitações | Renato, com insumo de cada dono | #17 |
 | 8. Conclusão e Trabalhos Futuros | Renato | #17 |
 
@@ -149,7 +149,7 @@ uv run streamlit run app.py                     # Laboratório de Análise > Ví
 
 ### 3.2 Áudio — Azure STT + TA for Health + classificador acústico
 
-_Dono: V. Geizler._
+_Dono: V. Geisler._
 
 **Dados.** Canal do paciente de 18 Consultas do PriMock57 (4–5 por dia dos 5 dias de gravação, `data/audio/primock57_selecionadas.txt`) — áudio já em WAV 16 kHz mono e a transcrição manual (`.TextGrid`) usada como referência do WER. Subset do Coswara (`data/audio/coswara_pastas_selecionadas.txt`): 17 das ~43 pastas do repositório, escolhidas por densidade de rótulo (pessoas com `bd`/`ftg` por MB baixado), já que o dataset não tem um subset pequeno pronto e os rótulos de interesse estão espalhados de forma desigual entre as pastas. Rationale completo de cada escolha nos próprios arquivos de seleção.
 
@@ -380,7 +380,7 @@ Exemplos reais, com o frame de Evidência e o Relatório de Sessão em `results/
 - **Queda (alta).** No clipe `queda_02`, a pessoa vai de em pé ao chão em 0,6 s: a caixa fica 1,8 vez mais larga que alta, com 48% da altura em pé. No `demo-03`, a Queda cai no minuto 200, depois do início de hidromorfona no minuto 90, e gera o Alerta Composto "Queda possivelmente associada a medicação".
 - **Sem falso positivo.** Os 6 agachamentos bem executados do `agachamento_lateral`, com o joelho chegando a 50–54°, não geram Desvio nem Queda.
 
-### Áudio (V. Geizler)
+### Áudio (V. Geisler)
 
 Inferência real do classificador acústico (Random Forest, AUC 0,721, limiar 0,573 — seção 3.2) sobre a fala do paciente nas 18 Consultas do PriMock57, sem depender do Azure (`results/audio/alteracao_vocal_primock57.csv`):
 
@@ -404,7 +404,7 @@ Sintomas negados ou atribuídos a terceiros, conforme marcados pela TA for Healt
 
 ## 6. Integração com Azure (serviços, custos, cotas)
 
-_Dono: V. Geizler._ Setup completo, cotas F0 e Plano B em [azure-setup.md](azure-setup.md) (#4); conta e recursos criados no #21, com o smoke test passando nos três serviços em 05/11/2026.
+_Dono: V. Geisler._ Setup completo, cotas F0 e Plano B em [azure-setup.md](azure-setup.md) (#4); conta e recursos criados no #21, com o smoke test passando nos três serviços em 05/11/2026.
 
 **Serviços.** **Speech** (Speech to Text, `en-US`, reconhecimento contínuo com timestamp) e **Language** (Text Analytics for Health + Sentiment), ambos tier **F0** (gratuito): 5h/mês de STT e 5.000 registros/mês de Language, compartilhados pelo time inteiro numa única chave.
 
@@ -447,7 +447,7 @@ _Dono: Renato, com insumo de cada dono._
 - **NEWS2 parcial.** Sem temperatura, nível de consciência e O2 suplementar, o escore é um piso do NEWS2 real; não substitui a avaliação clínica.
 - **WhatsApp depende de serviço externo.** O acionamento usa a Evolution API de um integrante; num hospital, o canal oficial seria o sistema de chamada de enfermagem.
 
-**Áudio (V. Geizler):**
+**Áudio (V. Geisler):**
 
 - **Termos Críticos sem medida formal de precisão e recall.** Não há rótulo de referência no PriMock57: a revisão manual achou 6 Alertas duvidosos ou errados em 49 (seção 5). A lista curada também limita o recall: variantes como "pain in my chest" não casam.
 - **Treino e inferência acústica vêm de tipos de fala diferentes.** O classificador é treinado em `counting-normal`/`vowel-a` do Coswara (fala controlada, curta) e infere sobre a fala espontânea de uma Consulta (PriMock57) ou de um upload qualquer; é uma limitação de desenho, não um bug — já prevista na ESTRATEGIA.md, seção 5. Na inferência real sobre as 18 Consultas do PriMock57, 17 passaram do limiar (seção 5): é desalinhamento de domínio, não um sinal clínico real.
