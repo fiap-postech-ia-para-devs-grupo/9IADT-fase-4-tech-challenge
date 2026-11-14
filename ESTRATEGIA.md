@@ -108,7 +108,7 @@ Todo Analisador grava Alertas **exatamente** neste formato (`src/core/alerts.py`
 
 ## 5. Analisador de Áudio — Especificação
 
-**Setup Azure (primeira semana, Vinicius Geizler):** conta Azure for Students; recursos **Speech** e **Language** em tier F0 (Speech: 5h/mês; Language: 5.000 registros/mês). Chaves no `.env` de cada um, **nunca no git**. Orçamento de cota: processar ~15–20 Consultas do PriMock57 em batch (não as 57) e reservar cota para as demos de upload.
+**Setup Azure (primeira semana, Vinicius Geisler):** conta Azure for Students; recursos **Speech** e **Language** em tier F0 (Speech: 5h/mês; Language: 5.000 registros/mês). Chaves no `.env` de cada um, **nunca no git**. Orçamento de cota: processar ~15–20 Consultas do PriMock57 em batch (não as 57) e reservar cota para as demos de upload.
 
 **Camada semântica (`src/analyzers/audio/semantic.py`):**
 
@@ -221,7 +221,7 @@ Marcos globais:
 
 **Entregável:** `src/analyzers/video/` + clipes processados + Relatórios de Sessão em `results/video/`.
 
-### Vinicius Geizler — Analisador de Áudio (~38h até 04/11)
+### Vinicius Geisler — Analisador de Áudio (~38h até 04/11)
 
 **28/09–05/10:** Conta Azure for Students + recursos Speech e Language; `.env.example`; download PriMock57 (Git LFS) e subset do Coswara.
 **06/10–19/10:** Camada semântica completa (STT, WER, TA for Health, Sentiment) em ~15–20 Consultas; extração de features do Coswara.
@@ -271,7 +271,7 @@ monitoramento-multimodal-fase4/
 │   │   └── fusion.py                    ← Fusão / Alerta Composto (Antonio)
 │   └── analyzers/
 │       ├── video/                       ← pose, angles, exercise_rules, fall, report (Marcelo)
-│       ├── audio/                       ← azure (config), semantic (Azure), acoustic (Coswara) (V. Geizler)
+│       ├── audio/                       ← azure (config), semantic (Azure), acoustic (Coswara) (V. Geisler)
 │       ├── vitals/                      ← load, detectors, inject, evaluate, stream (Antonio)
 │       └── prescriptions/               ← rules (V. Blasque)
 ├── scripts/
@@ -340,7 +340,7 @@ python-dotenv>=1.0
 ## 2. Fluxo Multimodal (diagrama: fontes → Analisadores → Alertas → Fusão → Central)
 ## 3. Modelos por Tipo de Dado
 ### 3.1 Vídeo — YOLOv8-pose, Desvio de Execução, Queda            (Marcelo)
-### 3.2 Áudio — Azure STT + TA for Health + classificador acústico (V. Geizler)
+### 3.2 Áudio — Azure STT + TA for Health + classificador acústico (V. Geisler)
 ### 3.3 Sinais Vitais — regras × z-score × Isolation Forest        (Antonio)
 ### 3.4 Prescrições — regras sobre MIMIC-IV Demo                   (V. Blasque)
 ## 4. Fusão e Pacientes de Demonstração
@@ -401,7 +401,7 @@ python-dotenv>=1.0
 ## 16. Comunicação do Time
 
 - **Check-in semanal** (domingos): ✅ feito / 🔴 bloqueios, alinhado aos marcos da seção 10.
-- **Dependências críticas, avisar imediatamente:** contrato do Alerta (Antonio, 05/10), Azure funcionando (V. Geizler, 05/10), `stream.py` (Antonio), `demo_patients.json` (V. Blasque).
+- **Dependências críticas, avisar imediatamente:** contrato do Alerta (Antonio, 05/10), Azure funcionando (V. Geisler, 05/10), `stream.py` (Antonio), `demo_patients.json` (V. Blasque).
 - **Branches:** `feature/video`, `feature/audio`, `feature/vitals-core`, `feature/app-prescriptions`, `feature/docs`. PR para `main` quando estável.
 - **Handoff para o Renato (04/11):** cada dono deixa no PR final um parágrafo "como rodar minha parte" e "o que mostrar no vídeo".
 - **Não reabrir escopo:** ideias novas vão para "Trabalhos Futuros".

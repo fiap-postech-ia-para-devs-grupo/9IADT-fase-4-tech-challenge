@@ -1,0 +1,58 @@
+# Constrói a imagem do Dockerfile da raiz e confere que o app sobe e responde.
+# Demora (~8 min: torch, dados e lote), por isso só roda quando algo que entra na imagem muda.
+name: Docker
+
+on:
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - pyproject.toml
+      - uv.lock
+      - scripts/download_data.py
+      - scripts/run_batch.py
+      - .github/workflows/docker.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  imagem:
+    name: build e smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: docker build -t monitoramento .
+
+      - name: Subir o container
+        run: docker run -d --name app -p 8501:8501 monitoramento
+
+      - name: App responde
+        run: |
+          for i in $(seq 60); do
+            if curl -fsS http://localhost:8501/_stcore/health; then echo; exit 0; fi
+            sleep 2
+          done
+          docker logs app
+          exit 1
+
+      - name: Banco populado pelo lote
+        run: |
+          docker exec app python -c "
+          import sqlite3
+          n = sqlite3.connect('data/alertas.db').execute('select count(*) from alertas').fetchone()[0]
+          print(n, 'Alertas')
+          assert n > 0
+          "
+
+      - name: Logs
+        if: always()
+        run: docker logs app 2>&1 | tail -50 || true
