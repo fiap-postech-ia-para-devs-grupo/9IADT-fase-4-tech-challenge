@@ -10,6 +10,7 @@ naturais e grava `results/vitals/avaliacao.csv` e `results/vitals/naturais.csv`.
 from __future__ import annotations
 
 import pathlib
+from typing import cast
 
 import pandas as pd
 
@@ -75,14 +76,13 @@ def main() -> None:
         .reset_index()
     )
     resumo["recall"] = resumo["detectadas"] / resumo["injecoes"]
-    resumo["precisao"] = (
+    uteis = cast(
+        pd.Series,
         avaliacao.assign(uteis=avaliacao["precisao"] * avaliacao["alertas"])
         .groupby("tecnica")["uteis"]
-        .sum()
-        .reindex(resumo["tecnica"])
-        .to_numpy()
-        / resumo["alertas"]
+        .sum(),
     )
+    resumo["precisao"] = uteis.reindex(resumo["tecnica"]).to_numpy() / resumo["alertas"]
     resumo.to_csv(SAIDA / "avaliacao.csv", index=False)
     pd.DataFrame(linhas_naturais).to_csv(SAIDA / "naturais.csv", index=False)
     print(resumo.round(3).to_string(index=False))

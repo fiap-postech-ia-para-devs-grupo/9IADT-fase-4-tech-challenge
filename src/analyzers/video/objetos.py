@@ -60,7 +60,8 @@ def detectar(frame: np.ndarray, modelo: Any = None) -> list[Objeto]:
     ):
         nome = AREAS_CRITICAS.get(resultado.names[int(classe)])
         if nome and confianca >= CONFIANCA_MINIMA:
-            objetos.append(Objeto(nome, float(confianca), tuple(float(v) for v in caixa)))
+            x1, y1, x2, y2 = (float(v) for v in caixa)
+            objetos.append(Objeto(nome, float(confianca), (x1, y1, x2, y2)))
     return objetos
 
 

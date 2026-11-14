@@ -104,7 +104,7 @@ def test_carregar_metadados_calcula_rotulo(tmp_path):
     rotulos = metadados.set_index("id")["rotulo"]
     assert rotulos["p1"] == 1
     assert rotulos["p2"] == 0
-    assert pd.isna(rotulos["p3"])
+    assert bool(pd.isna(rotulos["p3"]))
 
 
 # --- dataset a partir de uma pasta extraída -----------------------------------------------
@@ -243,12 +243,14 @@ def test_alerta_alteracao_vocal_no_contrato_quando_acima_do_limiar():
 def test_alerta_alteracao_vocal_e_deterministico():
     a1 = acoustic.alerta_alteracao_vocal("p1", "c1.wav", 0.9, limiar=0.5)
     a2 = acoustic.alerta_alteracao_vocal("p1", "c1.wav", 0.9, limiar=0.5)
+    assert a1 and a2
     assert a1.id == a2.id
 
 
 def test_id_do_alerta_de_alteracao_vocal_depende_do_paciente():
     a = acoustic.alerta_alteracao_vocal("avulso", "c1.wav", 0.9, limiar=0.5)
     b = acoustic.alerta_alteracao_vocal("demo-01", "c1.wav", 0.9, limiar=0.5)
+    assert a and b
     assert a.id != b.id
 
 

@@ -278,13 +278,17 @@ def _video_da_camera() -> None:
             tela.info("A imagem da câmera aparece aqui, com o esqueleto do YOLOv8-pose.")
             return
     destino = PASTA_LABORATORIO / f"camera-{datetime.now():%Y%m%d-%H%M%S}.avi"
+
+    def _mostrar_quadro(quadro, _segundo: float) -> None:
+        tela.image(quadro, channels="BGR", width="stretch")
+
     try:
         camera.capturar(
             destino,
             segundos=segundos,
             indice=int(indice),
             modelo=_modelo_pose(),
-            ao_vivo=lambda quadro, _: tela.image(quadro, channels="BGR", width="stretch"),
+            ao_vivo=_mostrar_quadro,
         )
     except camera.CameraIndisponivel as erro:
         st.error(str(erro))

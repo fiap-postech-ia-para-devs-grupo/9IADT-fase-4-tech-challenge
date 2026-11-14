@@ -320,7 +320,7 @@ def _filtros(todos: list[Alerta], fichas: dict[str, Ficha]) -> dict[str, Any]:
     """Barra de filtros acima da fila (a barra lateral é do plantão: plantonista e relógio)."""
     recorte_col, status_col, sev_col, origem_col, paciente_col = st.columns([2.2, 2, 2, 2, 2])
     recorte = recorte_col.selectbox(
-        "Pacientes", list(ESCOPOS), format_func=ESCOPOS.get, key="central_escopo"
+        "Pacientes", list(ESCOPOS), format_func=lambda e: ESCOPOS[e], key="central_escopo"
     )
     do_recorte = [
         a for a in todos if recorte == "todos" or escopo(a.paciente_id, fichas) == recorte
@@ -329,21 +329,21 @@ def _filtros(todos: list[Alerta], fichas: dict[str, Ficha]) -> dict[str, Any]:
         "Status",
         list(Status),
         default=[Status.NOVO, Status.RECONHECIDO],
-        format_func=ROTULO_STATUS.get,
+        format_func=lambda s: ROTULO_STATUS[s],
         key="central_status",
         placeholder="todos",
     )
     severidades = sev_col.multiselect(
         "Severidade",
         list(Severidade),
-        format_func=ROTULO_SEVERIDADE.get,
+        format_func=lambda s: ROTULO_SEVERIDADE[s],
         key="central_sev",
         placeholder="todas",
     )
     origens = origem_col.multiselect(
         "Origem",
         list(Origem),
-        format_func=ROTULO_ORIGEM.get,
+        format_func=lambda o: ROTULO_ORIGEM[o],
         key="central_origem",
         placeholder="todas",
     )

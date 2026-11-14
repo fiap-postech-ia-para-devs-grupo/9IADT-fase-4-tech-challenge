@@ -30,7 +30,7 @@ def main() -> None:
         except Exception:
             erros += 1
             continue
-        sinais = set(cabecalho.sig_name)
+        sinais = set(cabecalho.sig_name or [])
         if BASICOS <= sinais and sinais & PA and cabecalho.sig_len and cabecalho.sig_len >= 360:
             achados += 1
             print("OK", registro, cabecalho.sig_len, sorted(sinais & (PA | BASICOS)), flush=True)

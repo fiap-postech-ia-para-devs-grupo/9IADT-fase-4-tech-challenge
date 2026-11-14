@@ -122,7 +122,7 @@ def controles(paciente: PacienteDemo, camera_admissao: str | None) -> None:
         "Fonte da câmera",
         list(cameras),
         index=list(cameras).index(padrao),
-        format_func=cameras.get,
+        format_func=lambda c: cameras[c],
         key=f"camera_fonte_{paciente.id}",
         disabled=rodando or not usar_video,
     )
@@ -136,7 +136,7 @@ def controles(paciente: PacienteDemo, camera_admissao: str | None) -> None:
     som = st.selectbox(
         "Fonte do microfone",
         list(sons),
-        format_func=sons.get,
+        format_func=lambda s: sons[s],
         key=f"audio_fonte_{paciente.id}",
         disabled=rodando or not usar_audio,
     )

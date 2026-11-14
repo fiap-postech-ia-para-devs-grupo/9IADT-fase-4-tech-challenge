@@ -249,7 +249,10 @@ def equipe(conn: sqlite3.Connection) -> list[Profissional]:
         "SELECT id, nome, funcao, registro, telefone, recebe_alertas FROM profissionais "
         "WHERE ativo = 1 ORDER BY nome"
     )
-    return [Profissional(*linha[:5], bool(linha[5])) for linha in linhas]
+    return [
+        Profissional(id_, nome, funcao, registro, telefone, bool(recebe))
+        for id_, nome, funcao, registro, telefone, recebe in linhas
+    ]
 
 
 def salvar_profissional(conn: sqlite3.Connection, profissional: Profissional) -> None:

@@ -1,8 +1,11 @@
 import pytest
 
 from src.analyzers.audio import acoustic, lab, semantic
+from src.analyzers.audio.azure import AzureConfig
 from src.analyzers.audio.semantic import EntidadeClinica, SentimentoTrecho, Trecho
 from src.core.alerts import Origem, Tipo
+
+CONFIG_FALSA = AzureConfig("chave", "eastus", "chave", "https://exemplo")  # Azure mockado
 
 TRECHOS = [Trecho(0.0, 2.0, "I feel really tired and short of breath")]
 
@@ -31,7 +34,7 @@ def test_analyze_audio_sem_modelo_treinado_nao_tem_probabilidade(tmp_path):
 
     resultado = lab.analyze_audio(
         arquivo,
-        config=object(),
+        config=CONFIG_FALSA,
         cache_dir=tmp_path / "cache",
         caminho_modelo=tmp_path / "nao-existe.joblib",
     )
@@ -57,7 +60,7 @@ def test_analyze_audio_com_modelo_gera_alerta_de_alteracao_vocal(tmp_path, monke
 
     resultado = lab.analyze_audio(
         arquivo,
-        config=object(),
+        config=CONFIG_FALSA,
         paciente_id="demo-01",
         cache_dir=tmp_path / "cache",
         caminho_modelo=caminho_modelo,
@@ -87,7 +90,7 @@ def test_analyze_audio_com_modelo_mas_probabilidade_abaixo_do_limiar_nao_gera_al
     caminho_modelo.write_bytes(b"\x00")
 
     resultado = lab.analyze_audio(
-        arquivo, config=object(), cache_dir=tmp_path / "cache", caminho_modelo=caminho_modelo
+        arquivo, config=CONFIG_FALSA, cache_dir=tmp_path / "cache", caminho_modelo=caminho_modelo
     )
 
     assert resultado.probabilidade_alteracao_vocal == 0.1
@@ -109,7 +112,10 @@ def test_uploads_de_mesmo_nome_e_conteudo_diferente_nao_compartilham_identidade(
         arquivo = tmp_path / pasta / "gravacao.wav"
         arquivo.write_bytes(conteudo)
         lab.analyze_audio(
-            arquivo, config=object(), cache_dir=tmp_path / "cache", caminho_modelo=tmp_path / "x"
+            arquivo,
+            config=CONFIG_FALSA,
+            cache_dir=tmp_path / "cache",
+            caminho_modelo=tmp_path / "x",
         )
 
     assert identidades[0] != identidades[1]  # conteúdo diferente: não reaproveita cache

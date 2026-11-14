@@ -64,14 +64,14 @@ def prescricoes() -> list[OpcaoPrescricao]:
     sexo = {"M": "masculino", "F": "feminino"}
     return [
         OpcaoPrescricao(
-            int(linha.subject_id),
-            int(linha.hadm_id),
-            int(linha.anchor_age) if pd.notna(linha.anchor_age) else None,
-            sexo.get(str(linha.gender)),
-            linha.inicio,
-            int(linha.n),
+            int(linha["subject_id"]),
+            int(linha["hadm_id"]),
+            int(linha["anchor_age"]) if pd.notna(linha["anchor_age"]) else None,
+            sexo.get(str(linha["gender"])),
+            linha["inicio"],
+            int(linha["n"]),
         )
-        for linha in grupos.sort_values("n", ascending=False).itertuples()
+        for linha in grupos.sort_values("n", ascending=False).to_dict("records")
     ]
 
 
