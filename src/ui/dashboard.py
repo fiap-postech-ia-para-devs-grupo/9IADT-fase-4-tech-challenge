@@ -205,10 +205,7 @@ def _equipe() -> None:
         st.markdown(
             "**📲 Recebem chamadas no WhatsApp:** " + (", ".join(recebem) or "ninguém cadastrado")
         )
-        st.caption(
-            f"WhatsApp {'conectado (instância ' + cfg.instancia + ')' if cfg.ativo else 'simulado'}"
-            " · equipe e números em Administração › Equipe e Leitos"
-        )
+        st.caption(f"Chamadas: {cfg.canal} · equipe e números em Administração › Equipe e Leitos")
 
 
 def painel() -> None:

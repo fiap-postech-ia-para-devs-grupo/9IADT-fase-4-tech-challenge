@@ -1,4 +1,9 @@
+from __future__ import annotations
+
+import io
+import json
 from datetime import datetime, timedelta
+from email.message import Message
 
 import pytest
 
@@ -174,3 +179,59 @@ def test_mensagem_tem_sirene_paciente_e_link():
     assert texto.startswith("🚨")
     assert "Leito UTI-04" in texto
     assert "http://app/alertas" in texto
+
+
+class _RespostaFalsa:
+    def __init__(self, corpo: bytes) -> None:
+        self.corpo = corpo
+
+    def read(self) -> bytes:
+        return self.corpo
+
+    def __enter__(self) -> _RespostaFalsa:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        return None
+
+
+def test_sem_evolution_o_telegram_recebe_a_chamada_com_o_destinatario(monkeypatch):
+    pedidos = []
+
+    def urlopen_falso(pedido, timeout):
+        pedidos.append(pedido)
+        return _RespostaFalsa(b'{"ok": true, "result": {"message_id": 42}}')
+
+    monkeypatch.setattr(notificacao.urllib.request, "urlopen", urlopen_falso)
+    cfg = notificacao.ConfigWhatsApp("", "", "", "http://app", "TOKEN", "-100123")
+
+    assert cfg.ativo and not cfg.evolution
+    status, detalhe = notificacao.enviar_whatsapp(cfg, "5511999998888", "🚨 oi", "Dra. Ana")
+
+    assert (status, detalhe) == ("enviado", "telegram:42")
+    assert pedidos[0].full_url == "https://api.telegram.org/botTOKEN/sendMessage"
+    corpo = json.loads(pedidos[0].data)
+    assert corpo["chat_id"] == "-100123"
+    assert corpo["text"].startswith("📱 Para: Dra. Ana (5511•••••8888)\n🚨 oi")
+
+
+_ERRO_MARKDOWN = b'{"ok": false, "description": "Bad Request: can\'t parse entities"}'
+
+
+def test_telegram_recusa_o_markdown_e_reenvia_sem_formatacao(monkeypatch):
+    formatos = []
+
+    def urlopen_falso(pedido, timeout):
+        corpo = json.loads(pedido.data)
+        formatos.append(corpo.get("parse_mode"))
+        if "parse_mode" in corpo:
+            raise notificacao.urllib.error.HTTPError(
+                pedido.full_url, 400, "bad", Message(), io.BytesIO(_ERRO_MARKDOWN)
+            )
+        return _RespostaFalsa(b'{"ok": true, "result": {"message_id": 7}}')
+
+    monkeypatch.setattr(notificacao.urllib.request, "urlopen", urlopen_falso)
+    cfg = notificacao.ConfigWhatsApp("", "", "", "http://app", "TOKEN", "1")
+
+    assert notificacao.enviar_telegram(cfg, "leito_04 *") == ("enviado", "telegram:7")
+    assert formatos == ["Markdown", None]

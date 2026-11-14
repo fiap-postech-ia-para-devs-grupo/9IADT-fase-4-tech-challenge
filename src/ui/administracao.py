@@ -148,11 +148,12 @@ def _whatsapp() -> None:
     conn = plantao.conexao()
     cfg = notificacao.config()
     if cfg.ativo:
-        st.success(f"WhatsApp conectado pela Evolution API (instância `{cfg.instancia}`).")
+        st.success(f"Chamadas conectadas: {cfg.canal}.")
     else:
         st.warning(
-            "Evolution API não configurada: as chamadas ficam **simuladas** (registradas, sem "
-            "envio). Preencha `EVOLUTION_URL`, `EVOLUTION_APIKEY` e `EVOLUTION_INSTANCE` no `.env`."
+            "Nenhum canal configurado: as chamadas ficam **simuladas** (registradas, sem envio). "
+            "Preencha `EVOLUTION_URL`, `EVOLUTION_APIKEY` e `EVOLUTION_INSTANCE` (WhatsApp) ou "
+            "`TELEGRAM_BOT_TOKEN` e `TELEGRAM_CHAT_ID` (Telegram) no `.env`."
         )
     # Chave própria + callback: o valor sobrevive à troca de tela (widget fora da tela some).
     st.toggle(
@@ -179,6 +180,7 @@ def _whatsapp() -> None:
                 numero,
                 "🚨 [TESTE] Luz de chamada do Monitoramento Multimodal configurada para "
                 f"{profissional.rotulo}. Demonstração acadêmica (FIAP).",
+                profissional.rotulo,
             )
             st.write(f"{profissional.rotulo} ({notificacao.mascarar(numero)}): {status}")
 

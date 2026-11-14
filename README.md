@@ -37,7 +37,7 @@ O `--extra-index-url` é necessário no Linux, porque o `torch` CPU vem do índi
 
 Copie `.env.example` para `.env` e preencha as variáveis do Azure. O `.env` não vai para o git. Sem as chaves, o lote de áudio roda só do cache versionado (o upload de áudio no Laboratório precisa delas).
 
-Opcional: para a equipe receber as chamadas de emergência no WhatsApp, preencha `EVOLUTION_URL`, `EVOLUTION_APIKEY` e `EVOLUTION_INSTANCE` (Evolution API) e `APP_URL` (link da Central na mensagem). Sem elas, o acionamento fica simulado e só é registrado.
+Opcional: para a equipe receber as chamadas de emergência no WhatsApp, preencha `EVOLUTION_URL`, `EVOLUTION_APIKEY` e `EVOLUTION_INSTANCE` (Evolution API) e `APP_URL` (link da Central na mensagem). Sem o WhatsApp, dá para usar um bot do Telegram: `TELEGRAM_BOT_TOKEN` (criado no @BotFather) e `TELEGRAM_CHAT_ID` (o chat que recebe as chamadas). Sem nenhum dos dois, o acionamento fica simulado e só é registrado.
 
 ```bash
 cp .env.example .env
