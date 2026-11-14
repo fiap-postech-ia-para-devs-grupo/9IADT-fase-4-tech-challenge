@@ -66,13 +66,13 @@ def parar_tudo(paciente_id: str) -> None:
 
 
 def _fontes_audio() -> dict[str, str]:
-    opcoes = {MICROFONE: "Microfone deste computador (ao vivo)"}
-    opcoes |= {
+    """Gravações primeiro (funcionam em qualquer máquina); o microfone ao vivo por último."""
+    opcoes = {
         str(_SONS / arquivo): rotulo
         for arquivo, rotulo in SONS_EXEMPLO.items()
         if (_SONS / arquivo).exists()
     }
-    return opcoes
+    return opcoes | {MICROFONE: "Microfone deste computador (ao vivo)"}
 
 
 def _ligar_video(paciente: PacienteDemo, escolha: str) -> None:
@@ -118,7 +118,10 @@ def controles(paciente: PacienteDemo, camera_admissao: str | None) -> None:
         disabled=rodando,
     )
     cameras = fontes.cameras()
-    padrao = camera_admissao if camera_admissao in cameras else fontes.WEBCAM
+    clipes = [c for c in cameras if c != fontes.WEBCAM]
+    padrao = (
+        camera_admissao if camera_admissao in cameras else clipes[0] if clipes else fontes.WEBCAM
+    )
     camera = st.selectbox(
         "Fonte da câmera",
         list(cameras),
