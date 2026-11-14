@@ -87,9 +87,13 @@ O menu segue a rotina de um plantão:
 ```bash
 uv run pytest
 uv run ruff check .
+uv run ruff format --check .
+uv run pyright
 ```
 
-Os testes de áudio usam o Azure mockado, então rodam sem chave.
+Os testes de áudio usam o Azure mockado, então rodam sem chave. Os que dependem dos dados baixados se pulam sem eles.
+
+O CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) roda esses quatro comandos em toda PR e em todo push na `main`, sem segredos nem dados.
 
 ## Estrutura
 

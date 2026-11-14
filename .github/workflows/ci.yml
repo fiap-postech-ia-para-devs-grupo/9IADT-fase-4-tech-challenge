@@ -1,0 +1,50 @@
+# Lint, tipos e testes em toda PR e em todo push na main.
+# Não usa segredos nem baixa dados: os testes que dependem de data/ (MIMIC, vídeos, cache do
+# PriMock57) se pulam sozinhos num checkout limpo.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: ruff · pyright · pytest
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # Mesmas dependências de sistema do .devcontainer/Dockerfile
+      # (ffmpeg: pydub; libgl1/libglib2.0-0: OpenCV).
+      - name: Dependências de sistema
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends ffmpeg libgl1 libglib2.0-0
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Instalar dependências (uv.lock)
+        run: uv sync --frozen
+
+      - name: ruff check
+        run: uv run ruff check .
+
+      - name: ruff format
+        run: uv run ruff format --check .
+
+      - name: pyright
+        run: uv run pyright
+
+      - name: pytest
+        run: uv run pytest -q
