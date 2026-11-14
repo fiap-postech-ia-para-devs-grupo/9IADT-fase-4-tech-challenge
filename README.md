@@ -16,11 +16,32 @@ Este README resume o que foi feito e como rodar. Os detalhes estão no [relatór
 
 ## Como rodar
 
-O passo a passo abaixo foi testado num clone limpo e **sem nenhuma chave do Azure**: tudo funciona, exceto analisar no Laboratório um áudio que ainda não foi analisado (ver [Chaves opcionais](#chaves-opcionais-env)).
+Tudo funciona **sem nenhuma chave do Azure**, exceto analisar no Laboratório um áudio que ainda não foi analisado (ver [Chaves opcionais](#chaves-opcionais-env)). Há três caminhos:
+
+| Caminho | Precisa de | Quando usar |
+| --- | --- | --- |
+| [Docker](#opção-mais-direta-docker) | Só Docker | Para só rodar e avaliar: dois comandos |
+| [Devcontainer](#1-ambiente) | Docker e VS Code | Para rodar e mexer no código |
+| [Local](#1-ambiente) | Python 3.12, uv e ffmpeg | Sem Docker |
+
+### Opção mais direta: Docker
+
+O [`Dockerfile`](Dockerfile) da raiz monta uma imagem completa: dependências, dados públicos, lote já processado e modelos baixados.
+
+```bash
+git clone https://github.com/fiap-postech-ia-para-devs-grupo/9IADT-fase-4-tech-challenge.git
+cd 9IADT-fase-4-tech-challenge
+docker build -t monitoramento .              # cerca de 15 min, só na primeira vez
+docker run --rm -p 8501:8501 monitoramento
+```
+
+Acesse <http://localhost:8501> e pule direto para [O que dá para ver em 5 minutos](#o-que-dá-para-ver-em-5-minutos). Para usar Azure ou Telegram, crie o `.env` (`cp .env.example .env`, preencha) e rode com `docker run --rm -p 8501:8501 --env-file .env monitoramento`. As chaves não entram na imagem. Os Alertas reconhecidos ficam dentro do container: um `docker run` novo começa o plantão do zero.
 
 ### 1. Ambiente
 
-**Opção A: devcontainer (recomendado).** Precisa de Docker e do VS Code (ou outro editor com suporte a devcontainers). O container já traz Python 3.12, uv, ffmpeg e as bibliotecas de sistema do OpenCV e do Azure Speech.
+Os passos 1 a 4 são para o devcontainer ou para rodar localmente. Foram testados num clone limpo, sem chaves do Azure.
+
+**Devcontainer.** Precisa de Docker e do VS Code (ou outro editor com suporte a devcontainers). O container já traz Python 3.12, uv, ffmpeg e as bibliotecas de sistema do OpenCV e do Azure Speech.
 
 ```bash
 git clone https://github.com/fiap-postech-ia-para-devs-grupo/9IADT-fase-4-tech-challenge.git
@@ -30,7 +51,7 @@ cp .devcontainer/.env.example .devcontainer/.env   # obrigatório: o container n
 
 O `.devcontainer/.env` pode ficar vazio (ele guarda só a identidade git de quem desenvolve). Depois, abra a pasta no VS Code e escolha **Reopen in Container**. Ao criar o container, o `post-create.sh` instala as dependências (`uv sync --frozen`) e cria o `.env` a partir do `.env.example`.
 
-**Opção B: local.** Precisa de Python 3.12, [uv](https://docs.astral.sh/uv/) e ffmpeg.
+**Local.** Precisa de Python 3.12, [uv](https://docs.astral.sh/uv/) e ffmpeg.
 
 ```bash
 git clone https://github.com/fiap-postech-ia-para-devs-grupo/9IADT-fase-4-tech-challenge.git
@@ -168,11 +189,13 @@ uv run pyright              # checagem de tipos
 - Os testes cobrem o Contrato do Alerta, o banco, a Fusão, o NEWS2, o acionamento e cada Analisador. Vídeo e pose usam poses sintéticas.
 - O Azure é mockado nos testes, então eles rodam sem chave. Os testes que dependem dos dados baixados são pulados quando os dados não estão presentes.
 - O **CI** ([GitHub Actions](.github/workflows/ci.yml)) roda os quatro comandos em toda PR e em todo push na `main`, sem segredos e sem baixar dados.
+- Um segundo workflow ([docker.yml](.github/workflows/docker.yml)) constrói a imagem do `Dockerfile`, sobe o container e confere que o app responde e que o banco foi populado. Roda quando muda algo que entra na imagem.
 
 ## Estrutura
 
 ```text
 app.py                 interface Streamlit (menu por seções)
+Dockerfile             imagem única: dependências, dados, lote e modelos
 src/core/              Contrato do Alerta, SQLite, Fusão, NEWS2, Pacientes de Demonstração,
                        cadastros (leitos, equipe, admissões, evolução) e acionamento
 src/analyzers/         um Analisador por fonte: video, audio, vitals, prescriptions
