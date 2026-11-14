@@ -6,8 +6,11 @@ depois de `MINUTOS_ESCALONAMENTO` minutos do plantão, o acionamento escala para
 Cada (Alerta, nível, profissional) é enviado uma vez só; tudo fica registrado na tabela
 `notificacoes`, que a tela de Administração mostra.
 
-Sem `EVOLUTION_URL`/`EVOLUTION_APIKEY`/`EVOLUTION_INSTANCE` no `.env`, o envio é **simulado**:
-registra o que seria enviado e não chama nada externo.
+Canal de envio, pelo `.env`:
+- `EVOLUTION_URL`/`EVOLUTION_APIKEY`/`EVOLUTION_INSTANCE`: WhatsApp de cada profissional;
+- senão, `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`: um chat (ou grupo) do Telegram faz as vezes do
+  celular da equipe, e cada mensagem diz a quem se destina (alternativa para a demonstração);
+- sem nenhum dos dois, o envio é **simulado**: registra o que seria enviado e não chama nada.
 """
 
 from __future__ import annotations
@@ -53,10 +56,26 @@ class ConfigWhatsApp:
     apikey: str
     instancia: str
     app_url: str
+    telegram_token: str = ""
+    telegram_chat: str = ""
+
+    @property
+    def evolution(self) -> bool:
+        return bool(self.url and self.apikey and self.instancia)
+
+    @property
+    def telegram(self) -> bool:
+        return bool(self.telegram_token and self.telegram_chat)
 
     @property
     def ativo(self) -> bool:
-        return bool(self.url and self.apikey and self.instancia)
+        return self.evolution or self.telegram
+
+    @property
+    def canal(self) -> str:
+        if self.evolution:
+            return f"WhatsApp (Evolution API, instância {self.instancia})"
+        return "Telegram (bot de demonstração)" if self.telegram else "simulado"
 
 
 @dataclass(frozen=True)
@@ -77,6 +96,8 @@ def config() -> ConfigWhatsApp:
         apikey=os.environ.get("EVOLUTION_APIKEY", "").strip(),
         instancia=os.environ.get("EVOLUTION_INSTANCE", "").strip(),
         app_url=os.environ.get("APP_URL", "http://localhost:8501").strip().rstrip("/"),
+        telegram_token=os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(),
+        telegram_chat=os.environ.get("TELEGRAM_CHAT_ID", "").strip(),
     )
 
 
@@ -116,10 +137,15 @@ def mensagem(alerta: Alerta, paciente: str, nivel: int, app_url: str) -> str:
     )
 
 
-def enviar_whatsapp(cfg: ConfigWhatsApp, numero: str, texto: str) -> tuple[str, str]:
+def enviar_whatsapp(
+    cfg: ConfigWhatsApp, numero: str, texto: str, destinatario: str = ""
+) -> tuple[str, str]:
     """(status, detalhe). Sem configuração, simula; erro de rede vira 'falhou', sem exceção."""
-    if not cfg.ativo:
-        return "simulado", "Evolution API não configurada no .env"
+    if not cfg.evolution:
+        if cfg.telegram:
+            para = destinatario or mascarar(numero)
+            return enviar_telegram(cfg, f"📱 Para: {para} ({mascarar(numero)})\n{texto}")
+        return "simulado", "Nenhum canal configurado no .env (Evolution API ou Telegram)"
     pedido = urllib.request.Request(
         f"{cfg.url}/message/sendText/{cfg.instancia}",
         data=json.dumps({"number": numero, "text": texto}).encode(),
@@ -132,6 +158,37 @@ def enviar_whatsapp(cfg: ConfigWhatsApp, numero: str, texto: str) -> tuple[str, 
         return "enviado", str(corpo.get("key", {}).get("id", "ok"))
     except (urllib.error.URLError, TimeoutError, ValueError) as erro:
         return "falhou", str(erro)[:200]
+
+
+def enviar_telegram(cfg: ConfigWhatsApp, texto: str) -> tuple[str, str]:
+    """Bot API do Telegram. Tenta com a formatação (*negrito*, _itálico_, como no WhatsApp) e,
+    se o texto tiver algum caractere que o Markdown recuse, reenvia sem formatação."""
+    url = f"https://api.telegram.org/bot{cfg.telegram_token}/sendMessage"
+    erro = ""
+    for formato in ({"parse_mode": "Markdown"}, {}):
+        pedido = urllib.request.Request(
+            url,
+            data=json.dumps({"chat_id": cfg.telegram_chat, "text": texto} | formato).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(pedido, timeout=10) as resposta:
+                corpo = json.loads(resposta.read() or b"{}")
+            return "enviado", f"telegram:{corpo.get('result', {}).get('message_id', 'ok')}"
+        except urllib.error.HTTPError as falha:
+            try:  # o Telegram explica o erro no corpo (ex.: "chat not found")
+                motivo = json.loads(falha.read()).get("description", "")
+            except (ValueError, OSError):
+                motivo = ""
+            erro = f"HTTP {falha.code} {motivo}".strip()
+            if falha.code != 400 or "parse" not in motivo:  # só reenvia se o Markdown falhou
+                break
+        except (urllib.error.URLError, TimeoutError, ValueError) as falha:
+            # sem o token na mensagem de erro (ele faz parte da URL)
+            erro = str(falha).replace(cfg.telegram_token, "•••")[:200]
+            break
+    return "falhou", erro
 
 
 def _preparar(conn: sqlite3.Connection) -> None:
@@ -194,7 +251,7 @@ def acionar(
                 numero = numero_valido(profissional.telefone) or ""
                 paciente = rotulo_paciente.get(alerta.paciente_id, alerta.paciente_id)
                 texto = mensagem(alerta, paciente, nivel, cfg.app_url)
-                status, detalhe = enviar_whatsapp(cfg, numero, texto)
+                status, detalhe = enviar_whatsapp(cfg, numero, texto, profissional.rotulo)
                 feita = Notificacao(
                     alerta.id, nivel, profissional.id, numero, status, detalhe, agora
                 )
