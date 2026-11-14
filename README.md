@@ -1,5 +1,13 @@
 # Monitoramento Multimodal de Pacientes
 
+| Integrante | RM |
+| --- | --- |
+| Antonio Bazo | 372646 |
+| Renato Mattos | 370975 |
+| Vinicius Geisler | 373670 |
+| Marcelo Costa | 371714 |
+| Vinicius Blasque | 370746 |
+
 Tech Challenge da Fase 4 (FIAP, pós-graduação em IA para Devs). O sistema monitora pacientes a partir de vídeo, áudio, sinais vitais e prescrições, gera **Alertas** para a equipe médica e os funde em **Alertas Compostos** quando sinais de diferentes origens se confirmam. Vocabulário e decisões em [CONTEXT.md](CONTEXT.md) e [ESTRATEGIA.md](ESTRATEGIA.md).
 
 > Os pacientes da demonstração são **compostos**: cada um junta registros reais de fontes públicas diferentes sob uma única identidade (ver [ADR 0001](docs/adr/0001-paciente-de-demonstracao-composto.md)).
