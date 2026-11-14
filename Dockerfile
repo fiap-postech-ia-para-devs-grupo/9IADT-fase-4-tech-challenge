@@ -1,6 +1,6 @@
 # Imagem única do projeto: dependências, dados públicos, lote processado e modelos já baixados.
 #
-#   docker build -t monitoramento .                      # ~15 min na primeira vez (baixa tudo)
+#   docker build -t monitoramento .                      # ~10 min na primeira vez (baixa tudo)
 #   docker run --rm -p 8501:8501 monitoramento           # abre em http://localhost:8501
 #   docker run --rm -p 8501:8501 --env-file .env monitoramento   # com Azure/Telegram (opcional)
 #

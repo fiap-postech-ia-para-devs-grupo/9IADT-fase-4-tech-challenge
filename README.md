@@ -31,7 +31,7 @@ O [`Dockerfile`](Dockerfile) da raiz monta uma imagem completa: dependências, d
 ```bash
 git clone https://github.com/fiap-postech-ia-para-devs-grupo/9IADT-fase-4-tech-challenge.git
 cd 9IADT-fase-4-tech-challenge
-docker build -t monitoramento .              # cerca de 15 min, só na primeira vez
+docker build -t monitoramento .              # cerca de 10 min, só na primeira vez
 docker run --rm -p 8501:8501 monitoramento
 ```
 

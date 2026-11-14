@@ -1,5 +1,5 @@
 # Constrói a imagem do Dockerfile da raiz e confere que o app sobe e responde.
-# Demora (~15 min: torch, dados e lote), por isso só roda quando algo que entra na imagem muda.
+# Demora (~8 min: torch, dados e lote), por isso só roda quando algo que entra na imagem muda.
 name: Docker
 
 on:
